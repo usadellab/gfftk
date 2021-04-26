@@ -8,8 +8,7 @@
 
 
 #include <iostream>
-#include <string_view>
-#include <cstdint>
+//#include <cstdint>
 #include <vector>
 
 namespace gtf
@@ -19,12 +18,12 @@ namespace gtf
     std::string seqname;
     std::string source;
     std::string feature;
-    //std::int_fast32_t start;
-    //std::int_fast32_t end;
+    std::int_fast32_t start;
+    std::int_fast32_t end;
     //int strand;
     //float score;
     //int frame;
-    // Skipping comment field for now
+    // std::string comment
   };
 
   class Parser
