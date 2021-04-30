@@ -27,7 +27,6 @@ namespace gtf
         continue;
       }
       split_cols(line, cols);
-
       gtf::GtfEntry e {cols[0], cols[1], cols[2], std::stol(cols[3]), std::stol(cols[4])};
 //      std::cout << e.seqname << "--"<< e.source << "---" << e.start << "---" << e.end <<"\n";
       cols.clear();
