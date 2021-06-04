@@ -18,7 +18,7 @@ namespace gtf
   Parser::~Parser()
   { }
 
-  void Parser::parse()
+  void Parser::parse(gtf::Parser::Processor& proc)
   {
     for(std::string line; std::getline(std::cin, line);)
     {
@@ -27,8 +27,8 @@ namespace gtf
         continue;
       }
       split_cols(line, cols);
-      gtf::GtfEntry e {cols[0], cols[1], cols[2], std::stol(cols[3]), std::stol(cols[4])};
-//      std::cout << e.seqname << "--"<< e.source << "---" << e.start << "---" << e.end <<"\n";
+      gtf::GtfEntry e {cols[0], cols[1], cols[2], std::stol(cols[3]), std::stol(cols[4]), cols[8]};
+      proc.process_entry(e);
       cols.clear();
     }
   }

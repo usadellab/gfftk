@@ -23,7 +23,7 @@ namespace gtf
     //int strand;
     //float score;
     //int frame;
-    // std::string comment
+     std::string comment;
   };
 
   class Parser
@@ -36,7 +36,7 @@ namespace gtf
       };
       Parser();
       ~Parser();
-      void parse();
+      void parse(gtf::Parser::Processor& proc);
 
     private:
       std::vector<std::string> cols;
