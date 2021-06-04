@@ -31,8 +31,6 @@ IntervalNode* IsoformScanner::insert(IntervalNode* root, IntervalNode* ival)
   {
     return ival;
   }
-//  std::cout << "ins\nroot: " << root->locus.start << "\t" << root->locus.comment
-//            << "\nival:" << ival->locus.start << "\t" << ival->locus.comment << "\n";
   if(ival->locus.start < root->locus.start)
   {
     root->left = insert(root->left, ival);
@@ -50,25 +48,27 @@ IntervalNode* IsoformScanner::insert(IntervalNode* root, IntervalNode* ival)
 }
 void IsoformScanner::process_entry(struct gtf::GtfEntry& e)
 {
-//  std::cout << e.seqname << "\t" << e.source << "\t" << e.start << "\t" << e.end << "\n";
   IntervalNode* nn  = new_node(e);
-//  std::cout << root <<"\n";
-//  std::cout << "Before:" <<  nn->locus.start << "\n";
   root = insert(root, nn);
-//  std::cout << "After\nroot:\t" << root->locus.start << "\t" << root->locus.comment
-//            << "\nnn:\t" << nn->locus.start << "\t" << nn->locus.comment << "\n";
 }
 
 void IsoformScanner::walk_inorder(IntervalNode* root)
 {
-//  std::cout << root->max << "9999999999999999999999999999999999999\n";
   if(root == 0)
   {
     return;
   }
   walk_inorder(root->left);
-  std::cout << "[" << root->locus.start << ", " << root->locus.end << "]"
-        << " max = "<< root->max << "\n";
+  std::cout << root << "\t" << root->locus.start << "\t" << root->locus.end
+        << "\t" << root->max << "\t" << root->left << "\t" << root->right << "\n";
+  walk_inorder(root->right);
+}
+
+
+void IsoformScanner::show_tree()
+{
+  std::cout << "#node\tstart\tend\tmax\tleft\tright\n";
+  walk_inorder(lastnode);
 }
 
 int main(int argc, char **argv)
@@ -76,12 +76,7 @@ int main(int argc, char **argv)
   IsoformScanner isc;
   gtf::Parser p;
   p.parse(isc);
-//  for(auto i:isc.nodes)
-//  {
-//    std::cout << i << "\n";
-//  }
-  std::cout << "sasasasasas\n";
-  isc.walk_inorder(isc.lastnode);
+  isc.show_tree();
   return 0;
 }
 

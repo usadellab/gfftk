@@ -27,11 +27,11 @@ class IsoformScanner : public gtf::Parser::Processor
 
     IntervalNode* new_node(gtf::GtfEntry& e);
     IntervalNode* insert(IntervalNode* root, IntervalNode* ival);
-    void walk_inorder(IntervalNode* root);
-//    std::vector<IntervalNode*> nodes;
+    void show_tree();
     IntervalNode* lastnode;
+
   private:
     IntervalNode* root = 0;
-
+    void walk_inorder(IntervalNode* root);
 };
 
