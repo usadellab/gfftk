@@ -31,7 +31,7 @@ IntervalNode* IsoformScanner::insert(IntervalNode* root, IntervalNode* ival)
   {
     return ival;
   }
-  if(ival->locus.start < root->locus.start)
+  if(ival->locus.start <= root->locus.start)
   {
     root->left = insert(root->left, ival);
   }
