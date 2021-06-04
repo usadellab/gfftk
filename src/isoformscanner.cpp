@@ -3,6 +3,7 @@
  * \author Jan Piotr Buchmann <jpb@members.fsf.org>
  * \copyright 2021
  * -------------------------------------------------------------------------------
+ *  head -n 18 genomic.gtf
  */
 
 #include <iostream>
@@ -24,37 +25,57 @@ IntervalNode* IsoformScanner::new_node(gtf::GtfEntry& e)
   return node;
 }
 
-IntervalNode* IsoformScanner::insert(IntervalNode* root, gtf::GtfEntry& e)
+IntervalNode* IsoformScanner::insert(IntervalNode* root, IntervalNode* ival)
 {
   if(root == 0)
   {
-    return new_node(e);
+    return ival;
   }
-  if(e.start < root->locus.start)
+  if(ival->locus.start < root->locus.start)
   {
-    root->left = insert(root->left, e);
+    root->left = insert(root->left, ival);
   }
   else
   {
-    root->right = insert(root->right, e);
+    root->right = insert(root->right, ival);
   }
-  if(root->max < e.start)
+  if(root->max < ival->locus.start)
   {
-    root->max = e.start;
+    root->max = ival->locus.start;
   }
+  lastnode = root;
   return root;
 }
 void IsoformScanner::process_entry(struct gtf::GtfEntry& e)
 {
-
+  IntervalNode* nn  = new_node(e);
+  root = insert(root, nn);
 }
 
+void IsoformScanner::walk_inorder(IntervalNode* root)
+{
+  if(root == 0)
+  {
+    return;
+  }
+  walk_inorder(root->left);
+  std::cout << root << "\t" << root->locus.start << "\t" << root->locus.end
+        << "\t" << root->max << "\t" << root->left << "\t" << root->right << "\n";
+  walk_inorder(root->right);
+}
 
+void IsoformScanner::show_tree()
+{
+  std::cout << "#node\tstart\tend\tmax\tleft\tright\n";
+  walk_inorder(lastnode);
+}
 
 int main(int argc, char **argv)
 {
+  IsoformScanner isc;
   gtf::Parser p;
-  p.parse();
+  p.parse(isc);
+  isc.show_tree();
   return 0;
 }
 
