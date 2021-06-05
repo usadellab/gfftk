@@ -13,7 +13,7 @@ import graphviz
 
 class Node:
 
-  def __init__(self, name, label, start, end, maxval, left, right):
+  def __init__(self, name, label, start, end, maxval, left, right, feature):
     self.name = name
     self.label = label
     self.start = start
@@ -21,9 +21,10 @@ class Node:
     self.max = maxval
     self.left = None if left == '0' else left
     self.right = None if right == '0' else right
+    self.feature = feature
 
   def node_values(self):
-    return f"{self.label}    {self.name}\\n{self.start}-{self.end}: {self.max}\\nl:{self.left}   r:{self.right}"
+    return f"{self.label}  {self.name}  {self.feature}\\n{self.start}-{self.end}: {self.max}\\nl:{self.left}   r:{self.right}"
 
 
 def main():
@@ -36,7 +37,7 @@ def main():
       continue
     cols = i.strip().split('\t')
     if cols[0] not in nodes:
-      nodes[cols[0]] = Node(cols[0], nodecount, cols[1], cols[2], cols[3], cols[4], cols[5])
+      nodes[cols[0]] = Node(cols[0], nodecount, cols[1], cols[2], cols[3], cols[4], cols[5], cols[6])
       nodecount += 1
     else:
       sys.exit(f"Node: {cols[0]} not unique. Error.")

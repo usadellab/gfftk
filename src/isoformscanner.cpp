@@ -39,9 +39,9 @@ IntervalNode* IsoformScanner::insert(IntervalNode* root, IntervalNode* ival)
   {
     root->right = insert(root->right, ival);
   }
-  if(root->max < ival->locus.start)
+  if(root->max < ival->locus.end)
   {
-    root->max = ival->locus.start;
+    root->max = ival->locus.end;
   }
   lastnode = root;
   return root;
@@ -59,15 +59,16 @@ void IsoformScanner::walk_inorder(IntervalNode* root)
     return;
   }
   walk_inorder(root->left);
-  std::cout << root << "\t" << root->locus.start << "\t" << root->locus.end
-        << "\t" << root->max << "\t" << root->left << "\t" << root->right << "\n";
+  std::cout << root << "\t" << root->locus.start << "\t" << root->locus.end <<
+               "\t" << root->max << "\t" << root->left << "\t" << root->right <<
+               "\t" << root->locus.feature << "\n";
   walk_inorder(root->right);
 }
 
 
 void IsoformScanner::show_tree()
 {
-  std::cout << "#node\tstart\tend\tmax\tleft\tright\n";
+  std::cout << "#node\tstart\tend\tmax\tleft\tright\tfeature\n";
   walk_inorder(lastnode);
 }
 
