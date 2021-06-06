@@ -17,6 +17,12 @@ struct IntervalNode
   IntervalNode* right;
 };
 
+struct Feature
+{
+  std::string feature;
+  std::int_fast32_t start;
+  std::int_fast32_t end;
+}:
 
 class IsoformScanner : public gtf::Parser::Processor
 {
