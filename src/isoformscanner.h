@@ -21,7 +21,17 @@ struct IntervalNode
 struct Locus
 {
   std::string id;
-  std::map<std::string, IntervalNode*> nodes;
+  std::vector<IntervalNode*> nodes;
+  void show();
+};
+
+struct Feature
+{
+  IntervalNode* center;
+  IntervalNode* prev;
+  IntervalNode* next;
+  IntervalNode* up;
+  IntervalNode* down;
 };
 
 class IsoformScanner : public gtf::Parser::Processor
@@ -33,13 +43,16 @@ class IsoformScanner : public gtf::Parser::Processor
 
     IntervalNode* new_node(gtf::GtfEntry& e);
     IntervalNode* insert(IntervalNode* root, IntervalNode* ival);
-    void show_tree();
     IntervalNode* lastnode;
+    void show_tree();
+    void show_loci();
 
   private:
     IntervalNode* root = 0;
     void walk_inorder(IntervalNode* root);
-    std::map<std::string, Locus*> loci;
+    std::map<std::string, Locus> loci;
     bool isFeature(IntervalNode* node, std::string feature);
+    int node_count = 0;
+
 };
 

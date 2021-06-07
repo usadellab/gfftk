@@ -43,7 +43,7 @@ namespace gtf
       if(comment[0] == "gene_id")
         e.gene_id = trim(comment[1]);
       if(comment[1] == "transcript_id")
-        e.transcript_id = comment[1];
+        e.transcript_id = trim(comment[1]);
     }
   }
 

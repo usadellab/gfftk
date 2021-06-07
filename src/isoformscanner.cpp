@@ -13,7 +13,15 @@
 IsoformScanner::IsoformScanner()
   { }
 IsoformScanner::~IsoformScanner()
-  { }
+{
+  for(const auto& [key, value] : loci)
+  {
+    for(const auto& i:value.nodes)
+    {
+      delete i;
+    }
+  }
+}
 
 IntervalNode* IsoformScanner::new_node(gtf::GtfEntry& e)
 {
@@ -47,7 +55,7 @@ IntervalNode* IsoformScanner::insert(IntervalNode* root, IntervalNode* ival)
   return root;
 }
 
-bool isFeature(IntervalNode* node, std::string feature)
+bool IsoformScanner::isFeature(IntervalNode* node, std::string feature)
 {
   return (node->locus.feature == feature) ? true : false;
 }
@@ -71,24 +79,43 @@ void IsoformScanner::show_tree()
   walk_inorder(lastnode);
 }
 
-void IsoformScanner::process_entry(struct gtf::GtfEntry& e)
+void IsoformScanner::show_loci()
 {
-  root = insert(root, new_node(e));
-  std::cout << root->locus.gene_id << "\n";
-  //if (isFeature(root, "gene"))
-  //{
-
-  //}
+  for(auto& [key, value] : loci)
+  {
+    std::cout << key << ":" << value.nodes.size() << "\n";
+    value.show();
+  }
 }
 
+void IsoformScanner::process_entry(struct gtf::GtfEntry& e)
+{
+  IntervalNode* ival = new_node(e);
+  root = insert(root, ival);
+  if(isFeature(ival, "gene"))
+  {
+    loci[ival->locus.gene_id] = Locus {root->locus.gene_id};
+  }
+  if(loci.contains(ival->locus.gene_id))
+  {
+    loci[ival->locus.gene_id].nodes.push_back(ival);
+  }
+}
 
-
+void Locus::show()
+{
+  for(const auto &i : nodes)
+  {
+    std::cout << i << "\n";
+  }
+}
 int main(int argc, char **argv)
 {
   IsoformScanner isc;
   gtf::Parser p;
   p.parse(isc);
-  isc.show_tree();
+  //isc.show_tree();
+  isc.show_loci();
   return 0;
 }
 
