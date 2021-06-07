@@ -20,10 +20,12 @@ namespace gtf
     std::string feature;
     std::int_fast32_t start;
     std::int_fast32_t end;
+    std::string gene_id;
+    std::string transcript_id;
     //int strand;
     //float score;
     //int frame;
-     std::string comment;
+     //std::map<std::string, std::string> comments;
   };
 
   class Parser
@@ -39,8 +41,15 @@ namespace gtf
       void parse(gtf::Parser::Processor& proc);
 
     private:
-      std::vector<std::string> cols;
-      void split_cols(std::string& line, std::vector<std::string>& cols);
   };
 
+  std::vector<std::string> tokenize(const std::string& line, const char delim);
+  std::string& lstrip(std::string &s);
+  std::string& rstrip(std::string &s);
+  std::string& strip(std::string &s);
+
+  std::string& ltrim(std::string &s);
+  std::string& rtrim(std::string &s);
+  std::string& trim(std::string &s);
+  void process_comments(gtf::GtfEntry& e, std::string& gtf_comments);
 }//end gtf namespace

@@ -7,6 +7,7 @@
 
 
 #include <iostream>
+#include <map>
 #include "reader.h"
 
 struct IntervalNode
@@ -17,12 +18,11 @@ struct IntervalNode
   IntervalNode* right;
 };
 
-struct Feature
+struct Locus
 {
-  std::string feature;
-  std::int_fast32_t start;
-  std::int_fast32_t end;
-}:
+  std::string id;
+  std::map<std::string, IntervalNode*> nodes;
+};
 
 class IsoformScanner : public gtf::Parser::Processor
 {
@@ -39,5 +39,7 @@ class IsoformScanner : public gtf::Parser::Processor
   private:
     IntervalNode* root = 0;
     void walk_inorder(IntervalNode* root);
+    std::map<std::string, Locus*> loci;
+    bool isFeature(IntervalNode* node, std::string feature);
 };
 

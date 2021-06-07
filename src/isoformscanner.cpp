@@ -46,10 +46,10 @@ IntervalNode* IsoformScanner::insert(IntervalNode* root, IntervalNode* ival)
   lastnode = root;
   return root;
 }
-void IsoformScanner::process_entry(struct gtf::GtfEntry& e)
+
+bool isFeature(IntervalNode* node, std::string feature)
 {
-  IntervalNode* nn  = new_node(e);
-  root = insert(root, nn);
+  return (node->locus.feature == feature) ? true : false;
 }
 
 void IsoformScanner::walk_inorder(IntervalNode* root)
@@ -65,12 +65,23 @@ void IsoformScanner::walk_inorder(IntervalNode* root)
   walk_inorder(root->right);
 }
 
-
 void IsoformScanner::show_tree()
 {
   std::cout << "#node\tstart\tend\tmax\tleft\tright\tfeature\n";
   walk_inorder(lastnode);
 }
+
+void IsoformScanner::process_entry(struct gtf::GtfEntry& e)
+{
+  root = insert(root, new_node(e));
+  std::cout << root->locus.gene_id << "\n";
+  //if (isFeature(root, "gene"))
+  //{
+
+  //}
+}
+
+
 
 int main(int argc, char **argv)
 {
