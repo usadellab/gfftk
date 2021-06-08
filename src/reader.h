@@ -1,4 +1,3 @@
-#pragma once
 /*
  * -------------------------------------------------------------------------------
  * \author Jan Piotr Buchmann <jpb@members.fsf.org>
@@ -7,27 +6,14 @@
  */
 
 
+#pragma once
+
 #include <iostream>
-//#include <cstdint>
 #include <vector>
+#include "gtfentry.h"
 
 namespace gtf
 {
-  struct GtfEntry
-  {
-    std::string seqname;
-    std::string source;
-    std::string feature;
-    std::int_fast32_t start;
-    std::int_fast32_t end;
-    std::string gene_id;
-    std::string transcript_id;
-    //int strand;
-    //float score;
-    //int frame;
-     //std::map<std::string, std::string> comments;
-  };
-
   class Parser
   {
     public:

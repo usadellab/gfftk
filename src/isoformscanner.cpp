@@ -8,10 +8,12 @@
 
 #include <iostream>
 #include "reader.h"
+#include "overlap.h"
 #include "isoformscanner.h"
 
 IsoformScanner::IsoformScanner()
   { }
+
 IsoformScanner::~IsoformScanner()
 {
   for(const auto& [key, value] : loci)
@@ -23,23 +25,36 @@ IsoformScanner::~IsoformScanner()
   }
 }
 
-IntervalNode* IsoformScanner::new_node(gtf::GtfEntry& e)
-{
-  IntervalNode* node = new IntervalNode;
-  node->locus = e;
-  node->max = e.end;
-  node->left = 0;
-  node->right = 0;
-  return node;
-}
-
 IntervalNode* IsoformScanner::insert(IntervalNode* root, IntervalNode* ival)
 {
   if(root == 0)
   {
     return ival;
   }
-  if(ival->locus.start <= root->locus.start)
+  if(ival->start <= root->start)
+  {
+    root->left = insert(root->left, ival);
+  }
+  else
+  {
+    root->right = insert(root->right, ival);
+  }
+  if(root->max < ival->end)
+  {
+    root->max = ival->end;
+  }
+  return root;
+}
+
+/* Overlap& IsoformScanner::overlap(const IntervalNode* subject, const IntervalNode* query)
+{
+  overlap = Overlap()
+  if(subject == 0)
+  {
+    return overlap;
+  }
+
+  if(subject->locus.start <= root->locus.start)
   {
     root->left = insert(root->left, ival);
   }
@@ -51,14 +66,8 @@ IntervalNode* IsoformScanner::insert(IntervalNode* root, IntervalNode* ival)
   {
     root->max = ival->locus.end;
   }
-  lastnode = root;
   return root;
-}
-
-bool IsoformScanner::isFeature(IntervalNode* node, std::string feature)
-{
-  return (node->locus.feature == feature) ? true : false;
-}
+} */
 
 void IsoformScanner::walk_inorder(IntervalNode* root)
 {
@@ -67,9 +76,9 @@ void IsoformScanner::walk_inorder(IntervalNode* root)
     return;
   }
   walk_inorder(root->left);
-  std::cout << root << "\t" << root->locus.start << "\t" << root->locus.end <<
-               "\t" << root->max << "\t" << root->left << "\t" << root->right <<
-               "\t" << root->locus.feature << "\n";
+  std::cout << root << "\t" << root->start << "\t" << root->end <<
+               "\t" << root->max << "\t" << root->left << "\t" << root->right <<"\n";
+              //  << "\t" << root->entries[0] << "\n";
   walk_inorder(root->right);
 }
 
@@ -90,16 +99,17 @@ void IsoformScanner::show_loci()
 
 void IsoformScanner::process_entry(struct gtf::GtfEntry& e)
 {
-  IntervalNode* ival = new_node(e);
+  IntervalNode* ival = new IntervalNode(e);
   root = insert(root, ival);
-  if(isFeature(ival, "gene"))
+  if(e.feature == "gene")
   {
-    loci[ival->locus.gene_id] = Locus {root->locus.gene_id};
+    loci[e.gene_id] = Locus {e.gene_id};
   }
-  if(loci.contains(ival->locus.gene_id))
+  if(loci.contains(e.gene_id))
   {
-    loci[ival->locus.gene_id].nodes.push_back(ival);
+    loci[e.gene_id].nodes.push_back(ival);
   }
+  lastnode = root;
 }
 
 void Locus::show()
@@ -114,8 +124,7 @@ int main(int argc, char **argv)
   IsoformScanner isc;
   gtf::Parser p;
   p.parse(isc);
-  //isc.show_tree();
+  isc.show_tree();
   isc.show_loci();
   return 0;
 }
-

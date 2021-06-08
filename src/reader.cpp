@@ -9,6 +9,7 @@
 #include <iostream>
 #include <sstream>
 #include <locale>
+#include <vector>
 #include "reader.h"
 
 namespace gtf

@@ -5,18 +5,12 @@
  * -------------------------------------------------------------------------------
  */
 
+#pragma once
 
 #include <iostream>
 #include <map>
 #include "reader.h"
-
-struct IntervalNode
-{
-  gtf::GtfEntry locus;
-  std::int_fast32_t max;
-  IntervalNode* left;
-  IntervalNode* right;
-};
+#include "ivalnode.h"
 
 struct Locus
 {
@@ -40,19 +34,16 @@ class IsoformScanner : public gtf::Parser::Processor
     IsoformScanner();
     ~IsoformScanner();
     void process_entry(struct gtf::GtfEntry& e);
-
-    IntervalNode* new_node(gtf::GtfEntry& e);
     IntervalNode* insert(IntervalNode* root, IntervalNode* ival);
     IntervalNode* lastnode;
     void show_tree();
     void show_loci();
 
   private:
-    IntervalNode* root = 0;
+    IntervalNode* root = nullptr;
     void walk_inorder(IntervalNode* root);
     std::map<std::string, Locus> loci;
-    bool isFeature(IntervalNode* node, std::string feature);
-    int node_count = 0;
+    bool isFeature(const IntervalNode* node, std::string feature);
 
 };
 
