@@ -23,6 +23,6 @@ void IntervalNode::show_entries()
 {
   for(auto& i:entries)
   {
-    std::cout << i.start << "\t" << i.id << "\t"<< i.parent << "\n";
+    std::cout << i.start << "\t" << i.id() << "\t"<< i.parent() << "\n";
   }
 }

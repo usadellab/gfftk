@@ -105,13 +105,23 @@ void IsoformScanner::process_entry(gff::GffEntry e)
   IntervalNode* ival = new IntervalNode(e);
   // std::cout << ival->start << "\n";
   root = insert(root, ival);
-  if(e.feature == "gene")
+}
+
+void IsoformScanner::assemble_loci(gff::GffEntry& e)
+{
+ if(e.hasParent()) //part-of relation
   {
-    loci[e.id] = Locus {e.id};
+    loci[e.id()] = Locus {e.id()};
   }
-  if(loci.contains(e.id))
+  else
   {
-    loci[e.id].nodes.push_back(ival);
+    loci[e.id()] = Locus(e);
+    // if(loci.contains(e.id))
+
+  }
+
+  {
+    // loci[e.id].nodes.push_back(ival);
   }
 }
 

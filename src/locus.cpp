@@ -8,10 +8,11 @@
 #include <iostream>
 
 #include "locus.h"
+#include "gffentry.h"
 
 namespace gff
 {
-  Locus::Locus()
+  Locus::Locus(gff::GffEntry& e)
     { }
 
   Locus::~Locus()

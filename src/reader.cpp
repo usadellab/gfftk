@@ -28,9 +28,8 @@ namespace gff
       {
         continue;
       }
-      std::vector cols = utils::tokenize(line, '\t');
       // std::cout << cols[0] << "\n";
-      gff::GffEntry e(cols);
+      gff::GffEntry e(utils::tokenize(line, '\t'));
       proc.process_entry(e);
     }
   }

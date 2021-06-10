@@ -37,5 +37,6 @@ class IsoformScanner : public gff::Parser::Processor
     void walk_inorder(IntervalNode* root);
     std::map<std::string, Locus> loci;
     bool isFeature(const IntervalNode* node, std::string feature);
+    void assemble_loci(gff::GffEntry& e);
 };
 

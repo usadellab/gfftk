@@ -11,14 +11,17 @@
 #include <vector>
 
 #include "feature.h"
+#include "gffentry.h"
 
 namespace gff
 {
   class Locus
   {
     public:
-      Locus();
+      Locus(gff::GffEntry& e);
       ~Locus();
+      std::int_fast32_t start;
+      std::int_fast32_t end;
 
     private:
       std::vector<const gff::Feature> features;
