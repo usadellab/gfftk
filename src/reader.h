@@ -20,7 +20,7 @@ namespace gtf
       class Processor
       {
         public:
-          virtual void process_entry(struct gtf::GtfEntry& e) = 0;
+          virtual void process_entry(struct gtf::GtfEntry e) = 0;
       };
       Parser();
       ~Parser();

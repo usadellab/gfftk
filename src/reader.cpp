@@ -31,7 +31,6 @@ namespace gtf
       std::vector cols = tokenize(line, '\t');
       gtf::GtfEntry e {cols[0], cols[1], cols[2], std::stol(cols[3]), std::stol(cols[4])};
       process_comments(e, strip(cols[8]));
-      cols.clear();
       proc.process_entry(e);
     }
   }
@@ -43,7 +42,7 @@ namespace gtf
       std::vector<std::string> comment = tokenize(strip(i), ' ');
       if(comment[0] == "gene_id")
         e.gene_id = trim(comment[1]);
-      if(comment[1] == "transcript_id")
+      if(comment[0] == "transcript_id")
         e.transcript_id = trim(comment[1]);
     }
   }

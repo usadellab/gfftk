@@ -33,3 +33,4 @@
 work
 *.*.geany
 work/
+*.code-workspace

@@ -18,7 +18,7 @@ IsoformScanner::~IsoformScanner()
 {
   for(const auto& [key, value] : loci)
   {
-    for(const auto& i:value.nodes)
+    for(auto i:value.nodes)
     {
       delete i;
     }
@@ -77,8 +77,8 @@ void IsoformScanner::walk_inorder(IntervalNode* root)
   }
   walk_inorder(root->left);
   std::cout << root << "\t" << root->start << "\t" << root->end <<
-               "\t" << root->max << "\t" << root->left << "\t" << root->right <<"\n";
-              //  << "\t" << root->entries[0] << "\n";
+               "\t" << root->max << "\t" << root->left << "\t" << root->right << "\n";
+  root->show_entries();
   walk_inorder(root->right);
 }
 
@@ -97,9 +97,10 @@ void IsoformScanner::show_loci()
   }
 }
 
-void IsoformScanner::process_entry(struct gtf::GtfEntry& e)
+void IsoformScanner::process_entry(struct gtf::GtfEntry e)
 {
   IntervalNode* ival = new IntervalNode(e);
+  std::cout << ival->entries.size() << "\n";
   root = insert(root, ival);
   if(e.feature == "gene")
   {
@@ -125,6 +126,6 @@ int main(int argc, char **argv)
   gtf::Parser p;
   p.parse(isc);
   isc.show_tree();
-  isc.show_loci();
+  // isc.show_loci();
   return 0;
 }
