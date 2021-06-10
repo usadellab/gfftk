@@ -9,6 +9,7 @@
 #include <iostream>
 #include "reader.h"
 #include "overlap.h"
+#include "gffentry.h"
 #include "isoformscanner.h"
 
 IsoformScanner::IsoformScanner()
@@ -77,15 +78,17 @@ void IsoformScanner::walk_inorder(IntervalNode* root)
   }
   walk_inorder(root->left);
   std::cout << root << "\t" << root->start << "\t" << root->end <<
-               "\t" << root->max << "\t" << root->left << "\t" << root->right << "\n";
-  root->show_entries();
+               "\t" << root->max << "\t" << root->left << "\t" << root->right <<
+               "\t" << root->entries[0].feature <<  "\n";
+  // root->show_entries();
   walk_inorder(root->right);
 }
 
 void IsoformScanner::show_tree()
 {
   std::cout << "#node\tstart\tend\tmax\tleft\tright\tfeature\n";
-  walk_inorder(lastnode);
+  // std::cout << lastnode->start << "\n";
+  walk_inorder(root);
 }
 
 void IsoformScanner::show_loci()
@@ -97,20 +100,19 @@ void IsoformScanner::show_loci()
   }
 }
 
-void IsoformScanner::process_entry(struct gff::GffEntry e)
+void IsoformScanner::process_entry(gff::GffEntry e)
 {
   IntervalNode* ival = new IntervalNode(e);
-  std::cout << ival->entries.size() << "\n";
+  // std::cout << ival->start << "\n";
   root = insert(root, ival);
   if(e.feature == "gene")
   {
-    loci[e.gene_id] = Locus {e.gene_id};
+    loci[e.id] = Locus {e.id};
   }
-  if(loci.contains(e.gene_id))
+  if(loci.contains(e.id))
   {
-    loci[e.gene_id].nodes.push_back(ival);
+    loci[e.id].nodes.push_back(ival);
   }
-  lastnode = root;
 }
 
 void Locus::show()

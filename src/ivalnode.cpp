@@ -20,9 +20,9 @@ IntervalNode::~IntervalNode()
   { }
 
 void IntervalNode::show_entries()
-    {
-      for(auto& i:entries)
-      {
-        std::cout << i.start << "\t" << i.gene_id << "\t"<< i.transcript_id << "\n";
-      }
-    }
+{
+  for(auto& i:entries)
+  {
+    std::cout << i.start << "\t" << i.id << "\t"<< i.parent << "\n";
+  }
+}

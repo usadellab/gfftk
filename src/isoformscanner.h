@@ -10,6 +10,7 @@
 #include <iostream>
 #include <map>
 #include "reader.h"
+#include "gffentry.h"
 #include "ivalnode.h"
 
 struct Locus
@@ -19,23 +20,15 @@ struct Locus
   void show();
 };
 
-struct Feature
-{
-  IntervalNode* center;
-  IntervalNode* prev;
-  IntervalNode* next;
-  IntervalNode* up;
-  IntervalNode* down;
-};
+
 
 class IsoformScanner : public gff::Parser::Processor
 {
   public:
     IsoformScanner();
     ~IsoformScanner();
-    void process_entry(struct gff::GffEntry e);
+    void process_entry(gff::GffEntry e);
     IntervalNode* insert(IntervalNode* root, IntervalNode* ival);
-    IntervalNode* lastnode;
     void show_tree();
     void show_loci();
 
@@ -44,6 +37,5 @@ class IsoformScanner : public gff::Parser::Processor
     void walk_inorder(IntervalNode* root);
     std::map<std::string, Locus> loci;
     bool isFeature(const IntervalNode* node, std::string feature);
-
 };
 

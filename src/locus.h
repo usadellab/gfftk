@@ -5,27 +5,23 @@
  * -------------------------------------------------------------------------------
  */
 
-
 #pragma once
 
 #include <iostream>
 #include <vector>
-#include "gffentry.h"
+
+#include "feature.h"
 
 namespace gff
 {
-  class Parser
+  class Locus
   {
     public:
-      class Processor
-      {
-        public:
-          virtual void process_entry(gff::GffEntry e) = 0;
-      };
-      Parser();
-      ~Parser();
-      void parse(gff::Parser::Processor& proc);
+      Locus();
+      ~Locus();
 
     private:
+      std::vector<const gff::Feature> features;
+
   };
-}//end gff namespace
+} // namespace gff
