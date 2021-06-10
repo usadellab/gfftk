@@ -12,7 +12,7 @@
 #include <vector>
 #include "reader.h"
 
-namespace gtf
+namespace gff
 {
   Parser::Parser()
   { }
@@ -20,7 +20,7 @@ namespace gtf
   Parser::~Parser()
   { }
 
-  void Parser::parse(gtf::Parser::Processor& proc)
+  void Parser::parse(gff::Parser::Processor& proc)
   {
     for(std::string line; std::getline(std::cin, line);)
     {
@@ -29,15 +29,15 @@ namespace gtf
         continue;
       }
       std::vector cols = tokenize(line, '\t');
-      gtf::GtfEntry e {cols[0], cols[1], cols[2], std::stol(cols[3]), std::stol(cols[4])};
+      gff::GffEntry e {cols[0], cols[1], cols[2], std::stol(cols[3]), std::stol(cols[4])};
       process_comments(e, strip(cols[8]));
       proc.process_entry(e);
     }
   }
 
-  void process_comments(gtf::GtfEntry& e, std::string& gtf_comments)
+  void process_comments(gff::GffEntry& e, std::string& gff_comments)
   {
-    for(auto& i : tokenize(gtf_comments, ';'))
+    for(auto& i : tokenize(gff_comments, ';'))
     {
       std::vector<std::string> comment = tokenize(strip(i), ' ');
       if(comment[0] == "gene_id")
@@ -107,4 +107,4 @@ namespace gtf
     return ltrim(rtrim(s));
   }
 
-}//end namespace gtf
+}//end namespace gff

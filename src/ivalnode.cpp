@@ -8,9 +8,9 @@
 #include <iostream>
 
 #include "ivalnode.h"
-#include "gtfentry.h"
+#include "gffentry.h"
 
-IntervalNode::IntervalNode(gtf::GtfEntry e)
+IntervalNode::IntervalNode(gff::GffEntry e)
   :start(e.start), end(e.end), max(e.end)
 {
   entries.push_back(e);

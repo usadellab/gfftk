@@ -9,19 +9,19 @@
 
 #include <iostream>
 #include <vector>
-#include "gtfentry.h"
+#include "gffentry.h"
 
 class IntervalNode
 {
   public:
-    IntervalNode(gtf::GtfEntry e);
+    IntervalNode(gff::GffEntry e);
     ~IntervalNode();
     std::int_fast32_t start;
     std::int_fast32_t end;
     std::int_fast32_t max;
     IntervalNode* left =  nullptr;
     IntervalNode* right = nullptr;
-    std::vector<gtf::GtfEntry> entries;
+    std::vector<gff::GffEntry> entries;
     void show_entries();
 
   private:

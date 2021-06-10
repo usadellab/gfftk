@@ -97,7 +97,7 @@ void IsoformScanner::show_loci()
   }
 }
 
-void IsoformScanner::process_entry(struct gtf::GtfEntry e)
+void IsoformScanner::process_entry(struct gff::GffEntry e)
 {
   IntervalNode* ival = new IntervalNode(e);
   std::cout << ival->entries.size() << "\n";
@@ -123,7 +123,7 @@ void Locus::show()
 int main(int argc, char **argv)
 {
   IsoformScanner isc;
-  gtf::Parser p;
+  gff::Parser p;
   p.parse(isc);
   isc.show_tree();
   // isc.show_loci();

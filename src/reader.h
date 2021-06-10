@@ -10,9 +10,9 @@
 
 #include <iostream>
 #include <vector>
-#include "gtfentry.h"
+#include "gffentry.h"
 
-namespace gtf
+namespace gff
 {
   class Parser
   {
@@ -20,11 +20,11 @@ namespace gtf
       class Processor
       {
         public:
-          virtual void process_entry(struct gtf::GtfEntry e) = 0;
+          virtual void process_entry(struct gff::GffEntry e) = 0;
       };
       Parser();
       ~Parser();
-      void parse(gtf::Parser::Processor& proc);
+      void parse(gff::Parser::Processor& proc);
 
     private:
   };
@@ -37,5 +37,5 @@ namespace gtf
   std::string& ltrim(std::string &s);
   std::string& rtrim(std::string &s);
   std::string& trim(std::string &s);
-  void process_comments(gtf::GtfEntry& e, std::string& gtf_comments);
-}//end gtf namespace
+  void process_comments(gff::GffEntry& e, std::string& gff_comments);
+}//end gff namespace

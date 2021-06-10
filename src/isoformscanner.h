@@ -28,12 +28,12 @@ struct Feature
   IntervalNode* down;
 };
 
-class IsoformScanner : public gtf::Parser::Processor
+class IsoformScanner : public gff::Parser::Processor
 {
   public:
     IsoformScanner();
     ~IsoformScanner();
-    void process_entry(struct gtf::GtfEntry e);
+    void process_entry(struct gff::GffEntry e);
     IntervalNode* insert(IntervalNode* root, IntervalNode* ival);
     IntervalNode* lastnode;
     void show_tree();

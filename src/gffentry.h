@@ -10,9 +10,9 @@
 
 #include <iostream>
 
-namespace gtf
+namespace gff
 {
-  struct GtfEntry
+  struct GffEntry
   {
     std::string seqname;
     std::string source;
@@ -26,4 +26,4 @@ namespace gtf
     //int frame;
      //std::map<std::string, std::string> comments;
   };
-} //end namespace gtf
+} //end namespace gff
