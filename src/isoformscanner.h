@@ -8,17 +8,19 @@
 #pragma once
 
 #include <iostream>
-#include <map>
+#include <unordered_map>
+
 #include "reader.h"
 #include "gffentry.h"
 #include "ivalnode.h"
+#include "locus.h"
 
-struct Locus
-{
-  std::string id;
-  std::vector<IntervalNode*> nodes;
-  void show();
-};
+// struct Locus
+// {
+//   std::string id;
+//   std::vector<IntervalNode*> nodes;
+//   void show();
+// };
 
 
 
@@ -35,8 +37,9 @@ class IsoformScanner : public gff::Parser::Processor
   private:
     IntervalNode* root = nullptr;
     void walk_inorder(IntervalNode* root);
-    std::map<std::string, Locus> loci;
+    std::unordered_map<std::string, gff::Locus&> loci;
     bool isFeature(const IntervalNode* node, std::string feature);
     void assemble_loci(gff::GffEntry& e);
+    std::vector<IntervalNode*> nodes;
 };
 

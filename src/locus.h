@@ -9,6 +9,7 @@
 
 #include <iostream>
 #include <vector>
+#include <unordered_map>
 
 #include "feature.h"
 #include "gffentry.h"
@@ -24,7 +25,9 @@ namespace gff
       std::int_fast32_t end;
 
     private:
-      std::vector<const gff::Feature> features;
+      std::unordered_map<std::string, const gff::GffEntry&> features;
+
+
 
   };
 } // namespace gff

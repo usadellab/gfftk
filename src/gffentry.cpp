@@ -44,7 +44,7 @@ namespace gff
 
   bool GffEntry::hasParent()
   {
-    return feat_parent.empty();
+    return !feat_parent.empty();
   }
   const std::string& GffEntry::parent()
   {

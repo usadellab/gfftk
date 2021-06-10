@@ -7,22 +7,23 @@
  */
 
 #include <iostream>
-#include "reader.h"
-#include "overlap.h"
+#include <vector>
+
 #include "gffentry.h"
 #include "isoformscanner.h"
+#include "locus.h"
+#include "overlap.h"
+#include "reader.h"
 
 IsoformScanner::IsoformScanner()
   { }
 
 IsoformScanner::~IsoformScanner()
 {
-  for(const auto& [key, value] : loci)
+
+  for(auto i : nodes)
   {
-    for(auto i:value.nodes)
-    {
-      delete i;
-    }
+    delete i;
   }
 }
 
@@ -91,53 +92,48 @@ void IsoformScanner::show_tree()
   walk_inorder(root);
 }
 
-void IsoformScanner::show_loci()
-{
-  for(auto& [key, value] : loci)
-  {
-    std::cout << key << ":" << value.nodes.size() << "\n";
-    value.show();
-  }
-}
-
 void IsoformScanner::process_entry(gff::GffEntry e)
 {
   IntervalNode* ival = new IntervalNode(e);
   // std::cout << ival->start << "\n";
   root = insert(root, ival);
+  nodes.push_back(ival);
+  assemble_loci(e);
 }
 
 void IsoformScanner::assemble_loci(gff::GffEntry& e)
 {
- if(e.hasParent()) //part-of relation
+  // std::cout << e.id() << "   " << e.parent() << "     " << e.hasParent() <<  "\n";
+  if(e.hasParent()) //part-of relation
   {
-    loci[e.id()] = Locus {e.id()};
+    // loci[e.id()] = Locus {e.id()};
+    // std::cout << e.id() << "   " <<e.parent() << "\n";
   }
-  else
+  else  // new locus
   {
-    loci[e.id()] = Locus(e);
-    // if(loci.contains(e.id))
-
-  }
-
-  {
-    // loci[e.id].nodes.push_back(ival);
+    if(!loci.contains(e.id()))
+    {
+      gff::Locus locus = gff::Locus(e);
+      loci.insert({e.id(), locus});
+    }
   }
 }
 
-void Locus::show()
+void IsoformScanner::show_loci()
 {
-  for(const auto &i : nodes)
+  for(auto& i: loci)
   {
-    std::cout << i << "\n";
+    std::cout << " " << i.first << "::::" << i.second.start << "\n";
   }
+
 }
+
 int main(int argc, char **argv)
 {
   IsoformScanner isc;
   gff::Parser p;
   p.parse(isc);
   isc.show_tree();
-  // isc.show_loci();
+  isc.show_loci();
   return 0;
 }

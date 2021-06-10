@@ -13,6 +13,7 @@
 namespace gff
 {
   Locus::Locus(gff::GffEntry& e)
+  : start(e.start), end(e.end)
     { }
 
   Locus::~Locus()
