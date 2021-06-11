@@ -7,7 +7,6 @@
 
 #pragma once
 
-#include <iostream>
 #include <unordered_map>
 
 #include "reader.h"
@@ -37,9 +36,8 @@ class IsoformScanner : public gff::Parser::Processor
   private:
     IntervalNode* root = nullptr;
     void walk_inorder(IntervalNode* root);
-    std::unordered_map<std::string, gff::Locus&> loci;
-    bool isFeature(const IntervalNode* node, std::string feature);
-    void assemble_loci(gff::GffEntry& e);
+    std::unordered_map<std::string, gff::Locus> loci;
+    void assemble_loci(gff::GffEntry e);
     std::vector<IntervalNode*> nodes;
 };
 

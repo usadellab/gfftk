@@ -97,17 +97,18 @@ void IsoformScanner::process_entry(gff::GffEntry e)
   IntervalNode* ival = new IntervalNode(e);
   // std::cout << ival->start << "\n";
   root = insert(root, ival);
-  nodes.push_back(ival);
+  nodes.push_back(ival); // dirty way to track IntervalNodes
   assemble_loci(e);
 }
 
-void IsoformScanner::assemble_loci(gff::GffEntry& e)
+void IsoformScanner::assemble_loci(gff::GffEntry e)
 {
   // std::cout << e.id() << "   " << e.parent() << "     " << e.hasParent() <<  "\n";
-  if(e.hasParent()) //part-of relation
+  if( (e.hasParent()) && (loci.contains(e.id())) ) //part-of relation
   {
+
     // loci[e.id()] = Locus {e.id()};
-    // std::cout << e.id() << "   " <<e.parent() << "\n";
+    std::cout << e.id() << "   " <<e.parent() << "\n";
   }
   else  // new locus
   {
@@ -123,7 +124,8 @@ void IsoformScanner::show_loci()
 {
   for(auto& i: loci)
   {
-    std::cout << " " << i.first << "::::" << i.second.start << "\n";
+    std::cout << "Locus: " << i.first << "\n";
+    i.second.show();
   }
 
 }

@@ -13,6 +13,7 @@
 IntervalNode::IntervalNode(gff::GffEntry e)
   :start(e.start), end(e.end), max(e.end)
 {
+  // std::cout << e.end << "\n";
   entries.push_back(e);
 }
 
