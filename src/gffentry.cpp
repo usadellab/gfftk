@@ -36,8 +36,8 @@ namespace gff
       }
       if(comment[0] == "Parent")
       {
-        // std::cout << comment[0]  << "\n";
         this->feat_parent = utils::trim(comment[1]);
+        // std::cout << this->feat_id << "\tadding parent:" << comment[0]  << "\t" << this->feat_parent << "\n";
       }
     }
   }

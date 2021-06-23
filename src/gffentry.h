@@ -22,7 +22,10 @@ namespace gff
       std::string feature;
       std::int_fast32_t start;
       std::int_fast32_t end;
-
+      GffEntry* up = nullptr;
+      GffEntry* down = nullptr;
+      GffEntry* next = nullptr;
+      GffEntry* prev = nullptr;
       //int strand;
       //float score;
       //int frame;

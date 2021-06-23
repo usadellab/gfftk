@@ -12,12 +12,22 @@
 
 namespace gff
 {
-  Locus::Locus(gff::GffEntry& e)
-  : start(e.start), end(e.end)
-    { }
+  Locus::Locus(gff::GffEntry e)
+  : feature(e)
+    {
+      // std::cout << "INIT: "<<  e.start << "\t"  << e.end << "\t" << this->start << "\t" << this->end << "\n";
+    }
 
   Locus::~Locus()
     { }
 
+  const std::int_fast32_t Locus::start()
+  {
+    return feature.start;
+  }
+  const std::int_fast32_t Locus::end()
+  {
+    return feature.end;
+  }
 } // namespace gff
 

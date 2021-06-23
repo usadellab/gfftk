@@ -15,15 +15,6 @@
 #include "ivalnode.h"
 #include "locus.h"
 
-// struct Locus
-// {
-//   std::string id;
-//   std::vector<IntervalNode*> nodes;
-//   void show();
-// };
-
-
-
 class IsoformScanner : public gff::Parser::Processor
 {
   public:
@@ -31,15 +22,17 @@ class IsoformScanner : public gff::Parser::Processor
     ~IsoformScanner();
     void process_entry(gff::GffEntry e);
     IntervalNode* insert(IntervalNode* root, IntervalNode* ival);
+    gff::GffEntry& get_feature(const std::string& feature_name);
     void show_tree();
     void show_loci();
 
   private:
     IntervalNode* root = nullptr;
     void walk_inorder(IntervalNode* root);
-    std::unordered_map<std::string, gff::Locus&> loci;
+    std::unordered_map<std::string, gff::Locus> loci;
+    std::unordered_map<std::string, gff::GffEntry> features;
     bool isFeature(const IntervalNode* node, std::string feature);
-    void assemble_loci(gff::GffEntry& e);
+    void assemble_locus(gff::GffEntry& e);
     std::vector<IntervalNode*> nodes;
 };
 

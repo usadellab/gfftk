@@ -19,14 +19,15 @@ namespace gff
   class Locus
   {
     public:
-      Locus(gff::GffEntry& e);
+      Locus(gff::GffEntry e);
       ~Locus();
-      std::int_fast32_t start;
-      std::int_fast32_t end;
+      const std::int_fast32_t start();
+      const std::int_fast32_t end();
+
 
     private:
       std::unordered_map<std::string, const gff::GffEntry&> features;
-
+      GffEntry feature;
 
 
   };

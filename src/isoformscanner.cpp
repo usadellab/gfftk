@@ -97,17 +97,19 @@ void IsoformScanner::process_entry(gff::GffEntry e)
   IntervalNode* ival = new IntervalNode(e);
   // std::cout << ival->start << "\n";
   root = insert(root, ival);
+  // std::cout << "Inserting: " << e.id() << "\n";
+  features.insert({e.id(), e});
   nodes.push_back(ival);
-  assemble_loci(e);
+  assemble_locus(e);
 }
 
-void IsoformScanner::assemble_loci(gff::GffEntry& e)
+void IsoformScanner::assemble_locus(gff::GffEntry& e)
 {
-  // std::cout << e.id() << "   " << e.parent() << "     " << e.hasParent() <<  "\n";
   if(e.hasParent()) //part-of relation
   {
-    // loci[e.id()] = Locus {e.id()};
-    // std::cout << e.id() << "   " <<e.parent() << "\n";
+    std::cout << "Feature: " << e.id() << ":: parent:" << get_feature(e.parent()).id() << "\n";
+    e.up = &e;
+    // std::cout << e.up->id() << "\n";
   }
   else  // new locus
   {
@@ -118,12 +120,24 @@ void IsoformScanner::assemble_loci(gff::GffEntry& e)
     }
   }
 }
+gff::GffEntry& IsoformScanner::get_feature(const std::string& feature_name)
+{
+  if(features.contains(feature_name))
+  {
+    // std::cout << "Retrieving: " << feature_name << "\n";
+    return features.at(feature_name);
+  }
+  else
+  {
+    std::cout << "Error: " << feature_name << " not in storage\n";
+  }
+}
 
 void IsoformScanner::show_loci()
 {
   for(auto& i: loci)
   {
-    std::cout << " " << i.first << "::::" << i.second.start << "\n";
+    std::cout << " " << i.first << "::::" << i.second.start() << "\n";
   }
 
 }
