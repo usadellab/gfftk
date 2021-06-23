@@ -108,8 +108,9 @@ void IsoformScanner::assemble_locus(gff::GffEntry& e)
   if(e.hasParent()) //part-of relation
   {
     std::cout << "Feature: " << e.id() << ":: parent:" << get_feature(e.parent()).id() << "\n";
-    e.up = &e;
-    // std::cout << e.up->id() << "\n";
+    gff::GffEntry& p = get_feature(e.parent());
+    p.add_child(e);
+    e.add_parent(p);
   }
   else  // new locus
   {
@@ -124,7 +125,6 @@ gff::GffEntry& IsoformScanner::get_feature(const std::string& feature_name)
 {
   if(features.contains(feature_name))
   {
-    // std::cout << "Retrieving: " << feature_name << "\n";
     return features.at(feature_name);
   }
   else

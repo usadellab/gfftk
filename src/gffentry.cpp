@@ -42,14 +42,46 @@ namespace gff
     }
   }
 
+  void GffEntry::show_children()
+  {
+    for(auto i : down)
+    {
+      std::cout << i->id() << "\n";
+    }
+  }
+
+  void GffEntry::show_parent()
+  {
+    for(auto& i : up)
+    {
+      std::cout << i->id() << "\n";
+    }
+  }
+
+  GffEntry& GffEntry::add_child(gff::GffEntry& e)
+  {
+    std::cout << "info: " << id() << "\tadd child: " <<e.id() << "\n";
+    down.push_back(&e);
+    return e;
+  }
+
+  GffEntry& GffEntry::add_parent(gff::GffEntry& e)
+  {
+    std::cout << "info: " << id() << "\tadd parent: " <<e.id() << "\n";
+    up.push_back(&e);
+    return e;
+  }
+
   bool GffEntry::hasParent()
   {
     return !feat_parent.empty();
   }
+
   const std::string& GffEntry::parent()
   {
     return feat_parent;
   }
+
   const std::string& GffEntry::id()
   {
     return feat_id;

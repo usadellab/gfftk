@@ -9,6 +9,7 @@
 #pragma once
 
 #include <iostream>
+#include <vector>
 
 namespace gff
 {
@@ -22,8 +23,9 @@ namespace gff
       std::string feature;
       std::int_fast32_t start;
       std::int_fast32_t end;
-      GffEntry* up = nullptr;
-      GffEntry* down = nullptr;
+      GffEntry& add_child(gff::GffEntry& e);
+      GffEntry& add_parent(gff::GffEntry& e);
+
       GffEntry* next = nullptr;
       GffEntry* prev = nullptr;
       //int strand;
@@ -33,10 +35,14 @@ namespace gff
       bool hasParent();
       const std::string& parent();
       const std::string& id();
+      void show_children();
+      void show_parent();
 
     private:
       void process_comments(const std::string gff_comments);
       std::string feat_parent;
       std::string feat_id;
+      std::vector<GffEntry*> down;
+      std::vector<GffEntry*> up;
   };
 } //end namespace gff
