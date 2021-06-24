@@ -32,11 +32,11 @@ namespace gff
       if(comment[0] == "ID")
       {
         // std::cout << comment[0]  << "\n";
-        this->feat_id = utils::trim(comment[1]);
+        this->eid = utils::trim(comment[1]);
       }
       if(comment[0] == "Parent")
       {
-        this->feat_parent = utils::trim(comment[1]);
+        this->pid = utils::trim(comment[1]);
         // std::cout << this->feat_id << "\tadding parent:" << comment[0]  << "\t" << this->feat_parent << "\n";
       }
     }
@@ -44,7 +44,7 @@ namespace gff
 
   void GffEntry::show_children()
   {
-    for(auto i : down)
+    for(auto& i : down)
     {
       std::cout << i->id() << "\n";
     }
@@ -60,28 +60,30 @@ namespace gff
 
   GffEntry& GffEntry::add_child(gff::GffEntry& e)
   {
-    std::cout << "info: " << id() << "\tadd child: " <<e.id() << "\n";
+    std::cout << "\t\tParent: " << id() << "\tadd child: " <<e.id() << "\n";
     down.push_back(&e);
     return e;
   }
 
   GffEntry& GffEntry::add_parent(gff::GffEntry& e)
   {
-    std::cout << "info: " << id() << "\tadd parent: " <<e.id() << "\n";
+    std::cout << "\t\tChild: " << id() << "\tadd parent: " <<e.id() << "\n";
     up.push_back(&e);
     return e;
   }
   bool GffEntry::hasParent()
   {
-    return !feat_parent.empty();
+    return !pid.empty();
   }
+
   const std::string& GffEntry::parent () const
   {
-    return feat_parent;
+    return pid;
   }
+
   const std::string& GffEntry::id() const
   {
-    return feat_id;
+    return eid;
   }
 
   void GffEntry::show()

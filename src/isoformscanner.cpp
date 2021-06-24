@@ -106,22 +106,43 @@ void IsoformScanner::process_entry(gff::GffEntry e)
 void IsoformScanner::assemble_locus(gff::GffEntry& e)
 {
   // std::cout << e.id() << "   " << e.parent() << "     " << e.hasParent() <<  "\n";
-  if( (e.hasParent()) && (loci.contains(e.id())) ) //part-of relation
+  if(!e.hasParent())// new locus
   {
-    std::cout << "Feature: " << e.id() << ":: parent:" << get_feature(e.parent()).id() << "\n";
+    gff::Locus locus = gff::Locus(e);
+    loci.insert({e.id(), locus});
+    std::cout << "New locus: " << locus.id() << "\n";
+  }
+  else //part-of relation
+  {
     gff::GffEntry& p = get_feature(e.parent());
+    std::cout << "\tExtending locus with: " << e.id() << " : Part-of: " <<p.id() << "\n";
     p.add_child(e);
     e.add_parent(p);
-  }
-  else  // new locus
-  {
-    if(!loci.contains(e.id()))
-    {
-      gff::Locus locus = gff::Locus(e);
-      loci.insert({e.id(), locus});
-    }
+    std::cout << "\tGetting locus for entry: " << e.id() << "\n\tparent: " << p.id() << ": "<< &p <<"\n";
+    get_locus(p.id());
+
+    // gff::Locus& l = loci.at(e.id());
+    // std::cout << "Feature: " << e.id() << ":: parent:" << get_feature(e.parent()).id() << "\n";
+
+    //
+    // l.add_feature(e);
   }
 }
+
+void IsoformScanner::get_locus(const std::string& nodeid)
+{
+  gff::GffEntry& node = get_feature(nodeid);
+  std::cout << "\t\t\tstart: " << node.id() << " address "<< &node <<"\n";
+
+  while(node.hasParent())
+  {
+    std::cout << "\t\t\tprenode: " << node.id() << "\tparent: " << node.parent() << "\n";
+    node = get_feature(node.parent());
+    std::cout << "\t\t\tpostnode: " << node.id() << "\n";
+  }
+  std::cout << "\t\t\tlocus: " << node.id() <<"\n";
+}
+
 gff::GffEntry& IsoformScanner::get_feature(const std::string& feature_name)
 {
   if(features.contains(feature_name))
@@ -136,10 +157,11 @@ gff::GffEntry& IsoformScanner::get_feature(const std::string& feature_name)
 
 void IsoformScanner::show_loci()
 {
+  std::cout << "Listing loci\n";
   for(auto& i: loci)
   {
     std::cout << "Locus: " << i.first << "\n";
-    i.second.show();
+    // i.second.show();
   }
 
 }
@@ -150,6 +172,6 @@ int main(int argc, char **argv)
   gff::Parser p;
   p.parse(isc);
   isc.show_tree();
-  // isc.show_loci();
+  isc.show_loci();
   return 0;
 }

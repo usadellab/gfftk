@@ -24,11 +24,9 @@ namespace gff
     // std::cout <<"Destructing\t" << this->end << " \n";
   }
 
-  void Locus::show()
+  const std::string& Locus::id()
   {
-
-    feature.show();
-    show_features();
+    return feature.id();
   }
 
   void Locus::show_features()
@@ -36,14 +34,26 @@ namespace gff
     for(auto& i: features)
     {
       std::cout << "\tFeature: " << i.first << "\n";
-      i.second.show();
+      // i.second.show();
     }
+  }
+
+  void Locus::show()
+  {
+    std::cout << "Locus: "<< id() << "\n";
+    // show_features();
+  }
+
+  void Locus::add_feature(gff::GffEntry& e)
+  {
+    features.insert({e.id(), e});
   }
 
   const std::int_fast32_t Locus::start()
   {
     return feature.start;
   }
+
   const std::int_fast32_t Locus::end()
   {
     return feature.end;

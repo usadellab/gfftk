@@ -34,5 +34,6 @@ class IsoformScanner : public gff::Parser::Processor
     bool isFeature(const IntervalNode* node, std::string feature);
     void assemble_locus(gff::GffEntry& e);
     std::vector<IntervalNode*> nodes;
+    void get_locus(const std::string& nodeid);
 };
 

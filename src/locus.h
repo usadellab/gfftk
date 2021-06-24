@@ -23,7 +23,9 @@ namespace gff
       ~Locus();
       const std::int_fast32_t start();
       const std::int_fast32_t end();
+      void add_feature(gff::GffEntry& e);
       void show();
+      const std::string& id();
 
     private:
       std::unordered_map<std::string, gff::GffEntry&> features;

@@ -41,8 +41,8 @@ namespace gff
 
     private:
       void process_comments(const std::string gff_comments);
-      std::string feat_parent;
-      std::string feat_id;
+      std::string pid;
+      std::string eid;
       std::vector<GffEntry*> down;
       std::vector<GffEntry*> up;
   };
