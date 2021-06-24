@@ -33,10 +33,11 @@ namespace gff
       //int frame;
        //std::map<std::string, std::string> comments;
       bool hasParent();
-      const std::string& parent();
-      const std::string& id();
+      const std::string& parent() const;
+      const std::string& id() const;
       void show_children();
       void show_parent();
+      void show();
 
     private:
       void process_comments(const std::string gff_comments);

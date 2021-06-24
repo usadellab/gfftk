@@ -150,6 +150,6 @@ int main(int argc, char **argv)
   gff::Parser p;
   p.parse(isc);
   isc.show_tree();
-  isc.show_loci();
+  // isc.show_loci();
   return 0;
 }

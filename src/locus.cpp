@@ -13,10 +13,10 @@
 
 namespace gff
 {
-  Locus::Locus(gff::GffEntry& e)
-  :locus(e)
+  Locus::Locus(gff::GffEntry e)
+  : feature(e)
   {
-      // std::cout << "Ceated: " << this->end << "\n";
+    // std::cout << "INIT: "<<  e.start << "\t"  << e.end << "\t" << this->start << "\t" << this->end << "\n";
   }
 
   Locus::~Locus()
@@ -27,9 +27,10 @@ namespace gff
   void Locus::show()
   {
 
-    locus.show();
+    feature.show();
     show_features();
   }
+
   void Locus::show_features()
   {
     for(auto& i: features)
@@ -38,9 +39,6 @@ namespace gff
       i.second.show();
     }
   }
-
-  Locus::~Locus()
-    { }
 
   const std::int_fast32_t Locus::start()
   {

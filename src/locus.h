@@ -23,10 +23,12 @@ namespace gff
       ~Locus();
       const std::int_fast32_t start();
       const std::int_fast32_t end();
+      void show();
 
     private:
-      std::unordered_map<std::string, const gff::GffEntry&> features;
+      std::unordered_map<std::string, gff::GffEntry&> features;
       GffEntry feature;
+      void show_features();
 
   };
 } // namespace gff
