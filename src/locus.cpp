@@ -9,14 +9,35 @@
 
 #include "locus.h"
 #include "gffentry.h"
+#include "feature.h"
 
 namespace gff
 {
-  Locus::Locus(gff::GffEntry e)
-  : feature(e)
+  Locus::Locus(gff::GffEntry& e)
+  :locus(e)
+  {
+      // std::cout << "Ceated: " << this->end << "\n";
+  }
+
+  Locus::~Locus()
+  {
+    // std::cout <<"Destructing\t" << this->end << " \n";
+  }
+
+  void Locus::show()
+  {
+
+    locus.show();
+    show_features();
+  }
+  void Locus::show_features()
+  {
+    for(auto& i: features)
     {
-      // std::cout << "INIT: "<<  e.start << "\t"  << e.end << "\t" << this->start << "\t" << this->end << "\n";
+      std::cout << "\tFeature: " << i.first << "\n";
+      i.second.show();
     }
+  }
 
   Locus::~Locus()
     { }

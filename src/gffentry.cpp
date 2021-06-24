@@ -71,19 +71,22 @@ namespace gff
     up.push_back(&e);
     return e;
   }
-
   bool GffEntry::hasParent()
   {
     return !feat_parent.empty();
   }
-
   const std::string& GffEntry::parent()
   {
     return feat_parent;
   }
-
   const std::string& GffEntry::id()
   {
     return feat_id;
+  }
+
+  void GffEntry::show()
+  {
+    std::cout << "Sequence: " << seqname << " Locus: " << id() << "Type: " << feature <<
+                 "Coords: " << start << "\t" <<  end << "\n";
   }
 } // namespace gff

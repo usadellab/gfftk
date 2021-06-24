@@ -105,7 +105,8 @@ void IsoformScanner::process_entry(gff::GffEntry e)
 
 void IsoformScanner::assemble_locus(gff::GffEntry& e)
 {
-  if(e.hasParent()) //part-of relation
+  // std::cout << e.id() << "   " << e.parent() << "     " << e.hasParent() <<  "\n";
+  if( (e.hasParent()) && (loci.contains(e.id())) ) //part-of relation
   {
     std::cout << "Feature: " << e.id() << ":: parent:" << get_feature(e.parent()).id() << "\n";
     gff::GffEntry& p = get_feature(e.parent());
@@ -137,7 +138,8 @@ void IsoformScanner::show_loci()
 {
   for(auto& i: loci)
   {
-    std::cout << " " << i.first << "::::" << i.second.start() << "\n";
+    std::cout << "Locus: " << i.first << "\n";
+    i.second.show();
   }
 
 }

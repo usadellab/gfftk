@@ -24,11 +24,9 @@ namespace gff
       const std::int_fast32_t start();
       const std::int_fast32_t end();
 
-
     private:
       std::unordered_map<std::string, const gff::GffEntry&> features;
       GffEntry feature;
-
 
   };
 } // namespace gff
