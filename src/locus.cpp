@@ -47,9 +47,9 @@ void Locus::show()
 
 void Locus::add_feature(gff::GffEntry e)
 {
-  std::cout << "Inserting: " << e.id() << " into " << id() << "\n";
-  // features.push_back(e);
-  std::cout << "Size: " << features.size() <<"\n";
+  // std::cout << "Inserting: " << e.id() << " into " << id() << "\n";
+  features.push_back(e);
+  // std::cout << "Size: " << features.size() <<"\n";
 }
 
 const std::int_fast32_t Locus::start()

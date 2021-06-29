@@ -101,7 +101,7 @@ void IsoformScanner::process_entry(gff::GffEntry e)
 
 /* Collect all features/entries which are part of a locus. A locus is a feature
 without a parent feature. The search for a locus is initiated by the parent of
-currently examined entry to save one step.
+the currently examined entry to save one step.
 */
 void IsoformScanner::assemble_locus(gff::GffEntry e)
 {
@@ -119,13 +119,10 @@ void IsoformScanner::assemble_locus(gff::GffEntry e)
     e.add_parent(p);
     // std::cout << "\tGetting locus for entry: " << e.id() << "\n\tparent: " << p.id() << ": "<< &p <<"\n";
     const std::string& lid = get_locus_id(p);
-    std::cout << "Locus : " << lid << "\n";
+    // std::cout << "Locus : " << lid << "\n";
     if(loci.contains(lid))
     {
-      gff::Locus& loc = loci.at(lid);
-      std::cout << "Locus inst " << loc.id() << "  " << &loc <<"\n";
-      std::cout << "Locus for : " << e.id() << " = " << loc.id() << "  " << &loc <<"\n";
-      loc.features.push_back(e);
+      loci.at(lid).add_feature(e);
     }
     else
     {
@@ -161,7 +158,7 @@ void IsoformScanner::show_loci()
   std::cout << "Listing loci\n";
   for(auto& i: loci)
   {
-    std::cout << "Locus: " << i.first << &i << "\n";
+    std::cout << "Locus: " << i.first << "\n";
     i.second.show();
   }
 }

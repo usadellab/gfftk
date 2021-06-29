@@ -79,8 +79,9 @@ const std::string& GffEntry::id() const
 void GffEntry::show()
 {
 
-  std::cout << "Sequence: " << seqname << "\tId: " << id() << "\tType: "
-            << feature << "\tCoords: " << start << "\t" <<  end << "\tparent: " << parent() << "\n";
+  std::cout << "\tSequence: " << seqname << "\tId: " << id() << "\tType: "
+            << feature << "\tCoords: " << start << "\t" <<  end
+            << "\tparent: " << parent() << "\n";
 }
 
 } // namespace gff
