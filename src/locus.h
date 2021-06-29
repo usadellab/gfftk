@@ -25,12 +25,14 @@ class Locus
     const std::int_fast32_t start();
     const std::int_fast32_t end();
     void add_feature(gff::GffEntry e);
+    void collect_feature(const std::string& level);
     void show();
     const std::string& id();
     void show_features();
 
   private:
     std::vector<gff::GffEntry> features;
+    std::unordered_map<std::string, std::vector<gff::GffEntry>> featuresl;
     GffEntry feature;
 
 };

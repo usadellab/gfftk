@@ -37,6 +37,25 @@ void Locus::show_features()
   {
     i.show();
   }
+
+  for(auto& i : featuresl)
+  {
+    std::cout << i.first << "\n";
+    for(auto& j : i.second)
+    {
+      std::cout << j.id() << "\t";
+    }
+    std::cout << "\n";
+  }
+
+}
+
+void Locus::collect_feature(const std::string& level)
+{
+  for(auto& i: features)
+  {
+    i.show();
+  }
 }
 
 void Locus::show()
@@ -47,10 +66,16 @@ void Locus::show()
 
 void Locus::add_feature(gff::GffEntry e)
 {
-  // std::cout << "Inserting: " << e.id() << " into " << id() << "\n";
-  features.push_back(e);
-  // std::cout << "Size: " << features.size() <<"\n";
+  if(featuresl.contains(e.feature))
+  {
+    featuresl[e.feature].push_back(e);
+  }
+  else
+  {
+    featuresl.insert(std::pair<std::string, std::vector<gff::GffEntry>> (e.feature, {e}));
+  }
 }
+
 
 const std::int_fast32_t Locus::start()
 {
