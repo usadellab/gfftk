@@ -28,9 +28,10 @@ class Locus
     void show();
     const std::string& id();
     void show_features();
+    std::vector<gff::GffEntry> features;
 
   private:
-    std::unordered_map<std::string, gff::GffEntry> features;
+    // std::vector<gff::GffEntry> features;
     GffEntry feature;
 
 };

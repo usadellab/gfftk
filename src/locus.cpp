@@ -32,22 +32,24 @@ const std::string& Locus::id()
 
 void Locus::show_features()
 {
+  std::cout << "\tFeatures: " << features.size() <<"\n";
   for(auto& i: features)
   {
-    std::cout << "\tFeature: " << i.first << "\n";
-    // i.second.show();
+    i.show();
   }
 }
 
 void Locus::show()
 {
-  std::cout << "Locus: "<< id() << "\n";
-  // show_features();
+  std::cout << "Locus: "<< id() << "\n" << "\tCoords: " << start() << "-" << end() << "\n";
+  show_features();
 }
 
 void Locus::add_feature(gff::GffEntry e)
 {
-  features.insert({e.id(), e});
+  std::cout << "Inserting: " << e.id() << " into " << id() << "\n";
+  // features.push_back(e);
+  std::cout << "Size: " << features.size() <<"\n";
 }
 
 const std::int_fast32_t Locus::start()

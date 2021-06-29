@@ -56,12 +56,12 @@ void GffEntry::show_parent()
 }
 void GffEntry::add_child(gff::GffEntry& e)
 {
-  std::cout << "\t\tParent: " << id() << "\tadd child: " <<e.id() << "\n";
+  // std::cout << "\t\tParent: " << id() << "\tadd child: " <<e.id() << "\n";
   down.push_back(&e);
 }
 void GffEntry::add_parent(gff::GffEntry& e)
 {
-  std::cout << "\t\tChild: " << id() << "\tadd parent: " <<e.id() << "\n";
+  // std::cout << "\t\tChild: " << id() << "\tadd parent: " <<e.id() << "\n";
   up.push_back(&e);
 }
 bool GffEntry::hasParent()
@@ -78,8 +78,9 @@ const std::string& GffEntry::id() const
 }
 void GffEntry::show()
 {
-  std::cout << "Sequence: " << seqname << "\tLocus: " << id() << "\tType: "
-            << feature << "\tCoords: " << start << "\t" <<  end << "\n";
+
+  std::cout << "Sequence: " << seqname << "\tId: " << id() << "\tType: "
+            << feature << "\tCoords: " << start << "\t" <<  end << "\tparent: " << parent() << "\n";
 }
 
 } // namespace gff

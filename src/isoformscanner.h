@@ -9,6 +9,7 @@
 
 #include <iostream>
 #include <unordered_map>
+#include <vector>
 
 #include "reader.h"
 #include "gffentry.h"
@@ -22,8 +23,8 @@ class IsoformScanner : public gff::Parser::Processor
     ~IsoformScanner();
     void process_entry(gff::GffEntry e);
     IntervalNode* insert(IntervalNode* root, IntervalNode* ival);
-    gff::GffEntry& get_feature(const std::string& feature_name);
-    gff::GffEntry get_locus(const std::string& locus_name);
+    gff::GffEntry get_feature(const std::string& feature_name);
+    // gff::GffEntry get_locus(const std::string& locus_name);
     void show_tree();
     void show_loci();
 
@@ -33,7 +34,7 @@ class IsoformScanner : public gff::Parser::Processor
     std::unordered_map<std::string, gff::Locus> loci;
     std::unordered_map<std::string, gff::GffEntry> features;
     bool isFeature(const IntervalNode* node, std::string feature);
-    void assemble_locus(gff::GffEntry& e);
+    void assemble_locus(gff::GffEntry e);
     std::vector<IntervalNode*> nodes;
     const std::string& get_locus_id(gff::GffEntry& e);
 };
