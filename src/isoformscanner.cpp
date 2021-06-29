@@ -5,12 +5,12 @@
  * -------------------------------------------------------------------------------
  *  head -n 18 genomic.gtf
  */
+#include "isoformscanner.h"
 
 #include <iostream>
 #include <vector>
 
 #include "gffentry.h"
-#include "isoformscanner.h"
 #include "locus.h"
 #include "overlap.h"
 #include "reader.h"
@@ -103,44 +103,45 @@ void IsoformScanner::process_entry(gff::GffEntry e)
   assemble_locus(e);
 }
 
+/* Collect all features/entries which are part of a locus. A locus is a feature
+without a parent feature. The search for a locus is initiated by the parent of
+currently examined entry to save one step.
+*/
 void IsoformScanner::assemble_locus(gff::GffEntry& e)
 {
   // std::cout << e.id() << "   " << e.parent() << "     " << e.hasParent() <<  "\n";
-  if(!e.hasParent())// new locus
+  if(!e.hasParent())  // new locus
   {
     gff::Locus locus = gff::Locus(e);
     loci.insert({e.id(), locus});
     std::cout << "New locus: " << locus.id() << "\n";
   }
-  else //part-of relation
+  else  //part-of relation
   {
     gff::GffEntry& p = get_feature(e.parent());
     std::cout << "\tExtending locus with: " << e.id() << " : Part-of: " <<p.id() << "\n";
     p.add_child(e);
     e.add_parent(p);
     std::cout << "\tGetting locus for entry: " << e.id() << "\n\tparent: " << p.id() << ": "<< &p <<"\n";
-    get_locus(p.id());
-
-    // gff::Locus& l = loci.at(e.id());
-    // std::cout << "Feature: " << e.id() << ":: parent:" << get_feature(e.parent()).id() << "\n";
-
-    //
-    // l.add_feature(e);
+    gff::Locus loc = get_locus(get_locus_id(p));
+    loc.add_feature(e);
+    std::cout << "Locus for : " << e.id() << " = " << loc.id() << "  " << &loc <<"\n";
   }
 }
 
-void IsoformScanner::get_locus(const std::string& nodeid)
+const std::string& IsoformScanner::get_locus_id(gff::GffEntry& e)
 {
-  gff::GffEntry& node = get_feature(nodeid);
-  std::cout << "\t\t\tstart: " << node.id() << " address "<< &node <<"\n";
+  // gff::GffEntry& node = get_feature(nodeid);
+  std::cout << "\t\t\tstart: " << e.id() << " address "<< &e <<"\n";
 
-  while(node.hasParent())
+  while(e.hasParent())
   {
-    std::cout << "\t\t\tprenode: " << node.id() << "\tparent: " << node.parent() << "\n";
-    node = get_feature(node.parent());
-    std::cout << "\t\t\tpostnode: " << node.id() << "\n";
+    std::cout << "\t\t\tprenode: " << e.id() << "\tparent: " << e.parent() << "\n";
+    e = get_feature(e.parent());
+    std::cout << "\t\t\tpostnode: " << e.id() << "\n";
   }
-  std::cout << "\t\t\tlocus: " << node.id() <<"\n";
+  std::cout << "\t\t\tlocus: " << e.id() <<"\n";
+  return e.id();
 }
 
 gff::GffEntry& IsoformScanner::get_feature(const std::string& feature_name)
@@ -154,6 +155,20 @@ gff::GffEntry& IsoformScanner::get_feature(const std::string& feature_name)
     std::cout << "Error: " << feature_name << " not in storage\n";
   }
 }
+
+gff::GffEntry IsoformScanner::get_locus(const std::string& locus_name)
+{
+  if(loci.contains(locus_name))
+  {
+    return features.at(locus_name);
+  }
+  else
+  {
+    std::cout << "Error: " << locus_name << " not in storage\n";
+  }
+}
+
+
 
 void IsoformScanner::show_loci()
 {

@@ -16,21 +16,23 @@
 
 namespace gff
 {
-  class Locus
-  {
-    public:
-      Locus(gff::GffEntry e);
-      ~Locus();
-      const std::int_fast32_t start();
-      const std::int_fast32_t end();
-      void add_feature(gff::GffEntry& e);
-      void show();
-      const std::string& id();
 
-    private:
-      std::unordered_map<std::string, gff::GffEntry&> features;
-      GffEntry feature;
-      void show_features();
+class Locus
+{
+  public:
+    Locus(gff::GffEntry e);
+    ~Locus();
+    const std::int_fast32_t start();
+    const std::int_fast32_t end();
+    void add_feature(gff::GffEntry e);
+    void show();
+    const std::string& id();
+    void show_features();
 
-  };
+  private:
+    std::unordered_map<std::string, gff::GffEntry> features;
+    GffEntry feature;
+
+};
+
 } // namespace gff

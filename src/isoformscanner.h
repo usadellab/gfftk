@@ -23,6 +23,7 @@ class IsoformScanner : public gff::Parser::Processor
     void process_entry(gff::GffEntry e);
     IntervalNode* insert(IntervalNode* root, IntervalNode* ival);
     gff::GffEntry& get_feature(const std::string& feature_name);
+    gff::GffEntry get_locus(const std::string& locus_name);
     void show_tree();
     void show_loci();
 
@@ -34,6 +35,6 @@ class IsoformScanner : public gff::Parser::Processor
     bool isFeature(const IntervalNode* node, std::string feature);
     void assemble_locus(gff::GffEntry& e);
     std::vector<IntervalNode*> nodes;
-    void get_locus(const std::string& nodeid);
+    const std::string& get_locus_id(gff::GffEntry& e);
 };
 
