@@ -10,6 +10,7 @@
 #include <iostream>
 #include <vector>
 
+
 #include "gffentry.h"
 #include "locus.h"
 #include "overlap.h"
@@ -158,7 +159,7 @@ void IsoformScanner::show_loci()
   std::cout << "Listing loci\n";
   for(auto& i: loci)
   {
-    std::cout << "Locus: " << i.first << "\n";
+    // std::cout << "Locus: " << i.first << "\n";
     i.second.show();
   }
 }

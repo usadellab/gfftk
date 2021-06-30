@@ -66,6 +66,7 @@ void Locus::show()
 
 void Locus::add_feature(gff::GffEntry e)
 {
+  // std::cout << "Par: " << e.id() << " " << e.get_parent().id() << "   " << e.parent() << "\n";
   if(featuresl.contains(e.feature))
   {
     featuresl[e.feature].push_back(e);

@@ -5,10 +5,11 @@
  * -------------------------------------------------------------------------------
  */
 
+#include "gffentry.h"
+
 #include <iostream>
 #include <vector>
 
-#include "gffentry.h"
 #include "utils.h"
 
 namespace gff
@@ -21,8 +22,13 @@ GffEntry::GffEntry(const std::vector<std::string>& gffcols)
   process_comments(gffcols[8]);
 }
 GffEntry::~GffEntry()
- {}
-void GffEntry::process_comments(const std::string gff_comments)
+{
+  // up.clear();
+  delete next;
+  delete prev;
+}
+
+void GffEntry::process_comments(const std::string& gff_comments)
 {
   for(auto& i : utils::tokenize(gff_comments, ';'))
   {
@@ -40,34 +46,40 @@ void GffEntry::process_comments(const std::string gff_comments)
     }
   }
 }
+
 void GffEntry::show_children()
 {
-  for(auto& i : down)
+  for(auto& i : children)
   {
-    std::cout << i->id() << "\n";
+    std::cout << i.id() << "\n";
   }
 }
+
 void GffEntry::show_parent()
 {
-  for(auto& i : up)
+  for(auto& i : parents)
   {
-    std::cout << i->id() << "\n";
+    std::cout << i.id() << "\n";
   }
 }
-void GffEntry::add_child(gff::GffEntry& e)
+
+void GffEntry::add_child(gff::GffEntry e)
 {
-  // std::cout << "\t\tParent: " << id() << "\tadd child: " <<e.id() << "\n";
-  down.push_back(&e);
+  std::cout << "\t\tParent: " << id() << "\tadd child: " <<e.id() << "   " << &e << "\n";
+  children.push_back(e);
+  // std::cout << children.back().id() << "\n";
 }
-void GffEntry::add_parent(gff::GffEntry& e)
+void GffEntry::add_parent(gff::GffEntry e)
 {
-  // std::cout << "\t\tChild: " << id() << "\tadd parent: " <<e.id() << "\n";
-  up.push_back(&e);
+  std::cout << "\t\tChild: " << id() << "\tadd parent: " <<e.id() << "\n";
+  parents.push_back(e);
 }
+
 bool GffEntry::hasParent()
 {
   return !pid.empty();
 }
+
 const std::string& GffEntry::parent () const
 {
   return pid;
@@ -76,6 +88,16 @@ const std::string& GffEntry::id() const
 {
   return eid;
 }
+
+GffEntry GffEntry::get_parent()
+{
+  for(auto& i : parents)
+  {
+    std::cout << "\t\tparent: " << i.id() << "\n";
+  }
+   return parents.front();
+}
+
 void GffEntry::show()
 {
 
@@ -83,5 +105,6 @@ void GffEntry::show()
             << feature << "\tCoords: " << start << "\t" <<  end
             << "\tparent: " << parent() << "\n";
 }
+
 
 } // namespace gff

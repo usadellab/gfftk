@@ -9,6 +9,7 @@
 #pragma once
 
 #include <iostream>
+#include <functional>
 #include <vector>
 
 namespace gff
@@ -24,8 +25,8 @@ class GffEntry
     std::string feature;
     std::int_fast32_t start;
     std::int_fast32_t end;
-    void add_child(gff::GffEntry& e);
-    void add_parent(gff::GffEntry& e);
+    void add_child(gff::GffEntry e);
+    void add_parent(gff::GffEntry e);
     GffEntry* next = nullptr;
     GffEntry* prev = nullptr;
     //int strand;
@@ -38,13 +39,14 @@ class GffEntry
     void show_children();
     void show_parent();
     void show();
+    GffEntry get_parent();
 
   private:
-    void process_comments(const std::string gff_comments);
+    void process_comments(const std::string& gff_comments);
     std::string pid;
     std::string eid;
-    std::vector<GffEntry*> down;
-    std::vector<GffEntry*> up;
+    std::vector<gff::GffEntry> children;
+    std::vector<gff::GffEntry> parents;
 };
 
 } //end namespace gff
