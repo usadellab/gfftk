@@ -32,65 +32,63 @@ const std::string& Locus::id()
 
 void Locus::show_features()
 {
-  // std::cout << "\tFeatures: " << features.size() <<"\n";
-  // for(auto& i: features)
-  // {
-  //   i.show();
-  // }
-
-  for(auto& i : featuresa)
+  for(auto& i : features)
   {
-    std::cout << i.first << "\n";
     for(auto& j : i.second)
     {
-      // std::cout << i.first << "\n";
-      for(auto& k : j.second)
-      {
-        std::cout << k.id() << "\n";
-      }
-      std::cout << "\n\n";
+      std::cout << "\t" << j.second.entries.front().id() << "\n\t" << j.second.type << ": " << j.second.start << "-" << j.second.end
+                << "\n\tlen: " << j.second.end - j.second.start + 1 << "\n";
+    std::cout << "\n";
     }
   }
-
 }
 
 void Locus::show()
 {
-  std::cout << "Locus: "<< id() << "\n" << "\tCoords: " << start() << "-" << end() << "\n";
+  std::cout << "Locus: "<< id() << "\n\tType: " << feature.feature << "\n" << "\tCoords: " << start() << "-"
+            << end() << "\n";
   show_features();
 }
 
 void Locus::add_feature(gff::GffEntry e)
 {
-  // // std::cout << "Par: " << e.id() << " " << e.get_parent().id() << "   " << e.parent() << "\n";
-  // if(featuresl.contains(e.feature))
-  // {
-  //   featuresl[e.feature].push_back(e);
-  // }
-  // else
-  // {
-  //   featuresl.insert(std::pair<std::string, std::vector<gff::GffEntry>> (e.feature, {e}));
-  // }
-
-  if(featuresa.contains(e.feature))
+  gff::FeatureA fa = {e.feature, e.parent(), e.start, e.end, std::vector<gff::GffEntry>{e}};
+  if(features.contains(e.feature))
   {
-    // std::unordered_map<std::string, std::vector<gff::GffEntry>> f = { {e.parent(), std::vector<gff::GffEntry>{e}} };
-    auto [it, success] = featuresa[e.feature].try_emplace(e.parent(), std::vector<gff::GffEntry>{e});
+    auto [it, success] = features[e.feature].try_emplace(e.parent(), fa);
     if(!success)
     {
-      it->second.push_back(e);
-      // std::cout << "Etry: " << it->first << " : " << it->second.back().id() << "\n";
+      it->second.entries.push_back(e);
+      if(e.start < it->second.start)
+      {
+        it->second.start = e.start;
+      }
+      if(e.end > it->second.end)
+      {
+        it->second.end = e.end;
+      }
     }
   }
   else
   {
-    // featuresl.insert(std::pair<std::string, std::vector<gff::GffEntry>> (e.feature, {e}));
-    // featuresa.insert({e.feature, std::unordered_map<std::string, std::vector<gff::GffEntry>> {} });
-    featuresa.insert({e.feature, std::unordered_map<std::string, std::vector<gff::GffEntry>>{ {e.parent(), std::vector<gff::GffEntry>{e}}} });
-    // std::cout << "\tNew feature: " << e.feature << "\tid: " << e.id() << "\tparent: " << e.parent() <<"\n";
+   features.insert({e.feature, std::unordered_map<std::string, gff::FeatureA> {{e.parent(), fa}} });
   }
 }
 
+void Locus::set_longest_feature(const std::string& level)
+{
+  if(features.contains(level))
+  {
+    for(auto& i : features[level])
+    {
+      if( (longest_feat.end - longest_feat.start + 1) < (i.second.end - i.second.start + 1))
+      {
+        longest_feat = i.second;
+      }
+      // std::cout << i.second.type << "\tlen: " << i.second.end - i.second.start + 1 << "\n";
+    }
+  }
+}
 
 const std::int_fast32_t Locus::start()
 {

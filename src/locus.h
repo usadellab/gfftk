@@ -17,12 +17,14 @@
 namespace gff
 {
 
-// struct Feature
-// {
-//   std::string type;
-//   std::string parent_id;
-//   std::vector<gff::GffEntry> entries;
-// };
+struct FeatureA
+{
+  std::string type;
+  std::string parent_id;
+  std::int_fast32_t start;
+  std::int_fast32_t end;
+  std::vector<gff::GffEntry> entries;
+};
 
 class Locus
 {
@@ -35,13 +37,14 @@ class Locus
     void show();
     const std::string& id();
     void show_features();
+    void set_longest_feature(const std::string& level);
+    gff::FeatureA longest_feat = {"dummy", "none", 0, 0};
 
   private:
-    std::vector<gff::GffEntry> features;
-    // std::unordered_map<std::string, std::vector<gff::GffEntry>> featuresl;
-    std::unordered_map<std::string, std::unordered_map<std::string, std::vector<gff::GffEntry>>> featuresa;
-    GffEntry feature;
+    std::unordered_map<std::string, std::unordered_map<std::string, gff::FeatureA>> features;
+    // gff::FeatureA longest_feat;
 
+    GffEntry feature;
 };
 
 } // namespace gff

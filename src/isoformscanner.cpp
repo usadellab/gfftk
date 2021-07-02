@@ -21,7 +21,6 @@ IsoformScanner::IsoformScanner()
 
 IsoformScanner::~IsoformScanner()
 {
-
   for(auto i : nodes)
   {
     delete i;
@@ -98,6 +97,7 @@ void IsoformScanner::process_entry(gff::GffEntry e)
   features.insert({e.id(), e});
   nodes.push_back(ival);
   assemble_locus(e);
+  // don#t forget last entry
 }
 
 /* Collect all features/entries which are part of a locus. A locus is a feature
@@ -108,21 +108,29 @@ void IsoformScanner::assemble_locus(gff::GffEntry e)
 {
   if(!e.hasParent())  // new locus
   {
+    if(!prevloc.empty())
+    {
+      loci.at(prevloc).show();
+      loci.at(prevloc).set_longest_feature("CDS");
+      std::cout << "LONGEST \n";
+      std::cout << loci.at(prevloc).longest_feat.start << " : "  << loci.at(prevloc).longest_feat.end << "\n";
+      for(auto& i : loci.at(prevloc).longest_feat.entries)
+      {
+        std::cout << i.id() << "\n";
+      }
+    }
     gff::Locus locus = gff::Locus(e);
     loci.insert({e.id(), locus});
-    std::cout << "New locus: " << locus.id() << "\n";
+    prevloc = locus.id();
   }
   else  //part-of relation
   {
     gff::GffEntry p = get_feature(e.parent()); // dangerous, fix later
-    // std::cout << "\tEntry: " << e.id() << "\n\tparent: " << e.parent() << "   " << p.id() <<"\n";
-    // std::cout << "\tExtending locus with: " << e.id() << " : Part-of: " <<p.id() << "\n";
     p.add_child(e);
     e.add_parent(p);
     const std::string lid = get_locus_id(p);
     if(loci.contains(lid))
     {
-      // std::cout << "\tAdding feature: " << e.feature << "\tid: " << e.id() << "\tparent: " << p.id() <<"\n";
       loci.at(lid).add_feature(e);
     }
     else
@@ -159,7 +167,6 @@ void IsoformScanner::show_loci()
   std::cout << "Listing loci\n";
   for(auto& i: loci)
   {
-    // std::cout << "Locus: " << i.first << "\n";
     i.second.show();
   }
 }
@@ -170,6 +177,6 @@ int main(int argc, char **argv)
   gff::Parser p;
   p.parse(isc);
   // isc.show_tree();
-  isc.show_loci();
+  // isc.show_loci();
   return 0;
 }
