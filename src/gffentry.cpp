@@ -53,6 +53,10 @@ void GffEntry::show_children()
   {
     std::cout << i.id() << "\n";
   }
+  for(auto& i : featuresl)
+  {
+    std::cout << "popo: " << i.first << "\n";
+  }
 }
 
 void GffEntry::show_parent()
@@ -65,13 +69,21 @@ void GffEntry::show_parent()
 
 void GffEntry::add_child(gff::GffEntry e)
 {
-  std::cout << "\t\tParent: " << id() << "\tadd child: " <<e.id() << "   " << &e << "\n";
+  // std::cout << "\t\tParent: " << id() << "\tadd child: " <<e.id() << "   " << &e << "\n";
+  if(featuresl.contains(e.feature))
+  {
+    featuresl[e.feature].push_back(e);
+  }
+  else
+  {
+    featuresl.insert(std::pair<std::string, std::vector<gff::GffEntry>> (e.feature, {e}));
+  }
   children.push_back(e);
   // std::cout << children.back().id() << "\n";
 }
 void GffEntry::add_parent(gff::GffEntry e)
 {
-  std::cout << "\t\tChild: " << id() << "\tadd parent: " <<e.id() << "\n";
+  // std::cout << "\t\tChild: " << id() << "\tadd parent: " <<e.id() << "\n";
   parents.push_back(e);
 }
 
@@ -104,6 +116,7 @@ void GffEntry::show()
   std::cout << "\tSequence: " << seqname << "\tId: " << id() << "\tType: "
             << feature << "\tCoords: " << start << "\t" <<  end
             << "\tparent: " << parent() << "\n";
+  show_children();
 }
 
 

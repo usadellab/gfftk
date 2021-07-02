@@ -32,30 +32,26 @@ const std::string& Locus::id()
 
 void Locus::show_features()
 {
-  std::cout << "\tFeatures: " << features.size() <<"\n";
-  for(auto& i: features)
-  {
-    i.show();
-  }
+  // std::cout << "\tFeatures: " << features.size() <<"\n";
+  // for(auto& i: features)
+  // {
+  //   i.show();
+  // }
 
-  for(auto& i : featuresl)
+  for(auto& i : featuresa)
   {
     std::cout << i.first << "\n";
     for(auto& j : i.second)
     {
-      std::cout << j.id() << "\t";
+      // std::cout << i.first << "\n";
+      for(auto& k : j.second)
+      {
+        std::cout << k.id() << "\n";
+      }
+      std::cout << "\n\n";
     }
-    std::cout << "\n";
   }
 
-}
-
-void Locus::collect_feature(const std::string& level)
-{
-  for(auto& i: features)
-  {
-    i.show();
-  }
 }
 
 void Locus::show()
@@ -66,14 +62,32 @@ void Locus::show()
 
 void Locus::add_feature(gff::GffEntry e)
 {
-  // std::cout << "Par: " << e.id() << " " << e.get_parent().id() << "   " << e.parent() << "\n";
-  if(featuresl.contains(e.feature))
+  // // std::cout << "Par: " << e.id() << " " << e.get_parent().id() << "   " << e.parent() << "\n";
+  // if(featuresl.contains(e.feature))
+  // {
+  //   featuresl[e.feature].push_back(e);
+  // }
+  // else
+  // {
+  //   featuresl.insert(std::pair<std::string, std::vector<gff::GffEntry>> (e.feature, {e}));
+  // }
+
+  if(featuresa.contains(e.feature))
   {
-    featuresl[e.feature].push_back(e);
+    // std::unordered_map<std::string, std::vector<gff::GffEntry>> f = { {e.parent(), std::vector<gff::GffEntry>{e}} };
+    auto [it, success] = featuresa[e.feature].try_emplace(e.parent(), std::vector<gff::GffEntry>{e});
+    if(!success)
+    {
+      it->second.push_back(e);
+      // std::cout << "Etry: " << it->first << " : " << it->second.back().id() << "\n";
+    }
   }
   else
   {
-    featuresl.insert(std::pair<std::string, std::vector<gff::GffEntry>> (e.feature, {e}));
+    // featuresl.insert(std::pair<std::string, std::vector<gff::GffEntry>> (e.feature, {e}));
+    // featuresa.insert({e.feature, std::unordered_map<std::string, std::vector<gff::GffEntry>> {} });
+    featuresa.insert({e.feature, std::unordered_map<std::string, std::vector<gff::GffEntry>>{ {e.parent(), std::vector<gff::GffEntry>{e}}} });
+    // std::cout << "\tNew feature: " << e.feature << "\tid: " << e.id() << "\tparent: " << e.parent() <<"\n";
   }
 }
 

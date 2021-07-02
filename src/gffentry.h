@@ -11,6 +11,7 @@
 #include <iostream>
 #include <functional>
 #include <vector>
+#include <map>
 
 namespace gff
 {
@@ -45,6 +46,7 @@ class GffEntry
     void process_comments(const std::string& gff_comments);
     std::string pid;
     std::string eid;
+    std::unordered_map<std::string, std::vector<gff::GffEntry>> featuresl;
     std::vector<gff::GffEntry> children;
     std::vector<gff::GffEntry> parents;
 };

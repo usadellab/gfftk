@@ -110,19 +110,19 @@ void IsoformScanner::assemble_locus(gff::GffEntry e)
   {
     gff::Locus locus = gff::Locus(e);
     loci.insert({e.id(), locus});
-    // std::cout << "New locus: " << locus.id() << "\n";
+    std::cout << "New locus: " << locus.id() << "\n";
   }
   else  //part-of relation
   {
     gff::GffEntry p = get_feature(e.parent()); // dangerous, fix later
+    // std::cout << "\tEntry: " << e.id() << "\n\tparent: " << e.parent() << "   " << p.id() <<"\n";
     // std::cout << "\tExtending locus with: " << e.id() << " : Part-of: " <<p.id() << "\n";
     p.add_child(e);
     e.add_parent(p);
-    // std::cout << "\tGetting locus for entry: " << e.id() << "\n\tparent: " << p.id() << ": "<< &p <<"\n";
-    const std::string& lid = get_locus_id(p);
-    // std::cout << "Locus : " << lid << "\n";
+    const std::string lid = get_locus_id(p);
     if(loci.contains(lid))
     {
+      // std::cout << "\tAdding feature: " << e.feature << "\tid: " << e.id() << "\tparent: " << p.id() <<"\n";
       loci.at(lid).add_feature(e);
     }
     else
@@ -132,7 +132,7 @@ void IsoformScanner::assemble_locus(gff::GffEntry e)
   }
 }
 
-const std::string& IsoformScanner::get_locus_id(gff::GffEntry& e)
+const std::string IsoformScanner::get_locus_id(gff::GffEntry e)
 {
   // std::cout << "\t\t\tstart: " << e.id() << " address "<< &e <<"\n";
   while(e.hasParent())
