@@ -11,7 +11,7 @@
 #include "gffentry.h"
 
 IntervalNode::IntervalNode(gff::GffEntry e)
-  :start(e.start), end(e.end), max(e.end)
+  :start(e.start()), end(e.end()), max(e.end())
 {
   // std::cout << e.end << "\n";
   entries.push_back(e);
@@ -24,6 +24,6 @@ void IntervalNode::show_entries()
 {
   for(auto& i:entries)
   {
-    std::cout << i.start << "\t" << i.id() << "\t"<< i.parent() << "\n";
+    std::cout << i.start() << "\t" << i.id() << "\t"<< i.parent() << "\n";
   }
 }

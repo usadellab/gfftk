@@ -16,19 +16,31 @@
 
 namespace gff
 {
-
-struct FeatureA
-{
-  std::string type;
-  std::string parent_id;
-  std::int_fast32_t start;
-  std::int_fast32_t end;
-  std::vector<gff::GffEntry> entries;
-};
-
 class Locus
 {
   public:
+    class Feature
+    {
+      public:
+        Feature(gff::GffEntry& e);
+        ~Feature();
+        std::string id;
+        std::string type;
+        std::string parent_id;
+        std::int_fast32_t start;
+        std::int_fast32_t end;
+        std::int_fast32_t length();
+        void add_entry(gff::GffEntry e);
+        void show_entries();
+        void update(gff::GffEntry e);
+        void show();
+
+      private:
+        std::vector<gff::GffEntry> entries;
+        std::int_fast32_t feat_length;
+        void update_length();
+    };
+
     Locus(gff::GffEntry e);
     ~Locus();
     const std::int_fast32_t start();
@@ -38,13 +50,13 @@ class Locus
     const std::string& id();
     void show_features();
     void set_longest_feature(const std::string& level);
-    gff::FeatureA longest_feat = {"dummy", "none", 0, 0};
+    void find_longest_feature(const std::string& level);
+    bool hasFeature(const std::string& level);
 
   private:
-    std::unordered_map<std::string, std::unordered_map<std::string, gff::FeatureA>> features;
-    // gff::FeatureA longest_feat;
-
-    GffEntry feature;
+    //                    type                          parent          feature
+    std::unordered_map<std::string, std::unordered_map<std::string, gff::Locus::Feature>> features;
+    GffEntry loc_feature;
 };
 
 } // namespace gff

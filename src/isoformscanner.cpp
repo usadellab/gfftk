@@ -80,7 +80,7 @@ void IsoformScanner::walk_inorder(IntervalNode* root)
   walk_inorder(root->left);
   std::cout << root << "\t" << root->start << "\t" << root->end <<
                "\t" << root->max << "\t" << root->left << "\t" << root->right <<
-               "\t" << root->entries[0].feature <<  "\n";
+               "\t" << root->entries[0].feature() <<  "\n";
   walk_inorder(root->right);
 }
 
@@ -97,6 +97,7 @@ void IsoformScanner::process_entry(gff::GffEntry e)
   features.insert({e.id(), e});
   nodes.push_back(ival);
   assemble_locus(e);
+
   // don#t forget last entry
 }
 
@@ -110,17 +111,16 @@ void IsoformScanner::assemble_locus(gff::GffEntry e)
   {
     if(!prevloc.empty())
     {
+      std::cout << "Assessing\n";
       loci.at(prevloc).show();
-      loci.at(prevloc).set_longest_feature("CDS");
-      std::cout << "LONGEST \n";
-      std::cout << loci.at(prevloc).longest_feat.start << " : "  << loci.at(prevloc).longest_feat.end << "\n";
-      for(auto& i : loci.at(prevloc).longest_feat.entries)
-      {
-        std::cout << i.id() << "\n";
-      }
+      loci.at(prevloc).find_longest_feature("CDS");
+      std::cout << "=================================================\n";
+
     }
     gff::Locus locus = gff::Locus(e);
     loci.insert({e.id(), locus});
+    std::cout << "New Locus\n";
+    locus.show();
     prevloc = locus.id();
   }
   else  //part-of relation

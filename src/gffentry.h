@@ -21,11 +21,13 @@ class GffEntry
   public:
     GffEntry(const std::vector<std::string>& gffcols);
     ~GffEntry();
-    std::string seqname;
-    std::string source;
-    std::string feature;
-    std::int_fast32_t start;
-    std::int_fast32_t end;
+    const std::string& sequence() const;
+    const std::string& source() const;
+    const std::string& parent() const;
+    const std::string& id() const;
+    const std::string& feature() const;
+    std::int_fast32_t start();
+    std::int_fast32_t end();
     void add_child(gff::GffEntry e);
     void add_parent(gff::GffEntry e);
     GffEntry* next = nullptr;
@@ -35,8 +37,6 @@ class GffEntry
     //int frame;
      //std::map<std::string, std::string> comments;
     bool hasParent();
-    const std::string& parent() const;
-    const std::string& id() const;
     void show_children();
     void show_parent();
     void show();
@@ -46,7 +46,12 @@ class GffEntry
     void process_comments(const std::string& gff_comments);
     std::string pid;
     std::string eid;
-    std::unordered_map<std::string, std::vector<gff::GffEntry>> featuresl;
+    std::string feat_seq;
+    std::string feat_source;
+    std::string feat_type;
+    std::int_fast32_t feat_start;
+    std::int_fast32_t feat_end;
+    std::unordered_map<std::string, std::vector<gff::GffEntry>> features;
     std::vector<gff::GffEntry> children;
     std::vector<gff::GffEntry> parents;
 };
