@@ -119,8 +119,7 @@ void IsoformScanner::assemble_locus(gff::GffEntry e)
     }
     gff::Locus locus = gff::Locus(e);
     loci.insert({e.id(), locus});
-    std::cout << "New Locus\n";
-    locus.show();
+    std::cout << "New Locus: " << locus.id() << "\n";
     prevloc = locus.id();
   }
   else  //part-of relation
@@ -128,10 +127,11 @@ void IsoformScanner::assemble_locus(gff::GffEntry e)
     gff::GffEntry p = get_feature(e.parent()); // dangerous, fix later
     p.add_child(e);
     e.add_parent(p);
+
     const std::string lid = get_locus_id(p);
     if(loci.contains(lid))
     {
-      loci.at(lid).add_feature(e);
+      loci.at(lid).add_entry(e);
     }
     else
     {
@@ -142,14 +142,8 @@ void IsoformScanner::assemble_locus(gff::GffEntry e)
 
 const std::string IsoformScanner::get_locus_id(gff::GffEntry e)
 {
-  // std::cout << "\t\t\tstart: " << e.id() << " address "<< &e <<"\n";
   while(e.hasParent())
-  {
-    // std::cout << "\t\t\tprenode: " << e.id() << "\tparent: " << e.parent() << "\n";
-    e = get_feature(e.parent());
-    // std::cout << "\t\t\tpostnode: " << e.id() << "\n";
-  }
-  // std::cout << "\t\t\tlocus: " << e.id() <<"\n";
+    {e = get_feature(e.parent());}
   return e.id();
 }
 

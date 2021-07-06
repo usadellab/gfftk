@@ -23,6 +23,7 @@ class Locus
     {
       public:
         Feature(gff::GffEntry& e);
+        Feature(const std::string& id);
         ~Feature();
         std::string id;
         std::string type;
@@ -32,29 +33,29 @@ class Locus
         std::int_fast32_t length();
         void add_entry(gff::GffEntry e);
         void show_entries();
-        void update(gff::GffEntry e);
+        void update_coords(gff::GffEntry e);
         void show();
 
       private:
         std::vector<gff::GffEntry> entries;
-        std::int_fast32_t feat_length;
-        void update_length();
+        void update_length(std::int_fast32_t entry_len);
+        std::int_fast32_t feat_length = 0;
     };
 
     Locus(gff::GffEntry e);
     ~Locus();
+    const std::string& id();
     const std::int_fast32_t start();
     const std::int_fast32_t end();
     void add_feature(gff::GffEntry e);
+    void add_entry(gff::GffEntry e);
     void show();
-    const std::string& id();
     void show_features();
-    void set_longest_feature(const std::string& level);
     void find_longest_feature(const std::string& level);
     bool hasFeature(const std::string& level);
 
   private:
-    //                    type                          parent          feature
+    //                    type                          ID          feature
     std::unordered_map<std::string, std::unordered_map<std::string, gff::Locus::Feature>> features;
     GffEntry loc_feature;
 };

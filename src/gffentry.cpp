@@ -22,19 +22,24 @@ GffEntry::GffEntry(const std::vector<std::string>& gffcols)
   process_comments(gffcols[8]);
 }
 GffEntry::~GffEntry()
-{
-  delete next;
-  delete prev;
-}
+{ }
 
-bool GffEntry::hasParent() {return !pid.empty();}
-const std::string& GffEntry::parent () const {return pid;}
-const std::string& GffEntry::id() const {return eid;}
-const std::string& GffEntry::feature() const {return feat_type;}
-const std::string& GffEntry::sequence() const {return feat_seq;}
-std::int_fast32_t GffEntry::end() {return feat_end;}
-std::int_fast32_t GffEntry::start() {return feat_start;}
-
+bool GffEntry::hasParent()
+  {return !pid.empty();}
+const std::string& GffEntry::parent() const
+  {return pid;}
+const std::string& GffEntry::id() const
+  {return eid;}
+const std::string& GffEntry::feature() const
+  {return feat_type;}
+const std::string& GffEntry::sequence() const
+  {return feat_seq;}
+std::int_fast32_t GffEntry::end()
+  {return feat_end;}
+std::int_fast32_t GffEntry::start()
+  {return feat_start;}
+std::int_fast32_t GffEntry::length()
+  {return (feat_end - feat_start + 1); }
 
 void GffEntry::process_comments(const std::string& gff_comments)
 {
@@ -58,43 +63,26 @@ void GffEntry::process_comments(const std::string& gff_comments)
 void GffEntry::show_children()
 {
   for(auto& i : children)
-  {
-    std::cout << i.id() << "\n";
-  }
-  for(auto& i : features)
-  {
-    std::cout << "popo: " << i.first << "\n";
-  }
+    {i.show();}
 }
 
 void GffEntry::show_parent()
 {
   for(auto& i : parents)
-  {
-    std::cout << i.id() << "\n";
-  }
+    {std::cout << i.id() << "\n";}
 }
 
 void GffEntry::add_child(gff::GffEntry e)
 {
-  // std::cout << "\t\tParent: " << id() << "\tadd child: " <<e.id() << "   " << &e << "\n";
-  if(features.contains(e.feature()))
-  {
-    features[e.feature()].push_back(e);
-  }
-  else
-  {
-    features.insert(std::pair<std::string, std::vector<gff::GffEntry>> (e.feature(), {e}));
-  }
   children.push_back(e);
-  // std::cout << children.back().id() << "\n";
+  // std::cout << "\t\tChild: " << children.size() << "\n";
 }
+
 void GffEntry::add_parent(gff::GffEntry e)
 {
   // std::cout << "\t\tChild: " << id() << "\tadd parent: " <<e.id() << "\n";
   parents.push_back(e);
 }
-
 
 GffEntry GffEntry::get_parent()
 {
@@ -107,11 +95,10 @@ GffEntry GffEntry::get_parent()
 
 void GffEntry::show()
 {
-
-  std::cout << "\tSequence: " << sequence() << "\tId: " << id() << "\tType: "
-            << feature() << "\tCoords: " << start() << "\t" << end()
-            << "\tparent: " << parent() << "\n";
-  show_children();
+  std::cout << "\tEntry: " << id() <<  "\tSequence: " << sequence()
+            << "\tType: " << feature() << "\tCoords: " << start() << "\t" << end()
+            << "\tLength: " << length() << "\tparent: " << parent()
+            << "\tChildren: " << children.size() << "\n";
 }
 
 } // namespace gff

@@ -13,6 +13,7 @@
 
 namespace gff
 {
+
 Locus::Locus(GffEntry e)
  : loc_feature(e)
 {
@@ -30,8 +31,8 @@ const std::int_fast32_t Locus::end(){return loc_feature.end();}
 
 void Locus::show()
 {
-  std::cout << "Locus: "<< id() << "\tType: " << loc_feature.feature() << "\tCoords: " << start() << "-"
-            << end() << "\n";
+  std::cout << "Locus: "<< id() << "\tType: " << loc_feature.feature()
+            << "\tCoords: " << start() << "-" << end() << "\n";
   show_features();
 }
 
@@ -47,24 +48,20 @@ void Locus::show_features()
   }
 }
 
-void Locus::add_feature(GffEntry e)
+void Locus::add_entry(GffEntry e)
 {
+  if(e.id().empty()) //  No ID for entry. Possible, e.g. ENSEMBLE gff's
+    {return;}
   gff::Locus::Feature feat(e);
-  if(features.contains(e.feature()))
+  if(features.contains(feat.type))
   {
-    const auto &[it, pass] = features[e.feature()].try_emplace(e.parent(), feat);
+    const auto &[it, pass] = features[e.feature()].try_emplace(feat.id, feat);
     if(!pass)
-    {
-      // std::cout << "Checking for update: " << feat.parent_id << " : " << feat.start << " with " << e.id() << " : " << it->second.length() << "\n";
-      it->second.update(e);
-    }
+      {it->second.update_coords(e);}
   }
   else
   {
-   features.insert({e.feature(), std::unordered_map<std::string, Locus::Feature> {{e.parent(), feat}}});
-  //  std::cout << "New Feature init with  "<< e.id() <<"\n";
-  //  feat.show();
-  //  std::cout << "\t\t++++++++\n";
+   features.insert({feat.type, std::unordered_map<std::string, Locus::Feature> {{feat.id, feat}}});
   }
 }
 
@@ -73,13 +70,12 @@ bool Locus::hasFeature(const std::string& level)
   return features.contains(level);
 }
 
-// compare foi2 entries with new feature
 void Locus::find_longest_feature(const std::string& level)
 {
   std::cout << "Finding longest " << level << " on " << id() << "\n";
   if(features.empty())// no feature per locus
   {
-    std::cout << "No features on locus " << id();
+    std::cout << "No features on locus " << id() << "\n";
     return;
   }
   if(!hasFeature(level))
@@ -93,58 +89,48 @@ void Locus::find_longest_feature(const std::string& level)
   {
     if(long_feat)
     {
-      if(long_feat->length() < i.second.length())
-      {
-        long_feat = &i.second;
-      }
+      if(long_feat->length() < i.second.length()) {long_feat = &i.second;}
     }
-    else
-    {
-      long_feat = &i.second;
-    }
+    else {long_feat = &i.second;}
   }
   if(long_feat)
   {
     std::cout << "Longest " << long_feat->type << " on " << id() << "\n";
     long_feat->show();
-    long_feat->show_entries();
+    // long_feat->show_entries();
   }
 }
 
 Locus::Feature::Feature(GffEntry& e)
  : id(e.id()), type(e.feature()), parent_id(e.parent()), start(e.start()), end(e.end())
 {
-  update_length();
+  update_length(e.length());
   entries.push_back(e);
 }
+
+Locus::Feature::Feature(const std::string& parent_id)
+ : parent_id(parent_id)
+{ }
 
 Locus::Feature::~Feature(){ }
 
 std::int_fast32_t Locus::Feature::length() {return feat_length;}
 
-void Locus::Feature::update(GffEntry e)
+void Locus::Feature::update_coords(GffEntry e)
 {
+  update_length(e.length());
   if(e.start() < start)
-  {
-    start = e.start();
-    update_length();
-  }
+    {start = e.start();}
   if(e.end() > end)
-  {
-    end = e.end();
-    update_length();
-  }
+    {end = e.end();}
   add_entry(e);
 }
 
-void Locus::Feature::update_length()
-{
-  feat_length = end - start + 1;
-}
+void Locus::Feature::update_length(std::int_fast32_t entry_len)
+{feat_length += entry_len;}
 
 void Locus::Feature::add_entry(GffEntry e)
-{
-  entries.push_back(e);
+{entries.push_back(e);
 }
 
 void Locus::Feature::show_entries()
@@ -157,8 +143,9 @@ void Locus::Feature::show_entries()
 
 void Locus::Feature::show()
 {
-  std::cout << "\t" "id: " << id << "\t" << type << "\t"
-            << start << "-" << end << "\t" << length() << "\n";
+  std::cout << "\t" "Feature: " << id << "\t" << type << "\t"
+            << start << "-" << end << "\t" << length() << "\n\tEntries:\n";
+  show_entries();
 }
 } // namespace gff
 

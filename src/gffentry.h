@@ -28,10 +28,9 @@ class GffEntry
     const std::string& feature() const;
     std::int_fast32_t start();
     std::int_fast32_t end();
+    std::int_fast32_t length();
     void add_child(gff::GffEntry e);
     void add_parent(gff::GffEntry e);
-    GffEntry* next = nullptr;
-    GffEntry* prev = nullptr;
     //int strand;
     //float score;
     //int frame;
@@ -51,7 +50,6 @@ class GffEntry
     std::string feat_type;
     std::int_fast32_t feat_start;
     std::int_fast32_t feat_end;
-    std::unordered_map<std::string, std::vector<gff::GffEntry>> features;
     std::vector<gff::GffEntry> children;
     std::vector<gff::GffEntry> parents;
 };
