@@ -35,6 +35,8 @@ class Locus
         void show_entries();
         void update_coords(gff::GffEntry e);
         void show();
+        const std::vector<std::string> get_comment(const std::string& key) const;
+        const std::string& sequence() const;
 
       private:
         std::vector<gff::GffEntry> entries;

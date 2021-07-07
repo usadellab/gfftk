@@ -11,6 +11,7 @@
 #include <unordered_map>
 #include <vector>
 
+#include "entrydb.h"
 #include "reader.h"
 #include "gffentry.h"
 #include "ivalnode.h"
@@ -27,6 +28,7 @@ class IsoformScanner : public gff::Parser::Processor
     const std::string get_locus_id(gff::GffEntry e);
     void show_tree();
     void show_loci();
+    gff::EntryDb entrydb;
 
   private:
     IntervalNode* root = nullptr;
@@ -39,4 +41,3 @@ class IsoformScanner : public gff::Parser::Processor
     std::string prevloc;
 
 };
-

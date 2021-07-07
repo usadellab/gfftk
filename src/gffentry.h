@@ -11,7 +11,7 @@
 #include <iostream>
 #include <functional>
 #include <vector>
-#include <map>
+#include <unordered_map>
 
 namespace gff
 {
@@ -31,11 +31,13 @@ class GffEntry
     std::int_fast32_t length();
     void add_child(gff::GffEntry e);
     void add_parent(gff::GffEntry e);
+    const std::vector<std::string> get_comment(const std::string& key) const;
     //int strand;
     //float score;
     //int frame;
      //std::map<std::string, std::string> comments;
     bool hasParent();
+    bool hasId();
     void show_children();
     void show_parent();
     void show();
@@ -52,6 +54,7 @@ class GffEntry
     std::int_fast32_t feat_end;
     std::vector<gff::GffEntry> children;
     std::vector<gff::GffEntry> parents;
+    std::unordered_map<std::string, std::vector<std::string>> comments;
 };
 
 } //end namespace gff

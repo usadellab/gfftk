@@ -10,7 +10,6 @@
 #include <iostream>
 #include <vector>
 
-
 #include "gffentry.h"
 #include "locus.h"
 #include "overlap.h"
@@ -94,6 +93,7 @@ void IsoformScanner::process_entry(gff::GffEntry e)
 {
   IntervalNode* ival = new IntervalNode(e);
   root = insert(root, ival);
+  //entrydb.add_entry(e);
   features.insert({e.id(), e});
   nodes.push_back(ival);
   assemble_locus(e);
@@ -115,7 +115,6 @@ void IsoformScanner::assemble_locus(gff::GffEntry e)
       loci.at(prevloc).show();
       loci.at(prevloc).find_longest_feature("CDS");
       std::cout << "=================================================\n";
-
     }
     gff::Locus locus = gff::Locus(e);
     loci.insert({e.id(), locus});

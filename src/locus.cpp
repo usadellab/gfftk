@@ -97,6 +97,11 @@ void Locus::find_longest_feature(const std::string& level)
   {
     std::cout << "Longest " << long_feat->type << " on " << id() << "\n";
     long_feat->show();
+    std::vector<std::string> c = long_feat->get_comment("protein_id");
+    for(auto& i : c)
+    {
+      std::cout << "Represent:" << i << "\t" << long_feat->sequence() << "\n";
+    }
     // long_feat->show_entries();
   }
 }
@@ -127,11 +132,10 @@ void Locus::Feature::update_coords(GffEntry e)
 }
 
 void Locus::Feature::update_length(std::int_fast32_t entry_len)
-{feat_length += entry_len;}
+  {feat_length += entry_len;}
 
 void Locus::Feature::add_entry(GffEntry e)
-{entries.push_back(e);
-}
+  {entries.push_back(e);}
 
 void Locus::Feature::show_entries()
 {
@@ -147,5 +151,15 @@ void Locus::Feature::show()
             << start << "-" << end << "\t" << length() << "\n\tEntries:\n";
   show_entries();
 }
-} // namespace gff
 
+const std::vector<std::string> Locus::Feature::get_comment(const std::string& key) const
+{
+  return entries.front().get_comment(key);
+}
+
+const std::string& Locus::Feature::sequence() const
+{
+  return entries.front().sequence();
+}
+
+} // namespace gff

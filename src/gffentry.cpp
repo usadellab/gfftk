@@ -24,6 +24,8 @@ GffEntry::GffEntry(const std::vector<std::string>& gffcols)
 GffEntry::~GffEntry()
 { }
 
+bool GffEntry::hasId()
+  {return !eid.empty();}
 bool GffEntry::hasParent()
   {return !pid.empty();}
 const std::string& GffEntry::parent() const
@@ -52,10 +54,18 @@ void GffEntry::process_comments(const std::string& gff_comments)
       // std::cout << comment[0]  << "\n";
       this->eid = utils::trim(comment[1]);
     }
-    if(comment[0] == "Parent")
+    else if(comment[0] == "Parent")
     {
-      this->pid = utils::trim(comment[1]);
+      this->pid = utils::trim(comment[1]);  // adjust for multiple parents
       // std::cout << this->feat_id << "\tadding parent:" << comment[0]  << "\t" << this->feat_parent << "\n";
+    }
+    else
+    {
+      const auto &[it, pass] = comments.try_emplace(comment[0], std::vector<std::string> {comment[1]});
+      if(!pass)
+      {
+        it->second.push_back(comment[1]);
+      }
     }
   }
 }
@@ -99,6 +109,15 @@ void GffEntry::show()
             << "\tType: " << feature() << "\tCoords: " << start() << "\t" << end()
             << "\tLength: " << length() << "\tparent: " << parent()
             << "\tChildren: " << children.size() << "\n";
+}
+
+const std::vector<std::string> GffEntry::get_comment(const std::string& key) const
+{
+  if(comments.contains(key))
+  {
+    return comments.at(key);
+  }
+  return std::vector<std::string> {};
 }
 
 } // namespace gff
