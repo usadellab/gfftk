@@ -98,14 +98,14 @@ GffEntry GffEntry::get_parent()
 {
   for(auto& i : parents)
   {
-    std::cout << "\t\tparent: " << i.id() << "\n";
+    std::cerr << "\t\tparent: " << i.id() << "\n";
   }
    return parents.front();
 }
 
 void GffEntry::show()
 {
-  std::cout << "\tEntry: " << id() <<  "\tSequence: " << sequence()
+  std::cerr << "\tEntry: " << id() <<  "\tSequence: " << sequence()
             << "\tType: " << feature() << "\tCoords: " << start() << "\t" << end()
             << "\tLength: " << length() << "\tparent: " << parent()
             << "\tChildren: " << children.size() << "\n";
@@ -118,6 +118,10 @@ const std::vector<std::string> GffEntry::get_comment(const std::string& key) con
     return comments.at(key);
   }
   return std::vector<std::string> {};
+}
+bool GffEntry::hasComment(const std::string& commentkey)
+{
+  return comments.contains(commentkey);
 }
 
 } // namespace gff

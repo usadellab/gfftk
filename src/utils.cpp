@@ -31,8 +31,7 @@ namespace utils
   std::string& lstrip(std::string &s)
   {
     auto it = std::find_if(s.begin(), s.end(),
-                          [](unsigned char c){return !std::isspace(c);
-                                    });
+                          [](unsigned char c){return !std::isspace(c);});
     s.erase(s.begin(), it);
     return s;
   }
@@ -40,22 +39,18 @@ namespace utils
   std::string& rstrip(std::string &s)
   {
     auto it = std::find_if(s.rbegin(), s.rend(),
-                           [](unsigned char c){ return !std::isspace(c);
-                           });
+                           [](unsigned char c){ return !std::isspace(c);});
     s.erase(it.base(), s.end());
     return s;
   }
 
   std::string& strip(std::string &s)
-  {
-    return lstrip(rstrip(s));
-  }
+    {return lstrip(rstrip(s));}
 
   std::string& ltrim(std::string &s)
   {
     auto it = std::find_if(s.begin(), s.end(),
-                          [](unsigned char c){return c != '\"';
-                                    });
+                          [](unsigned char c){return c != '\"';});
     s.erase(s.begin(), it);
     return s;
   }
@@ -63,16 +58,11 @@ namespace utils
   std::string& rtrim(std::string &s)
   {
     auto it = std::find_if(s.rbegin(), s.rend(),
-                           [](unsigned char c){return c != '\"';
-                           });
+                           [](unsigned char c){return c != '\"';});
     s.erase(it.base(), s.end());
     return s;
   }
 
   std::string& trim(std::string &s)
-  {
-    return ltrim(rtrim(s));
-  }
+    {return ltrim(rtrim(s));}
 } // namespace utils
-
-

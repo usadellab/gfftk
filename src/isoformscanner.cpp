@@ -7,6 +7,7 @@
  */
 #include "isoformscanner.h"
 
+#include <cstdlib>
 #include <iostream>
 #include <vector>
 
@@ -91,13 +92,12 @@ void IsoformScanner::show_tree()
 
 void IsoformScanner::process_entry(gff::GffEntry e)
 {
-  IntervalNode* ival = new IntervalNode(e);
-  root = insert(root, ival);
+  // IntervalNode* ival = new IntervalNode(e);
+  // root = insert(root, ival);
   //entrydb.add_entry(e);
+  // nodes.push_back(ival);
   features.insert({e.id(), e});
-  nodes.push_back(ival);
   assemble_locus(e);
-
   // don#t forget last entry
 }
 
@@ -111,22 +111,23 @@ void IsoformScanner::assemble_locus(gff::GffEntry e)
   {
     if(!prevloc.empty())
     {
-      std::cout << "Assessing\n";
+      std::cerr << "Assessing\n";
       loci.at(prevloc).show();
       loci.at(prevloc).find_longest_feature("CDS");
-      std::cout << "=================================================\n";
+      std::cerr << "=================================================\n";
     }
     gff::Locus locus = gff::Locus(e);
     loci.insert({e.id(), locus});
-    std::cout << "New Locus: " << locus.id() << "\n";
+    std::cerr << "New Locus: " << locus.id() << "\n";
     prevloc = locus.id();
   }
   else  //part-of relation
   {
+    if(!hasFeature(e.parent()))
+      {std::exit(EXIT_FAILURE);}
     gff::GffEntry p = get_feature(e.parent()); // dangerous, fix later
     p.add_child(e);
     e.add_parent(p);
-
     const std::string lid = get_locus_id(p);
     if(loci.contains(lid))
     {
@@ -134,7 +135,7 @@ void IsoformScanner::assemble_locus(gff::GffEntry e)
     }
     else
     {
-      std::cout << "Error: locus " << lid << "not known\n";
+      std::cerr << "Error: locus " << lid << "not known\n";
     }
   }
 }
@@ -142,17 +143,24 @@ void IsoformScanner::assemble_locus(gff::GffEntry e)
 const std::string IsoformScanner::get_locus_id(gff::GffEntry e)
 {
   while(e.hasParent())
-    {e = get_feature(e.parent());}
+  {
+    if(!hasFeature(e.parent()))
+      {std::exit(EXIT_FAILURE);}
+    e = get_feature(e.parent());
+  }
   return e.id();
+}
+bool IsoformScanner::hasFeature(const std::string& feature_name)
+{
+  if(features.contains(feature_name))
+    {return true;}
+  std::cerr << "Error: " << feature_name << " not in storage\n";
+  return false;
 }
 
 gff::GffEntry IsoformScanner::get_feature(const std::string& feature_name)
 {
-  if(features.contains(feature_name)) {return features.at(feature_name);}
-  else
-  {
-    std::cout << "Error: " << feature_name << " not in storage\n";
-  }
+  return features.at(feature_name);
 }
 
 void IsoformScanner::show_loci()

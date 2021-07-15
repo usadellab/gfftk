@@ -31,7 +31,7 @@ const std::int_fast32_t Locus::end(){return loc_feature.end();}
 
 void Locus::show()
 {
-  std::cout << "Locus: "<< id() << "\tType: " << loc_feature.feature()
+  std::cerr << "Locus: "<< id() << "\tType: " << loc_feature.feature()
             << "\tCoords: " << start() << "-" << end() << "\n";
   show_features();
 }
@@ -44,7 +44,7 @@ void Locus::show_features()
     {
       j.second.show();
     }
-    std::cout << "\n";
+    std::cerr << "\n";
   }
 }
 
@@ -66,21 +66,19 @@ void Locus::add_entry(GffEntry e)
 }
 
 bool Locus::hasFeature(const std::string& level)
-{
-  return features.contains(level);
-}
+  {return features.contains(level);}
 
 void Locus::find_longest_feature(const std::string& level)
 {
-  std::cout << "Finding longest " << level << " on " << id() << "\n";
+  std::cerr << "Finding longest " << level << " on " << id() << "\n";
   if(features.empty())// no feature per locus
   {
-    std::cout << "No features on locus " << id() << "\n";
+    std::cerr << "No features on locus " << id() << "\n";
     return;
   }
   if(!hasFeature(level))
   {
-    std::cout << "No " << level << " features on locus " << id();
+    std::cerr << "No " << level << " features on locus " << id();
     return;
   }
 
@@ -89,19 +87,40 @@ void Locus::find_longest_feature(const std::string& level)
   {
     if(long_feat)
     {
-      if(long_feat->length() < i.second.length()) {long_feat = &i.second;}
+      if(long_feat->length() < i.second.length())
+        {long_feat = &i.second;}
     }
-    else {long_feat = &i.second;}
+    else
+      {long_feat = &i.second;}
   }
   if(long_feat)
   {
-    std::cout << "Longest " << long_feat->type << " on " << id() << "\n";
+    std::cerr << "Longest " << long_feat->type << " on " << id() << "\n";
     long_feat->show();
-    std::vector<std::string> c = long_feat->get_comment("protein_id");
-    for(auto& i : c)
+    std::cout << long_feat->id         << "\t" << long_feat->type  << "\t"
+              << long_feat->sequence() << "\t" << long_feat->start << "\t"
+              << long_feat->end        << "\t" << long_feat->length();
+    if(long_feat->hasComment("protein_id"))
     {
-      std::cout << "Represent:" << i << "\t" << long_feat->sequence() << "\n";
+      for(auto& i : long_feat->get_comment("protein_id"))
+      {
+        std::cout << "\t" << i;
+      }
     }
+    if(long_feat->hasComment("locus_tag"))
+    {
+      for(auto& i : long_feat->get_comment("locus_tag"))
+      {
+        std::cout << "\t" << i;
+      }
+    }
+    std::cout << "\n";
+    // std::vector<std::string> c = long_feat->get_comment("protein_id");
+    // vector1.insert( vector1.end(), vector2.begin(), vector2.end() );
+    // for(auto& i : c)
+    // {
+      // std::cout << "Represent:" << i << "\t" << long_feat->sequence() << "\n";
+    // }
     // long_feat->show_entries();
   }
 }
@@ -119,7 +138,8 @@ Locus::Feature::Feature(const std::string& parent_id)
 
 Locus::Feature::~Feature(){ }
 
-std::int_fast32_t Locus::Feature::length() {return feat_length;}
+std::int_fast32_t Locus::Feature::length()
+  {return feat_length;}
 
 void Locus::Feature::update_coords(GffEntry e)
 {
@@ -147,19 +167,20 @@ void Locus::Feature::show_entries()
 
 void Locus::Feature::show()
 {
-  std::cout << "\t" "Feature: " << id << "\t" << type << "\t"
+  std::cerr << "\t" "Feature: " << id << "\t" << type << "\t"
             << start << "-" << end << "\t" << length() << "\n\tEntries:\n";
   show_entries();
 }
 
 const std::vector<std::string> Locus::Feature::get_comment(const std::string& key) const
-{
-  return entries.front().get_comment(key);
-}
+  {return entries.front().get_comment(key);}
 
 const std::string& Locus::Feature::sequence() const
+  {return entries.front().sequence();}
+
+bool Locus::Feature::hasComment(const std::string& commentkey)
 {
-  return entries.front().sequence();
+  return entries.front().hasComment(commentkey);
 }
 
 } // namespace gff

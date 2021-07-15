@@ -37,6 +37,7 @@ class Locus
         void show();
         const std::vector<std::string> get_comment(const std::string& key) const;
         const std::string& sequence() const;
+        bool hasComment(const std::string& commentkey);
 
       private:
         std::vector<gff::GffEntry> entries;
