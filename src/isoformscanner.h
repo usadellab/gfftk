@@ -22,23 +22,28 @@ class IsoformScanner : public gff::Parser::Processor
   public:
     IsoformScanner();
     ~IsoformScanner();
-    void process_entry(gff::GffEntry e);
+    void process_entry(gff::GffEntry e, std::unordered_map<std::string, std::vector<std::string>>& header);
     IntervalNode* insert(IntervalNode* root, IntervalNode* ival);
     gff::GffEntry get_feature(const std::string& feature_name);
     bool hasFeature(const std::string& feature_name);
     const std::string get_locus_id(gff::GffEntry e);
     void show_tree();
     void show_loci();
+    void show_feature(gff::Locus::Feature* f, std::unordered_map<std::string, std::vector<std::string>>& header);
     gff::EntryDb entrydb;
 
   private:
     IntervalNode* root = nullptr;
-    void walk_inorder(IntervalNode* root);
     std::unordered_map<std::string, gff::Locus> loci;
     std::unordered_map<std::string, gff::GffEntry> features;
-    bool isFeature(const IntervalNode* node, std::string feature);
-    void assemble_locus(gff::GffEntry e);
     std::vector<IntervalNode*> nodes;
     std::string prevloc;
+    bool isFeature(const IntervalNode* node, std::string feature);
+    void assemble_locus(gff::GffEntry e, std::unordered_map<std::string, std::vector<std::string>>& header);
+    void walk_inorder(IntervalNode* root);
+    std::vector<std::string> directives = {"genome-build",
+                                           "processor",
+                                           "genome-build-accession",
+                                           "genome-version"};
 
 };

@@ -68,19 +68,13 @@ void Locus::add_entry(GffEntry e)
 bool Locus::hasFeature(const std::string& level)
   {return features.contains(level);}
 
-void Locus::find_longest_feature(const std::string& level)
+Locus::Feature* Locus::find_longest_feature(const std::string& level)
 {
-  std::cerr << "Finding longest " << level << " on " << id() << "\n";
-  if(features.empty())// no feature per locus
-  {
-    std::cerr << "No features on locus " << id() << "\n";
-    return;
-  }
+  std::cerr << "Finding longest " << level << " on " << id();
+  if(features.empty())  // no feature per locus
+    {std::cerr << ": locus without features\n";}
   if(!hasFeature(level))
-  {
-    std::cerr << "No " << level << " features on locus " << id();
-    return;
-  }
+    {std::cerr << "no " << level << " features\n";}
 
   Locus::Feature* long_feat = nullptr;
   for(auto& i : features[level])
@@ -93,36 +87,7 @@ void Locus::find_longest_feature(const std::string& level)
     else
       {long_feat = &i.second;}
   }
-  if(long_feat)
-  {
-    std::cerr << "Longest " << long_feat->type << " on " << id() << "\n";
-    long_feat->show();
-    std::cout << long_feat->id         << "\t" << long_feat->type  << "\t"
-              << long_feat->sequence() << "\t" << long_feat->start << "\t"
-              << long_feat->end        << "\t" << long_feat->length();
-    if(long_feat->hasComment("protein_id"))
-    {
-      for(auto& i : long_feat->get_comment("protein_id"))
-      {
-        std::cout << "\t" << i;
-      }
-    }
-    if(long_feat->hasComment("locus_tag"))
-    {
-      for(auto& i : long_feat->get_comment("locus_tag"))
-      {
-        std::cout << "\t" << i;
-      }
-    }
-    std::cout << "\n";
-    // std::vector<std::string> c = long_feat->get_comment("protein_id");
-    // vector1.insert( vector1.end(), vector2.begin(), vector2.end() );
-    // for(auto& i : c)
-    // {
-      // std::cout << "Represent:" << i << "\t" << long_feat->sequence() << "\n";
-    // }
-    // long_feat->show_entries();
-  }
+  return long_feat;
 }
 
 Locus::Feature::Feature(GffEntry& e)

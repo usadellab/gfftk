@@ -54,7 +54,7 @@ class Locus
     void add_entry(gff::GffEntry e);
     void show();
     void show_features();
-    void find_longest_feature(const std::string& level);
+    Locus::Feature* find_longest_feature(const std::string& level);
     bool hasFeature(const std::string& level);
 
   private:

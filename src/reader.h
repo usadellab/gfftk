@@ -5,10 +5,11 @@
  * -------------------------------------------------------------------------------
  */
 
-
 #pragma once
 
+#include <unordered_map>
 #include <vector>
+
 #include "gffentry.h"
 
 namespace gff
@@ -19,12 +20,19 @@ namespace gff
       class Processor
       {
         public:
-          virtual void process_entry(gff::GffEntry e) = 0;
+          virtual void process_entry(gff::GffEntry e, std::unordered_map<std::string, std::vector<std::string>>& header) = 0;
+          friend class gff::Parser;
+
+        private:
+          std::unordered_map<std::string, std::vector<std::string>> header;
       };
       Parser();
       ~Parser();
       void parse(gff::Parser::Processor& proc);
+      // friend class Processor;
 
     private:
+      void parse_header(const std::string& line);
+      std::unordered_map<std::string, std::vector<std::string>> header;
   };
 }//end gff namespace

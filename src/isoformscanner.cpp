@@ -90,14 +90,14 @@ void IsoformScanner::show_tree()
   walk_inorder(root);
 }
 
-void IsoformScanner::process_entry(gff::GffEntry e)
+void IsoformScanner::process_entry(gff::GffEntry e, std::unordered_map<std::string, std::vector<std::string>>& header)
 {
   // IntervalNode* ival = new IntervalNode(e);
   // root = insert(root, ival);
   //entrydb.add_entry(e);
   // nodes.push_back(ival);
   features.insert({e.id(), e});
-  assemble_locus(e);
+  assemble_locus(e, header);
   // don#t forget last entry
 }
 
@@ -105,20 +105,25 @@ void IsoformScanner::process_entry(gff::GffEntry e)
 without a parent feature. The search for a locus is initiated by the parent of
 the currently examined entry to save one step.
 */
-void IsoformScanner::assemble_locus(gff::GffEntry e)
+void IsoformScanner::assemble_locus(gff::GffEntry e, std::unordered_map<std::string, std::vector<std::string>>& header)
 {
   if(!e.hasParent())  // new locus
   {
     if(!prevloc.empty())
     {
       std::cerr << "Assessing\n";
-      loci.at(prevloc).show();
-      loci.at(prevloc).find_longest_feature("CDS");
-      std::cerr << "=================================================\n";
+      gff::Locus loc = loci.at(prevloc);
+      loc.show();
+      gff::Locus::Feature* lf = loci.at(prevloc).find_longest_feature("CDS");
+      if(lf)
+      {
+        std::cerr << "Longest " << lf->type << " on " << loc.id() << "\n";
+        show_feature(lf, header);
+      }
     }
     gff::Locus locus = gff::Locus(e);
     loci.insert({e.id(), locus});
-    std::cerr << "New Locus: " << locus.id() << "\n";
+    std::cerr << "== New Locus: " << locus.id() << "\n";
     prevloc = locus.id();
   }
   else  //part-of relation
@@ -172,10 +177,39 @@ void IsoformScanner::show_loci()
   }
 }
 
+void IsoformScanner::show_feature(gff::Locus::Feature* f, std::unordered_map<std::string, std::vector<std::string>>& header)
+{
+
+    f->show();
+    std::cout << f->id         << "\t" << f->type  << "\t"
+              << f->sequence() << "\t" << f->start << "\t"
+              << f->end        << "\t" << f->length();
+    if(f->hasComment("protein_id"))
+    for(auto& i : f->get_comment("protein_id"))
+      {
+            std::cout << "\t" << i;
+      }
+    if(f->hasComment("locus_tag"))
+    {
+      for(auto& i : f->get_comment("locus_tag"))
+      {
+        std::cout << "\t" << i;
+      }
+    }
+    for(auto& i : directives)
+    {
+      if(header.contains(i))
+      {
+        std::cout << "\t" << header[i].front();
+      }
+    }
+    std::cout << "\n";
+}
+
 int main(int argc, char **argv)
 {
-  IsoformScanner isc;
   gff::Parser p;
+  IsoformScanner isc;
   p.parse(isc);
   // isc.show_tree();
   // isc.show_loci();
