@@ -41,9 +41,6 @@ class IsoformScanner : public gff::Parser::Processor
     bool isFeature(const IntervalNode* node, std::string feature);
     void assemble_locus(gff::GffEntry e, std::unordered_map<std::string, std::vector<std::string>>& header);
     void walk_inorder(IntervalNode* root);
-    std::vector<std::string> directives = {"genome-build",
-                                           "processor",
-                                           "genome-build-accession",
-                                           "genome-version"};
+    std::vector<std::string> directives = {"genome-build", "processor", "genome-build-accession", "genome-version"};
 
 };

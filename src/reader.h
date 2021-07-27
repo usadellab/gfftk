@@ -21,15 +21,10 @@ namespace gff
       {
         public:
           virtual void process_entry(gff::GffEntry e, std::unordered_map<std::string, std::vector<std::string>>& header) = 0;
-          friend class gff::Parser;
-
-        private:
-          std::unordered_map<std::string, std::vector<std::string>> header;
       };
       Parser();
       ~Parser();
       void parse(gff::Parser::Processor& proc);
-      // friend class Processor;
 
     private:
       void parse_header(const std::string& line);

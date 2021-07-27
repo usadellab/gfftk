@@ -185,10 +185,13 @@ void IsoformScanner::show_feature(gff::Locus::Feature* f, std::unordered_map<std
               << f->sequence() << "\t" << f->start << "\t"
               << f->end        << "\t" << f->length();
     if(f->hasComment("protein_id"))
-    for(auto& i : f->get_comment("protein_id"))
+    {
+      for(auto& i : f->get_comment("protein_id"))
       {
             std::cout << "\t" << i;
       }
+    }
+
     if(f->hasComment("locus_tag"))
     {
       for(auto& i : f->get_comment("locus_tag"))
