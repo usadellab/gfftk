@@ -16,7 +16,8 @@
 #include "overlap.h"
 #include "reader.h"
 
-IsoformScanner::IsoformScanner()
+IsoformScanner::IsoformScanner(std::string gffsource, int taxid)
+  : gffsource(gffsource), taxid(taxid)
   { }
 
 IsoformScanner::~IsoformScanner()
@@ -117,7 +118,7 @@ void IsoformScanner::assemble_locus(gff::GffEntry e, std::unordered_map<std::str
       gff::Locus::Feature* lf = loci.at(prevloc).find_longest_feature("CDS");
       if(lf)
       {
-        std::cerr << "Longest " << lf->type << " on " << loc.id() << "\n";
+        std::cerr << "Found longest " << lf->type << " on " << loc.id() << ": " << lf->id << "\n";
         show_feature(lf, header);
       }
     }
@@ -181,9 +182,9 @@ void IsoformScanner::show_feature(gff::Locus::Feature* f, std::unordered_map<std
 {
 
     f->show();
-    std::cout << f->id         << "\t" << f->type  << "\t"
-              << f->sequence() << "\t" << f->start << "\t"
-              << f->end        << "\t" << f->length();
+    std::cout << taxid    << "\t" << gffsource     << "\t" << f->id << "\t"  <<
+                 f->type  << "\t" << f->sequence() << "\t" <<
+                 f->start << "\t" << f->end        << "\t" << f->length();
     if(f->hasComment("protein_id"))
     {
       for(auto& i : f->get_comment("protein_id"))
@@ -211,8 +212,10 @@ void IsoformScanner::show_feature(gff::Locus::Feature* f, std::unordered_map<std
 
 int main(int argc, char **argv)
 {
+  // int taxid = atoi(argv[1]);
+  // std::cout << taxid << "\n";
   gff::Parser p;
-  IsoformScanner isc;
+  IsoformScanner isc(argv[1]);
   p.parse(isc);
   // isc.show_tree();
   // isc.show_loci();

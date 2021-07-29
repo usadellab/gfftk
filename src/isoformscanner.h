@@ -20,7 +20,7 @@
 class IsoformScanner : public gff::Parser::Processor
 {
   public:
-    IsoformScanner();
+    IsoformScanner(std::string gffsource, int taxid = 0);
     ~IsoformScanner();
     void process_entry(gff::GffEntry e, std::unordered_map<std::string, std::vector<std::string>>& header);
     IntervalNode* insert(IntervalNode* root, IntervalNode* ival);
@@ -33,6 +33,8 @@ class IsoformScanner : public gff::Parser::Processor
     gff::EntryDb entrydb;
 
   private:
+    std::string gffsource;
+    int taxid;
     IntervalNode* root = nullptr;
     std::unordered_map<std::string, gff::Locus> loci;
     std::unordered_map<std::string, gff::GffEntry> features;
@@ -42,5 +44,4 @@ class IsoformScanner : public gff::Parser::Processor
     void assemble_locus(gff::GffEntry e, std::unordered_map<std::string, std::vector<std::string>>& header);
     void walk_inorder(IntervalNode* root);
     std::vector<std::string> directives = {"genome-build", "processor", "genome-build-accession", "genome-version"};
-
 };

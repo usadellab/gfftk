@@ -72,9 +72,10 @@ Locus::Feature* Locus::find_longest_feature(const std::string& level)
 {
   std::cerr << "Finding longest " << level << " on " << id();
   if(features.empty())  // no feature per locus
-    {std::cerr << ": locus without features\n";}
+    {std::cerr << ": locus without features";}
   if(!hasFeature(level))
-    {std::cerr << "no " << level << " features\n";}
+    {std::cerr << "no " << level << " features";}
+  std::cerr << "\n";
 
   Locus::Feature* long_feat = nullptr;
   for(auto& i : features[level])
