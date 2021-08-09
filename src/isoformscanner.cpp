@@ -93,6 +93,11 @@ void IsoformScanner::show_tree()
 
 void IsoformScanner::process_entry(gff::GffEntry e, std::unordered_map<std::string, std::vector<std::string>>& header)
 {
+  // std::cout << e.id() <<  "\n";
+  // for(auto& i : header)
+  // {
+  //   std::cout << "\t" << i.first << "\n";
+  // }
   // IntervalNode* ival = new IntervalNode(e);
   // root = insert(root, ival);
   //entrydb.add_entry(e);

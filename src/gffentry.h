@@ -45,7 +45,6 @@ class GffEntry
     GffEntry get_parent();
 
   private:
-    void process_comments(const std::string& gff_comments);
     std::string pid;
     std::string eid;
     std::string feat_seq;
@@ -56,6 +55,7 @@ class GffEntry
     std::vector<gff::GffEntry> children;
     std::vector<gff::GffEntry> parents;
     std::unordered_map<std::string, std::vector<std::string>> comments;
+    void process_comments(const std::string& gff_comments);
 };
 
 } //end namespace gff

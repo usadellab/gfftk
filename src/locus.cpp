@@ -9,7 +9,6 @@
 
 #include "locus.h"
 #include "gffentry.h"
-#include "feature.h"
 
 namespace gff
 {

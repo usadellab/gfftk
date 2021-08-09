@@ -11,7 +11,6 @@
 #include <vector>
 #include <unordered_map>
 
-#include "feature.h"
 #include "gffentry.h"
 
 namespace gff

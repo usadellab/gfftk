@@ -45,10 +45,18 @@ std::int_fast32_t GffEntry::length()
 
 void GffEntry::process_comments(const std::string& gff_comments)
 {
+  int comment_count = 0;
   for(auto& i : utils::tokenize(gff_comments, ';'))
   {
+    ++comment_count;
     std::vector<std::string> comment = utils::tokenize(utils::strip(i), '=');
-    // std::cout << comment[0] << "\n";
+    if(comment.size() < 2)
+    {
+      std::cerr << "WARNING: Skipping nonvalid key-value comment at coordinates:" <<
+        feat_start << " - " << feat_end <<  "\n\tComment nr: " << comment_count <<
+        "\n\tComment key: " << comment.front() << "\n\tComment:" << gff_comments << "\n";
+      return;
+    }
     if(comment[0] == "ID")
     {
       // std::cout << comment[0]  << "\n";

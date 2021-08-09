@@ -25,6 +25,7 @@ namespace gff
   {
     for(std::string line; std::getline(std::cin, line);)
     {
+      ++line_num;
       if(line.empty())
       {
         continue;
@@ -34,7 +35,6 @@ namespace gff
         parse_header(line);
         continue;
       }
-      // std::cout << cols[0] << "\n";
       gff::GffEntry e(utils::tokenize(line, '\t'));
       proc.process_entry(e, header);
     }

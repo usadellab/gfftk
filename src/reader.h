@@ -27,6 +27,7 @@ namespace gff
       void parse(gff::Parser::Processor& proc);
 
     private:
+      unsigned int line_num = 0;
       void parse_header(const std::string& line);
       std::unordered_map<std::string, std::vector<std::string>> header;
   };
