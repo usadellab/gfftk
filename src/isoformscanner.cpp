@@ -190,19 +190,19 @@ void IsoformScanner::show_feature(gff::Locus::Feature* f, std::unordered_map<std
     std::cout << taxid    << "\t" << gffsource     << "\t" << f->id << "\t"  <<
                  f->type  << "\t" << f->sequence() << "\t" <<
                  f->start << "\t" << f->end        << "\t" << f->length();
-    if(f->hasComment("protein_id"))
+    std::vector<std::string> req_comments = {"protein_id", "locus_tag"};
+    for(auto& i : req_comments)
     {
-      for(auto& i : f->get_comment("protein_id"))
+      if(f->hasComment(i))
       {
-            std::cout << "\t" << i;
+        for(auto& i : f->get_comment(i))
+        {
+          std::cout << "\t" << i;
+        }
       }
-    }
-
-    if(f->hasComment("locus_tag"))
-    {
-      for(auto& i : f->get_comment("locus_tag"))
+      else
       {
-        std::cout << "\t" << i;
+        std::cout << "\t#missing:" << i;
       }
     }
     for(auto& i : directives)
@@ -222,6 +222,7 @@ int main(int argc, char **argv)
   gff::Parser p;
   IsoformScanner isc(argv[1]);
   p.parse(isc);
+  std::cout << "#Done\n";
   // isc.show_tree();
   // isc.show_loci();
   return 0;
