@@ -54,7 +54,6 @@ void Locus::add_entry(GffEntry e)
   gff::Locus::Feature feat(e);
   if(features.contains(feat.type))
   {
-    // const auto &[it, pass] = features[e.feature()].try_emplace(feat.id, feat);
     const auto &[it, pass] = features[e.feature()].try_emplace(feat.parent_id, feat);
     if(!pass)
       {it->second.update_coords(e);}
