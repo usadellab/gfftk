@@ -54,13 +54,14 @@ void Locus::add_entry(GffEntry e)
   gff::Locus::Feature feat(e);
   if(features.contains(feat.type))
   {
-    const auto &[it, pass] = features[e.feature()].try_emplace(feat.id, feat);
+    // const auto &[it, pass] = features[e.feature()].try_emplace(feat.id, feat);
+    const auto &[it, pass] = features[e.feature()].try_emplace(feat.parent_id, feat);
     if(!pass)
       {it->second.update_coords(e);}
   }
   else
   {
-   features.insert({feat.type, std::unordered_map<std::string, Locus::Feature> {{feat.id, feat}}});
+   features.insert({feat.type, std::unordered_map<std::string, Locus::Feature> {{feat.parent_id, feat}}});
   }
 }
 
@@ -132,7 +133,7 @@ void Locus::Feature::show_entries()
 
 void Locus::Feature::show()
 {
-  std::cerr << "\t" "Feature: " << id << "\t" << type << "\t"
+  std::cerr << "\n\t" "Feature: " << id << "\t" << type << "\t"
             << start << "-" << end << "\t" << length() << "\n\tEntries:\n";
   show_entries();
 }
