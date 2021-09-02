@@ -35,7 +35,10 @@ class IsoformScanner : public gff::Parser::Processor
   private:
     std::string gffsource;
     int taxid;
-    std::vector<std::string> directives = {"genome-build", "processor", "genome-build-accession", "genome-version"};
+    std::vector<std::string> directives = {"genome-build", "processor",
+                                           "genome-build-accession",
+                                           "genome-version"};
+    std::vector<std::string> req_comments = {"protein_id", "locus_tag"};
     IntervalNode* root = nullptr;
     std::unordered_map<std::string, gff::Locus> loci;
     std::unordered_map<std::string, gff::GffEntry> features;

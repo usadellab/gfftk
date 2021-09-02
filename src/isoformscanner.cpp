@@ -74,14 +74,11 @@ IntervalNode* IsoformScanner::insert(IntervalNode* root, IntervalNode* ival)
 
 void IsoformScanner::walk_inorder(IntervalNode* root)
 {
-  if(root == 0)
-  {
-    return;
-  }
+  if(root == 0){ return; }
   walk_inorder(root->left);
-  std::cout << root << "\t" << root->start << "\t" << root->end <<
-               "\t" << root->max << "\t" << root->left << "\t" << root->right <<
-               "\t" << root->entries[0].feature() <<  "\n";
+  std::cout << root << "\t" << root->start << "\t" << root->end
+            << "\t" << root->max << "\t" << root->left << "\t" << root->right
+            << "\t" << root->entries[0].feature() <<  "\n";
   walk_inorder(root->right);
 }
 
@@ -109,11 +106,11 @@ void IsoformScanner::process_entry(gff::GffEntry e, std::unordered_map<std::stri
 
 /* Collect all features/entries which are part of a locus. A locus is a feature
 without a parent feature. The search for a locus is initiated by the parent of
-the currently examined entry to save one step.
+the currently examined entry to save one iteration.
 */
 void IsoformScanner::assemble_locus(gff::GffEntry e, std::unordered_map<std::string, std::vector<std::string>>& header)
 {
-  if(!e.hasParent())  // new locus
+  if(!e.hasParent())  //  new locus
   {
     if(!prevloc.empty())
     {
@@ -123,7 +120,8 @@ void IsoformScanner::assemble_locus(gff::GffEntry e, std::unordered_map<std::str
       gff::Locus::Feature* lf = loci.at(prevloc).find_longest_feature("CDS");
       if(lf)
       {
-        std::cerr << "Found longest " << lf->type << " on " << loc.id() << ": " << lf->id << "\n";
+        std::cerr << "Found longest " << lf->type << " on " << loc.id() << ": "
+                  << lf->id   << "\n";
         show_feature(lf, header);
       }
     }
@@ -132,22 +130,16 @@ void IsoformScanner::assemble_locus(gff::GffEntry e, std::unordered_map<std::str
     std::cerr << "== New Locus: " << locus.id() << "\n";
     prevloc = locus.id();
   }
-  else  //part-of relation
+  else  //  part-of relation
   {
-    if(!hasFeature(e.parent()))
-      {std::exit(EXIT_FAILURE);}
+    //  Test if parnet feature is known to isoformscanner
+    if(!hasFeature(e.parent())) {std::exit(EXIT_FAILURE);}
     gff::GffEntry p = get_feature(e.parent()); // dangerous, fix later
     p.add_child(e);
     e.add_parent(p);
     const std::string lid = get_locus_id(p);
-    if(loci.contains(lid))
-    {
-      loci.at(lid).add_entry(e);
-    }
-    else
-    {
-      std::cerr << "Error: locus " << lid << "not known\n";
-    }
+    if(loci.contains(lid)) {loci.at(lid).add_entry(e);}
+    else {std::cerr << "Error: locus " << lid << "not known\n";}
   }
 }
 
@@ -155,62 +147,47 @@ const std::string IsoformScanner::get_locus_id(gff::GffEntry e)
 {
   while(e.hasParent())
   {
-    if(!hasFeature(e.parent()))
-      {std::exit(EXIT_FAILURE);}
+    //  Test if parent feature is known to isoformscanner
+    if(!hasFeature(e.parent())){std::exit(EXIT_FAILURE);}
     e = get_feature(e.parent());
   }
   return e.id();
 }
 bool IsoformScanner::hasFeature(const std::string& feature_name)
 {
-  if(features.contains(feature_name))
-    {return true;}
+  if(features.contains(feature_name)){return true;}
   std::cerr << "Error: " << feature_name << " not in storage\n";
   return false;
 }
 
 gff::GffEntry IsoformScanner::get_feature(const std::string& feature_name)
-{
-  return features.at(feature_name);
-}
+{return features.at(feature_name);}
 
 void IsoformScanner::show_loci()
 {
   std::cout << "Listing loci\n";
-  for(auto& i: loci)
-  {
-    i.second.show();
-  }
+  for(auto& i: loci){ i.second.show(); }
 }
 
-void IsoformScanner::show_feature(gff::Locus::Feature* f, std::unordered_map<std::string, std::vector<std::string>>& header)
+void IsoformScanner::show_feature(gff::Locus::Feature* f,
+  std::unordered_map<std::string, std::vector<std::string>>& header)
 {
-
     f->show();
     std::cout << taxid    << "\t" << gffsource     << "\t" << f->id << "\t"  <<
                  f->type  << "\t" << f->sequence() << "\t" <<
                  f->start << "\t" << f->end        << "\t" << f->length();
-    std::vector<std::string> req_comments = {"protein_id", "locus_tag"};
+    // std::vector<std::string> req_comments = {"protein_id", "locus_tag"};
     for(auto& i : req_comments)
     {
       if(f->hasComment(i))
       {
-        for(auto& i : f->get_comment(i))
-        {
-          std::cout << "\t" << i;
-        }
+        for(auto& i : f->get_comment(i)){ std::cout << "\t" << i; }
       }
-      else
-      {
-        std::cout << "\t#missing:" << i;
-      }
+      else{ std::cout << "\t#missing:" << i; }
     }
     for(auto& i : directives)
     {
-      if(header.contains(i))
-      {
-        std::cout << "\t" << header[i].front();
-      }
+      if(header.contains(i)){ std::cout << "\t" << header[i].front(); }
     }
     std::cout << "\n";
 }
