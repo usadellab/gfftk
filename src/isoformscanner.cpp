@@ -197,7 +197,7 @@ int main(int argc, char **argv)
   // int taxid = atoi(argv[1]);
   // std::cout << taxid << "\n";
   gff::Parser p;
-  IsoformScanner isc(argv[1]);
+  IsoformScanner isc(argv[1], atol(argv[2]));
   p.parse(isc);
   std::cout << "#Done\n";
   // isc.show_tree();

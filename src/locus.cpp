@@ -49,8 +49,8 @@ void Locus::show_features()
 
 void Locus::add_entry(GffEntry e)
 {
-  if(e.id().empty()) //  No ID for entry. Possible, e.g. ENSEMBLE gff's
-    {return;}
+  // if(e.id().empty()) //  No ID for entry. Possible, e.g. ENSEMBLE gff's
+    // {return;}
   gff::Locus::Feature feat(e);
   if(features.contains(feat.type))
   {
