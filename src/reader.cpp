@@ -38,6 +38,8 @@ namespace gff
       gff::GffEntry e(utils::tokenize(line, '\t'));
       proc.process_entry(e, header);
     }
+    gff::GffEntry fake;
+    proc.process_entry(fake, header);
   }
 
   void Parser::parse_header(const std::string& line)

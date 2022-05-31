@@ -122,7 +122,7 @@ void IsoformScanner::assemble_locus(gff::GffEntry e, std::unordered_map<std::str
       {
         std::cerr << "Found longest " << lf->type << " on " << loc.id() << ": "
                   << lf->id   << "\n";
-        show_feature(lf, header);
+        show_feature(lf, loc, header);
       }
     }
     gff::Locus locus = gff::Locus(e);
@@ -169,13 +169,13 @@ void IsoformScanner::show_loci()
   for(auto& i: loci){ i.second.show(); }
 }
 
-void IsoformScanner::show_feature(gff::Locus::Feature* f,
+void IsoformScanner::show_feature(gff::Locus::Feature* f, gff::Locus loc,
   std::unordered_map<std::string, std::vector<std::string>>& header)
 {
     f->show();
-    std::cout << taxid    << "\t" << gffsource     << "\t" << f->id << "\t"  <<
-                 f->type  << "\t" << f->sequence() << "\t" <<
-                 f->start << "\t" << f->end        << "\t" << f->length();
+    std::cout << taxid << "\t" << gffsource << "\t" <<loc.id()       << "\t"
+              << f->id << "\t" << f->parent_id << "\t" << f->type   << "\t" << f->sequence() << "\t"
+              << f->start << "\t" << f->end << "\t" << f->length();
     // std::vector<std::string> req_comments = {"protein_id", "locus_tag"};
     for(auto& i : req_comments)
     {

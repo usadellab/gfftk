@@ -21,6 +21,13 @@ GffEntry::GffEntry(const std::vector<std::string>& gffcols)
 {
   process_comments(gffcols[8]);
 }
+
+GffEntry::GffEntry()
+  :feat_seq("DUMMY"), feat_source("DUMMY"), feat_type("DUMMY"),
+   feat_start(0), feat_end(0)
+{
+}
+
 GffEntry::~GffEntry()
 { }
 

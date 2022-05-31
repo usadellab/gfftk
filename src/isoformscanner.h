@@ -22,14 +22,18 @@ class IsoformScanner : public gff::Parser::Processor
   public:
     IsoformScanner(std::string gffsource, int taxid = 0);
     ~IsoformScanner();
-    void process_entry(gff::GffEntry e, std::unordered_map<std::string, std::vector<std::string>>& header);
+    void process_entry(gff::GffEntry e,
+                       std::unordered_map<std::string,
+                       std::vector<std::string>>& header);
     IntervalNode* insert(IntervalNode* root, IntervalNode* ival);
     gff::GffEntry get_feature(const std::string& feature_name);
     bool hasFeature(const std::string& feature_name);
     const std::string get_locus_id(gff::GffEntry e);
     void show_tree();
     void show_loci();
-    void show_feature(gff::Locus::Feature* f, std::unordered_map<std::string, std::vector<std::string>>& header);
+    void show_feature(gff::Locus::Feature* f,
+                      gff::Locus loc,
+                      std::unordered_map<std::string, std::vector<std::string>>& header);
     gff::EntryDb entrydb;
 
   private:

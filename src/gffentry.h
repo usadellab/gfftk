@@ -20,6 +20,7 @@ class GffEntry
 {
   public:
     GffEntry(const std::vector<std::string>& gffcols);
+    GffEntry();
     ~GffEntry();
     const std::string& sequence() const;
     const std::string& source() const;
