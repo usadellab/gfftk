@@ -29,7 +29,7 @@ class Locus
         std::string parent_id;
         std::int_fast32_t start;
         std::int_fast32_t end;
-        std::int_fast32_t length();
+        const std::int_fast32_t length() const;
         void add_entry(gff::GffEntry e);
         void show_entries();
         void update_coords(gff::GffEntry e);

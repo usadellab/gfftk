@@ -103,7 +103,7 @@ Locus::Feature::Feature(const std::string& parent_id)
 
 Locus::Feature::~Feature(){ }
 
-std::int_fast32_t Locus::Feature::length()
+const std::int_fast32_t Locus::Feature::length() const
   {return feat_length;}
 
 void Locus::Feature::update_coords(GffEntry e)
