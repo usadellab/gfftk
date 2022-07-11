@@ -124,6 +124,7 @@ void IsoformScanner::assemble_locus(gff::GffEntry e, std::unordered_map<std::str
                   << lf->id   << "\n";
         show_feature(lf, loc, header);
       }
+      // list_locus_features(loc, header);
     }
     gff::Locus locus = gff::Locus(e);
     loci.insert({e.id(), locus});
@@ -175,7 +176,7 @@ void IsoformScanner::show_feature(gff::Locus::Feature* f, gff::Locus loc,
     f->show();
     std::cout << taxid << "\t" << gffsource << "\t" <<loc.id()       << "\t"
               << f->id << "\t" << f->parent_id << "\t" << f->type   << "\t" << f->sequence() << "\t"
-              << f->start << "\t" << f->end << "\t" << f->length();
+              << f->start << "\t" << f->end << "\t" << f->length() << "\t" << f-> isSelected;
     // std::vector<std::string> req_comments = {"protein_id", "locus_tag"};
     for(auto& i : req_comments)
     {
@@ -190,6 +191,19 @@ void IsoformScanner::show_feature(gff::Locus::Feature* f, gff::Locus loc,
       if(header.contains(i)){ std::cout << "\t" << header[i].front(); }
     }
     std::cout << "\n";
+}
+
+void IsoformScanner::list_locus_features(gff::Locus& loc, std::unordered_map<std::string, std::vector<std::string>>& header) const
+{
+  for(auto& i : loc.featuremap())
+  {
+    for(auto& j : i.second)
+    {
+      std::cout << taxid << "\t" << gffsource << "\t" << loc.id() << "\t"
+                << j.second.id << "\t" << j.second.parent_id << "\t" << j.second.type  << "\t" << j.second.sequence() << "\t"
+                << j.second.start << "\t" << j.second.end << "\t" << j.second.length() << "\t" << j.second.isSelected;
+    }
+  }
 }
 
 int main(int argc, char **argv)

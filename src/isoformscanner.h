@@ -35,6 +35,7 @@ class IsoformScanner : public gff::Parser::Processor
                       gff::Locus loc,
                       std::unordered_map<std::string, std::vector<std::string>>& header);
     gff::EntryDb entrydb;
+    void list_locus_features(gff::Locus& loc, std::unordered_map<std::string, std::vector<std::string>>& header) const;
 
   private:
     std::string gffsource;
