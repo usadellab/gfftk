@@ -116,15 +116,15 @@ void IsoformScanner::assemble_locus(gff::GffEntry e, std::unordered_map<std::str
     {
       std::cerr << "Assessing\n";
       gff::Locus loc = loci.at(prevloc);
-      loc.show();
+      // loc.show();
       gff::Locus::Feature* lf = loci.at(prevloc).find_longest_feature("CDS");
       if(lf)
       {
         std::cerr << "Found longest " << lf->type << " on " << loc.id() << ": "
-                  << lf->id   << "\n";
-        show_feature(lf, loc, header);
+                  << lf->id   << "\t" << lf->isSelected <<"\n";
+        // show_feature(lf, loc, header);
       }
-      // list_locus_features(loc, header);
+      list_locus_features(loci.at(prevloc), header);
     }
     gff::Locus locus = gff::Locus(e);
     loci.insert({e.id(), locus});
@@ -195,14 +195,29 @@ void IsoformScanner::show_feature(gff::Locus::Feature* f, gff::Locus loc,
 
 void IsoformScanner::list_locus_features(gff::Locus& loc, std::unordered_map<std::string, std::vector<std::string>>& header) const
 {
-  for(auto& i : loc.featuremap())
+  const std::unordered_map<std::string, std::unordered_map<std::string, gff::Locus::Feature>>& fm = loc.featuremap();
+  for(const auto& i : fm.at("CDS"))
   {
-    for(auto& j : i.second)
-    {
+    // for(const auto& j : i.second)
+    // {
       std::cout << taxid << "\t" << gffsource << "\t" << loc.id() << "\t"
-                << j.second.id << "\t" << j.second.parent_id << "\t" << j.second.type  << "\t" << j.second.sequence() << "\t"
-                << j.second.start << "\t" << j.second.end << "\t" << j.second.length() << "\t" << j.second.isSelected;
-    }
+                << i.second.id << "\t" << i.second.parent_id << "\t" << i.second.type  << "\t" << i.second.sequence() << "\t"
+                << i.second.start << "\t" << i.second.end << "\t" << i.second.length() << "\t" << i.second.isSelected;
+      for(auto& k : directives)
+      {
+        if(header.contains(k)){ std::cout << "\t" << header[k].front(); }
+      }
+      gff::Locus::Feature feat = i.second;
+      for(auto& k : req_comments)
+      {
+        if(feat.hasComment(k))
+        {
+          for(auto& i : feat.get_comment(k)){ std::cout << "\t" << i; }
+        }
+        else{ std::cout << "\t#missing:" << k; }
+      }
+    // }
+    std::cout << "\n";
   }
 }
 

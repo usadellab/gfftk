@@ -87,7 +87,10 @@ Locus::Feature* Locus::find_longest_feature(const std::string& level)
     else
       {long_feat = &i.second;}
   }
-  long_feat->isSelected = true;
+  if(long_feat)
+  {
+    long_feat->isSelected = true;
+  }
   return long_feat;
 }
 
