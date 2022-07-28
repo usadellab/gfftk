@@ -4,6 +4,9 @@ CXXFLAGS=-Wall -std=c++20
 VPATH=.:../src
 CPPFLAGS=-I. -I../src -I/usr/include
 
+%.o: %.cpp
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $< -o $@
+
 utils.o:	utils.cpp utils.h
 reader.o:	reader.cpp reader.h gffentry.h utils.h
 ivalnode.o:	ivalnode.cpp ivalnode.h gffentry.h

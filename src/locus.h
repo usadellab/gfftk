@@ -37,6 +37,7 @@ class Locus
         const std::vector<std::string> get_comment(const std::string& key) const;
         const std::string& sequence() const;
         bool hasComment(const std::string& commentkey);
+        bool isSelected = false;
 
       private:
         std::vector<gff::GffEntry> entries;
@@ -55,6 +56,7 @@ class Locus
     void show_features();
     Locus::Feature* find_longest_feature(const std::string& level);
     bool hasFeature(const std::string& level);
+    const std::unordered_map<std::string, std::unordered_map<std::string, gff::Locus::Feature>>& featuremap();
 
   private:
     //                    type                          ID          feature

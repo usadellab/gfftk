@@ -87,6 +87,10 @@ Locus::Feature* Locus::find_longest_feature(const std::string& level)
     else
       {long_feat = &i.second;}
   }
+  if(long_feat)
+  {
+    long_feat->isSelected = true;
+  }
   return long_feat;
 }
 
@@ -146,6 +150,11 @@ const std::string& Locus::Feature::sequence() const
 bool Locus::Feature::hasComment(const std::string& commentkey)
 {
   return entries.front().hasComment(commentkey);
+}
+
+const std::unordered_map<std::string, std::unordered_map<std::string, gff::Locus::Feature>>& Locus::featuremap()
+{
+  return features;
 }
 
 } // namespace gff
