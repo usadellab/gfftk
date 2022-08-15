@@ -53,3 +53,5 @@ class IsoformScanner : public gff::Parser::Processor
     void assemble_locus(gff::GffEntry e, std::unordered_map<std::string, std::vector<std::string>>& header);
     void walk_inorder(IntervalNode* root);
 };
+
+void usage();

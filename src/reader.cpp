@@ -8,6 +8,7 @@
 #include "reader.h"
 
 #include <iostream>
+#include <fstream>
 #include <unordered_map>
 #include <vector>
 
@@ -15,15 +16,18 @@
 
 namespace gff
 {
-  Parser::Parser()
-  { }
+  Parser::Parser(std::string gff_file)
+  :gffsource(gff_file)
+  {  }
 
   Parser::~Parser()
-  { }
+  {  }
 
   void Parser::parse(gff::Parser::Processor& proc)
   {
-    for(std::string line; std::getline(std::cin, line);)
+    // for(std::string line; std::getline(std::cin, line);)
+    std::ifstream fh_gff(gffsource, std::ifstream::in);
+    for(std::string line; std::getline(fh_gff, line);)
     {
       ++line_num;
       if(line.empty())
@@ -40,6 +44,7 @@ namespace gff
     }
     gff::GffEntry fake;
     proc.process_entry(fake, header);
+    fh_gff.close(); // should be done in descructor
   }
 
   void Parser::parse_header(const std::string& line)

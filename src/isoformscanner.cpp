@@ -9,6 +9,7 @@
 
 #include <cstdlib>
 #include <iostream>
+#include <getopt.h>
 #include <vector>
 
 #include "gffentry.h"
@@ -18,7 +19,9 @@
 
 IsoformScanner::IsoformScanner(std::string gffsource, int taxid)
   : gffsource(gffsource), taxid(taxid)
-  { }
+  {
+
+  }
 
 IsoformScanner::~IsoformScanner()
 {
@@ -221,12 +224,70 @@ void IsoformScanner::list_locus_features(gff::Locus& loc, std::unordered_map<std
   }
 }
 
+void usage()
+{
+  std::cout <<  "--input, -i <path>           Path to GFF file\n" <<
+                "--taxid, -t <NCBI taxid>:    NCBI taxid\n"       <<
+                "--help, -h:                  Show help\n";
+  exit(1);
+}
+
 int main(int argc, char **argv)
 {
-  // int taxid = atoi(argv[1]);
-  // std::cout << taxid << "\n";
-  gff::Parser p;
-  IsoformScanner isc(argv[1], atol(argv[2]));
+  const char* const short_opts = "i:t:h";
+  const option long_opts[] =
+  {
+            {"input", required_argument, nullptr, 'i'},
+            {"taxid", required_argument, nullptr, 't'},
+            {"help", no_argument, nullptr, 'h'},
+            {nullptr, no_argument, nullptr, 0}
+  };
+  std::string gff_file;
+  int taxid = -1;
+  while (true)
+  {
+    const auto opt = getopt_long(argc, argv, short_opts, long_opts, nullptr);
+
+    if (-1 == opt)
+      break;
+
+    switch (opt)
+    {
+      case 'i':
+        gff_file = optarg;
+        break;
+
+      case 't':
+        taxid = atol(optarg);
+        break;
+
+      case 'h': // -h or --help
+        usage();
+        return EXIT_SUCCESS;
+
+      case '?': // Unrecognized option
+        return EXIT_FAILURE;
+      default:
+        usage();
+        break;
+    }
+  }
+
+  if(gff_file.empty())
+  {
+    std::cerr << "Error: Path to file is required\n";
+    usage();
+    return EXIT_FAILURE;
+  }
+
+  if(taxid < 0)
+  {
+    std::cerr << "Error: NCBI taxid required\n";
+    usage();
+    return EXIT_FAILURE;
+  }
+  gff::Parser p(gff_file);
+  IsoformScanner isc(gff_file, taxid);
   p.parse(isc);
   std::cout << "#Done\n";
   // isc.show_tree();
