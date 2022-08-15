@@ -15,7 +15,7 @@
 #include "gffentry.h"
 #include "locus.h"
 #include "overlap.h"
-#include "reader.h"
+#include "gfffile.h"
 
 IsoformScanner::IsoformScanner(std::string gffsource, int taxid)
   : gffsource(gffsource), taxid(taxid)
@@ -91,7 +91,7 @@ void IsoformScanner::show_tree()
   walk_inorder(root);
 }
 
-void IsoformScanner::process_entry(gff::GffEntry e, std::unordered_map<std::string, std::vector<std::string>>& header)
+int IsoformScanner::process_entry(gff::GffEntry e, std::unordered_map<std::string, std::vector<std::string>>& header)
 {
   // std::cout << e.id() <<  "\n";
   // for(auto& i : header)
@@ -152,7 +152,11 @@ const std::string IsoformScanner::get_locus_id(gff::GffEntry e)
   while(e.hasParent())
   {
     //  Test if parent feature is known to isoformscanner
-    if(!hasFeature(e.parent())){std::exit(EXIT_FAILURE);}
+    if(!hasFeature(e.parent()))
+    {
+      std::cerr << "Error for entry " << e.id() << ": Missing parent " << e.parent() << ". Abort.";
+      std::exit(EXIT_FAILURE);
+    }
     e = get_feature(e.parent());
   }
   return e.id();
@@ -286,9 +290,9 @@ int main(int argc, char **argv)
     usage();
     return EXIT_FAILURE;
   }
-  gff::Parser p(gff_file);
+  gff::GffFile gff(gff_file);
   IsoformScanner isc(gff_file, taxid);
-  p.parse(isc);
+  gff.parse(isc);
   std::cout << "#Done\n";
   // isc.show_tree();
   // isc.show_loci();

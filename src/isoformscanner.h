@@ -12,17 +12,17 @@
 #include <vector>
 
 #include "entrydb.h"
-#include "reader.h"
+#include "gfffile.h"
 #include "gffentry.h"
 #include "ivalnode.h"
 #include "locus.h"
 
-class IsoformScanner : public gff::Parser::Processor
+class IsoformScanner : public gff::GffFile::Processor
 {
   public:
     IsoformScanner(std::string gffsource, int taxid = 0);
     ~IsoformScanner();
-    void process_entry(gff::GffEntry e,
+    int process_entry(gff::GffEntry e,
                        std::unordered_map<std::string,
                        std::vector<std::string>>& header);
     IntervalNode* insert(IntervalNode* root, IntervalNode* ival);
