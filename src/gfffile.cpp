@@ -13,14 +13,19 @@
 #include <unordered_map>
 #include <vector>
 
-#include "utils.h"
+#include "helpers/linetools.h"
 
 namespace gff
 {
   GffFile::GffFile(std::string gff_file)
   :path(gff_file)
   {
-    open();
+    if(!open())
+    {
+      std::cerr << "Error: Opening GFF failed: " << path << "\n";
+      exit(EXIT_FAILURE);
+    }
+    std::cerr << "Info: Opened GFF for parsing: " << path << "\n";
   }
 
   GffFile::~GffFile()
@@ -43,15 +48,13 @@ namespace gff
     if(! std::filesystem::status_known(fstat) ? std::filesystem::exists(fstat) : std::filesystem::exists(path))
     {
       std::cerr << "Error: File not found: " << path << ". Abort\n";
-     exit(EXIT_FAILURE);
+      return(EXIT_FAILURE);
     }
     gff_in.open(path);
     if(!gff_in.is_open())
     {
-      std::cerr << "Error: Opening GFF failed: " << path << "\n";
-      exit(EXIT_FAILURE);
+      return(EXIT_FAILURE);
     }
-    std::cerr << "Info: Opened GFF for parsing: " << path << "\n";
     return EXIT_SUCCESS;
   }
 
@@ -70,7 +73,7 @@ namespace gff
         parse_directive(line);
         continue;
       }
-      gff::GffEntry e(utils::tokenize(line, '\t'));
+      gff::GffEntry e(linetools::tokenize(line, '\t'));
       entry_status = proc.process_entry(e, directives);
     }
     gff::GffEntry fake;
@@ -109,7 +112,7 @@ namespace gff
           {
             std::string directive = line.substr(directive_beg, i-1);
             std::string val = line.substr(i+1);
-            const auto &[it, pass] = directives.try_emplace(utils::strip(directive), std::vector<std::string>{utils::strip(val)});
+            const auto &[it, pass] = directives.try_emplace(linetools::strip(directive), std::vector<std::string>{linetools::strip(val)});
             if(!pass)
               {it->second.push_back(line.substr(i+1));}
             return;

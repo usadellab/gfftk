@@ -9,7 +9,7 @@
 #include <iostream>
 #include <vector>
 
-namespace utils
+namespace linetools
 {
   std::vector<std::string> tokenize(const std::string& line, char delim);
 
@@ -21,4 +21,4 @@ namespace utils
   std::string& rtrim(std::string &s);
   std::string& trim(std::string &s);
 
-} // namespace utils
+} // namespace linetools

@@ -11,9 +11,9 @@
 #include <locale>
 #include <vector>
 
-#include "utils.h"
+#include "linetools.h"
 
-namespace utils
+namespace linetools
 {
   std::vector<std::string> tokenize(const std::string& line, char delim)
   {

@@ -10,7 +10,7 @@
 #include <iostream>
 #include <vector>
 
-#include "utils.h"
+#include "helpers/linetools.h"
 
 namespace gff
 {
@@ -53,18 +53,18 @@ std::int_fast32_t GffEntry::length()
 void GffEntry::process_comments(const std::string& gff_comments)
 {
   int comment_count = 0;
-  for(auto& i : utils::tokenize(gff_comments, ';'))
+  for(auto& i : linetools::tokenize(gff_comments, ';'))
   {
     ++comment_count;
-    std::vector<std::string> comment = utils::tokenize(utils::strip(i), '=');
+    std::vector<std::string> comment = linetools::tokenize(linetools::strip(i), '=');
     if(comment[0] == "ID")
     {
       // std::cout << comment[0]  << "\n";
-      this->eid = utils::trim(comment[1]);
+      this->eid = linetools::trim(comment[1]);
     }
     else if(comment[0] == "Parent")
     {
-      this->pid = utils::trim(comment[1]);  // adjust for multiple parents
+      this->pid = linetools::trim(comment[1]);  // adjust for multiple parents
       // std::cout << this->feat_id << "\tadding parent:" << comment[0]  << "\t" << this->feat_parent << "\n";
     }
     else if(comment.size() < 2)
