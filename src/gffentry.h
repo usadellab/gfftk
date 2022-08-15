@@ -34,10 +34,6 @@ class GffEntry
     void add_parent(gff::GffEntry e);
     const std::vector<std::string> get_comment(const std::string& key) const;
     bool hasComment(const std::string& commentkey);
-    //int strand;
-    //float score;
-    //int frame;
-     //std::map<std::string, std::string> comments;
     bool hasParent();
     bool hasId();
     void show_children();

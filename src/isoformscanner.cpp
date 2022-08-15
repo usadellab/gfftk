@@ -1,10 +1,14 @@
-/*
- * -------------------------------------------------------------------------------
- * \author Jan Piotr Buchmann <jpb@members.fsf.org>
- * \copyright 2021
- * -------------------------------------------------------------------------------
- *  head -n 18 genomic.gtf
+/**
+ * @file isoformscanner.cpp
+ * @author jpb (jpb@members.fsf.org)
+ * @brief
+ * @version 0.1
+ * @date 2022-08-15
+ *
+ * @copyright Copyright (c) 2022
+ *
  */
+
 #include "isoformscanner.h"
 
 #include <cstdlib>
@@ -17,12 +21,21 @@
 #include "overlap.h"
 #include "gfffile.h"
 
+/**
+ * @brief Construct a new Isoform Scanner:: Isoform Scanner object
+ *
+ * @param gffsource
+ * @param taxid
+ */
 IsoformScanner::IsoformScanner(std::string gffsource, int taxid)
   : gffsource(gffsource), taxid(taxid)
-  {
+{
 
-  }
-
+}
+/**
+ * @brief Destroy the Isoform Scanner:: Isoform Scanner object
+ *
+ */
 IsoformScanner::~IsoformScanner()
 {
   for(auto i : nodes)

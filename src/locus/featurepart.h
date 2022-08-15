@@ -17,6 +17,9 @@ namespace gff
   {
     std::string id;
     std::string type;
+    int strand;
+    float score;
+    int frame;
     std::vector<std::string> children;
     std::vector<std::string> parents;
     std::int_fast32_t start;
