@@ -16,9 +16,7 @@ namespace linetools
   std::string& lstrip(std::string &s);
   std::string& rstrip(std::string &s);
   std::string& strip(std::string &s);
-
   std::string& ltrim(std::string &s);
   std::string& rtrim(std::string &s);
   std::string& trim(std::string &s);
-
 } // namespace linetools

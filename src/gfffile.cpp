@@ -14,6 +14,7 @@
 #include <vector>
 
 #include "helpers/linetools.h"
+#include "feature/featurepart.h"
 
 namespace gff
 {
@@ -74,6 +75,8 @@ namespace gff
         continue;
       }
       gff::GffEntry e(linetools::tokenize(line, '\t'));
+      std::vector gffcols = linetools::tokenize(line, '\t');
+      gff::GffFeaturePart fpart {gffcols[0], gffcols[1]};
       entry_status = proc.process_entry(e, directives);
     }
     gff::GffEntry fake;
@@ -120,6 +123,39 @@ namespace gff
           continue;
         default:
           return;
+      }
+    }
+  }
+  void GffFile::parse_attributes(const std::string& attributes)
+  {
+    int comment_count = 0;
+    for(auto& i : linetools::tokenize(gff_comments, ';'))
+    {
+      ++comment_count;
+      std::vector<std::string> comment = linetools::tokenize(linetools::strip(i), '=');
+      if(comment[0] == "ID")
+      {
+        // std::cout << comment[0]  << "\n";
+        this->eid = linetools::trim(comment[1]);
+      }
+      else if(comment[0] == "Parent")
+      {
+        this->pid = linetools::trim(comment[1]);  // adjust for multiple parents
+        // std::cout << this->feat_id << "\tadding parent:" << comment[0]  << "\t" << this->feat_parent << "\n";
+      }
+      else if(comment.size() < 2)
+      {
+        std::cerr << "WARNING: Skipping nonvalid key-value comment at coordinates:" <<
+          feat_start << " - " << feat_end <<  "\n\tComment nr: " << comment_count <<
+          "\n\tComment key: " << comment.front() << "\n\tComment:" << gff_comments << "\n";
+      }
+      else
+      {
+        const auto &[it, pass] = comments.try_emplace(comment[0], std::vector<std::string> {comment[1]});
+        if(!pass)
+        {
+          it->second.push_back(comment[1]);
+        }
       }
     }
   }

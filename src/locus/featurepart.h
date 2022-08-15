@@ -22,5 +22,5 @@ namespace gff
     std::int_fast32_t start;
     std::int_fast32_t end;
     std::unordered_map<std::string, std::vector<std::string>> comments;
-  } GffType;
+  } GffFeaturePart;
 } // namespace gff

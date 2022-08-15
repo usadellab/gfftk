@@ -24,7 +24,8 @@ class IsoformScanner : public gff::GffFile::Processor
     ~IsoformScanner();
     int process_entry(gff::GffEntry e,
                        std::unordered_map<std::string,
-                       std::vector<std::string>>& header);
+                       std::vector<std::string>>& header,
+                       gff::GffFile& file);
     IntervalNode* insert(IntervalNode* root, IntervalNode* ival);
     gff::GffEntry get_feature(const std::string& feature_name);
     bool hasFeature(const std::string& feature_name);

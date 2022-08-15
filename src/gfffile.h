@@ -21,7 +21,7 @@ namespace gff
       class Processor
       {
         public:
-          virtual int process_entry(gff::GffEntry e, std::unordered_map<std::string, std::vector<std::string>>& header) = 0;
+          virtual int process_entry(gff::GffEntry e, std::unordered_map<std::string, std::vector<std::string>>& header, gff::GffFile& file) = 0;
       };
     GffFile(std::string gff_file);
     ~GffFile();
@@ -35,5 +35,8 @@ namespace gff
     void close();
     void parse_directive(const std::string& line);
     std::unordered_map<std::string, std::vector<std::string>> directives;
+    void parse_attributes(const std::string& attributes);
+    //                    type                          ID          feature
+    std::unordered_map<std::string, std::unordered_map<std::string, gff::Locus::Feature>> features;
   };
 }//end gff namespace
