@@ -35,8 +35,11 @@ namespace gff
     void close();
     void parse_directive(const std::string& line);
     std::unordered_map<std::string, std::vector<std::string>> directives;
-    void parse_attributes(const std::string& attributes);
+    std::unordered_map<std::string, std::vector<std::string>> parse_attributes(const std::string& attributes);
+    gff::GffFeaturePart row_to_featurepart(std::vector<std::string>&);
+    int strand_to_int(std::string&);
+    int phase_to_int(std::string&);
     //                    type                          ID          feature
-    std::unordered_map<std::string, std::unordered_map<std::string, gff::Locus::Feature>> features;
+    // std::unordered_map<std::string, std::unordered_map<std::string, gff::Locus::Feature>> features;
   };
 }//end gff namespace

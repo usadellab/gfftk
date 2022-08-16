@@ -14,7 +14,7 @@
 #include <vector>
 
 #include "helpers/linetools.h"
-#include "feature/featurepart.h"
+#include "locus/featurepart.h"
 
 namespace gff
 {
@@ -74,13 +74,46 @@ namespace gff
         parse_directive(line);
         continue;
       }
-      gff::GffEntry e(linetools::tokenize(line, '\t'));
-      std::vector gffcols = linetools::tokenize(line, '\t');
-      gff::GffFeaturePart fpart {gffcols[0], gffcols[1]};
-      entry_status = proc.process_entry(e, directives);
+      // gff::GffEntry e(linetools::tokenize(line, '\t'));
+      // std::vector<std::string>& gffcols = linetools::tokenize(line, '\t');
+      row_to_featurepart(linetools::tokenize(line, '\t'));
+
+      // entry_status = proc.process_entry(e, directives);
     }
-    gff::GffEntry fake;
-    entry_status = proc.process_entry(fake, directives);
+    // gff::GffEntry fake;
+    // entry_status = proc.process_entry(fake, directives);
+  }
+  int GffFile::strand_to_int(std::string& strandval)
+  {
+    if(strandval == "+"){return 0;}
+    if(strandval == "-"){return 1;}
+    if(strandval == "."){return 2;}
+    std::cerr << "Warning: Bad vavlue for strand\n";
+    return -1; // Error
+  }
+
+  int GffFile::phase_to_int(std::string& phaseval)
+  {
+    if(phaseval == "."){return -1;}
+    return std::stoi(phaseval);
+  }
+
+  gff::GffFeaturePart GffFile::row_to_featurepart(std::vector<std::string>& gffcols)
+  {
+    float score = -1.0;
+    if(gffcols[5] != ".")
+    {
+      score = std::stof(gffcols[5]);
+    }
+    std::unordered_map<std::string, std::vector<std::string>> attribs = parse_attributes(gffcols[8]);
+    return gff::GffFeaturePart {gffcols[0],
+                                gffcols[1],
+                                gffcols[2],
+                                std::stol(gffcols[3]),
+                                std::stol(gffcols[4]),
+                                score,
+                                strand_to_int(gffcols[6]),
+                                phase_to_int(gffcols[7])};
   }
 
   void GffFile::parse_directive(const std::string& line)
@@ -126,37 +159,29 @@ namespace gff
       }
     }
   }
-  void GffFile::parse_attributes(const std::string& attributes)
+  std::unordered_map<std::string, std::vector<std::string>> GffFile::parse_attributes(const std::string& attribute_line)
   {
+    std::unordered_map<std::string, std::vector<std::string>> atrributes;
     int comment_count = 0;
-    for(auto& i : linetools::tokenize(gff_comments, ';'))
+    for(auto& i : linetools::tokenize(attribute_line, ';'))
     {
       ++comment_count;
       std::vector<std::string> comment = linetools::tokenize(linetools::strip(i), '=');
-      if(comment[0] == "ID")
+      if(comment.size() < 2)
       {
-        // std::cout << comment[0]  << "\n";
-        this->eid = linetools::trim(comment[1]);
-      }
-      else if(comment[0] == "Parent")
-      {
-        this->pid = linetools::trim(comment[1]);  // adjust for multiple parents
-        // std::cout << this->feat_id << "\tadding parent:" << comment[0]  << "\t" << this->feat_parent << "\n";
-      }
-      else if(comment.size() < 2)
-      {
-        std::cerr << "WARNING: Skipping nonvalid key-value comment at coordinates:" <<
-          feat_start << " - " << feat_end <<  "\n\tComment nr: " << comment_count <<
-          "\n\tComment key: " << comment.front() << "\n\tComment:" << gff_comments << "\n";
+        std::cerr << "WARNING: Skipping nonvalid key-value comment in line :" << line_num <<
+                      "\n\tComment nr: " << comment_count     <<
+                      "\n\tComment key: " << comment.front()  << "\n";
       }
       else
       {
-        const auto &[it, pass] = comments.try_emplace(comment[0], std::vector<std::string> {comment[1]});
+        const auto &[it, pass] = atrributes.try_emplace(comment[0], std::vector<std::string> {comment[1]});
         if(!pass)
         {
           it->second.push_back(comment[1]);
         }
       }
     }
+    return atrributes;
   }
 }//end namespace gff

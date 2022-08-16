@@ -15,15 +15,16 @@ namespace gff
 {
   typedef struct
   {
-    std::string id;
+    std::string seqid;
+    std::string source;
     std::string type;
-    int strand;
-    float score;
-    int frame;
-    std::vector<std::string> children;
-    std::vector<std::string> parents;
     std::int_fast32_t start;
     std::int_fast32_t end;
-    std::unordered_map<std::string, std::vector<std::string>> comments;
+    float score;
+    int strand;
+    int phase;
+    std::vector<std::string> children { };
+    std::vector<std::string> parents { };
+    std::unordered_map<std::string, std::vector<std::string>> attributes;
   } GffFeaturePart;
 } // namespace gff

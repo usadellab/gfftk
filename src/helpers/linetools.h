@@ -11,7 +11,7 @@
 
 namespace linetools
 {
-  std::vector<std::string> tokenize(const std::string& line, char delim);
+  std::vector<std::string>& tokenize(const std::string& line, char delim);
 
   std::string& lstrip(std::string &s);
   std::string& rstrip(std::string &s);

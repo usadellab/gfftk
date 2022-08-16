@@ -8,7 +8,7 @@ CPPFLAGS=-I. -I../src -I/usr/include
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $< -o $@
 
 helpers/linetools.o:	helpers/linetools.cpp helpers/linetools.h
-gfffile.o:	gfffile.cpp gfffile.h gffentry.h feature/featurepart.h helpers/linetools.h
+gfffile.o:	gfffile.cpp gfffile.h gffentry.h locus/featurepart.h helpers/linetools.h
 ivalnode.o:	ivalnode.cpp ivalnode.h gffentry.h
 overlap.o: overlap.cpp overlap.h
 gffentry.o: gffentry.cpp gffentry.h helpers/linetools.h
