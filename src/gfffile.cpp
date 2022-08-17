@@ -21,12 +21,7 @@ namespace gff
   GffFile::GffFile(std::string gff_file)
   :path(gff_file)
   {
-    if(!open())
-    {
-      std::cerr << "Error: Opening GFF failed: " << path << "\n";
-      exit(EXIT_FAILURE);
-    }
-    std::cerr << "Info: Opened GFF for parsing: " << path << "\n";
+    open();
   }
 
   GffFile::~GffFile()
@@ -48,20 +43,22 @@ namespace gff
     std::filesystem::file_status fstat = std::filesystem::file_status {};
     if(! std::filesystem::status_known(fstat) ? std::filesystem::exists(fstat) : std::filesystem::exists(path))
     {
-      std::cerr << "Error: File not found: " << path << ". Abort\n";
+      std::cerr << "[Error] " << path << " :File not found\n";
       return(EXIT_FAILURE);
     }
     gff_in.open(path);
     if(!gff_in.is_open())
     {
-      return(EXIT_FAILURE);
+      std::cerr << "[Error] " << path << " :failed to open\n";
+      exit(EXIT_FAILURE);
     }
+    std::cerr << "[Info] " << path << " :open for parsing\n";
     return EXIT_SUCCESS;
   }
 
   int GffFile::parse(gff::GffFile::Processor& proc)
   {
-    int entry_status;
+    int entry_status = 0;
     for(std::string line; std::getline(gff_in, line);)
     {
       ++line_num;
@@ -74,30 +71,16 @@ namespace gff
         parse_directive(line);
         continue;
       }
-      // gff::GffEntry e(linetools::tokenize(line, '\t'));
-      // std::vector<std::string>& gffcols = linetools::tokenize(line, '\t');
       gff::GffFeaturePart gfp = row_to_featurepart(linetools::tokenize(line, '\t'));
-            // entry_status = proc.process_entry(e, directives);
+      std::cout << gfp.seqid << "\n";
+      // entry_status = proc.process_entry(e, directives);
     }
     // gff::GffEntry fake;
     // entry_status = proc.process_entry(fake, directives);
-  }
-  int GffFile::strand_to_int(std::string& strandval)
-  {
-    if(strandval == "+"){return 0;}
-    if(strandval == "-"){return 1;}
-    if(strandval == "."){return 2;}
-    std::cerr << "Warning: Bad vavlue for strand\n";
-    return -1; // Error
+    return entry_status;
   }
 
-  int GffFile::phase_to_int(std::string& phaseval)
-  {
-    if(phaseval == "."){return -1;}
-    return std::stoi(phaseval);
-  }
-
-  gff::GffFeaturePart GffFile::row_to_featurepart(std::vector<std::string>& gffcols)
+  gff::GffFeaturePart GffFile::row_to_featurepart(const std::vector<std::string>& gffcols)
   {
     float score = -1.0;
     if(gffcols[5] != ".")
@@ -105,10 +88,6 @@ namespace gff
       score = std::stof(gffcols[5]);
     }
     const std::unordered_map<std::string, std::vector<std::string>> attribs = parse_attributes(gffcols[8]);
-    for(const auto& i : attribs)
-      {
-        std::cout << i.first ;
-      }
     return gff::GffFeaturePart {gffcols[0],
                                 gffcols[1],
                                 gffcols[2],
@@ -118,6 +97,23 @@ namespace gff
                                 strand_to_int(gffcols[6]),
                                 phase_to_int(gffcols[7])};
   }
+
+  int GffFile::strand_to_int(const std::string& strandval) const
+  {
+    if(strandval == "+"){return 0;}
+    if(strandval == "-"){return 1;}
+    if(strandval == "."){return 2;}
+    std::cerr << "Warning: Bad vavlue for strand\n";
+    return -1; // Error
+  }
+
+  int GffFile::phase_to_int(const std::string& phaseval) const
+  {
+    if(phaseval == "."){return -1;}
+    return std::stoi(phaseval);
+  }
+
+
 
   void GffFile::parse_directive(const std::string& line)
   {
@@ -162,14 +158,14 @@ namespace gff
       }
     }
   }
-  const std::unordered_map<std::string, std::vector<std::string>> GffFile::parse_attributes(const std::string& attribute_line) const
+  const std::unordered_map<std::string, std::vector<std::string>> GffFile::parse_attributes(std::string attribute_line)
   {
     std::unordered_map<std::string, std::vector<std::string>> atrributes;
     int comment_count = 0;
     for(auto& i : linetools::tokenize(attribute_line, ';'))
     {
       ++comment_count;
-      std::vector<std::string> comment = linetools::tokenize(linetools::strip(i), '=');
+      const std::vector<std::string> comment = linetools::tokenize(linetools::strip(i), '=');
       if(comment.size() < 2)
       {
         std::cerr << "WARNING: Skipping invalid key-value comment on line :" << line_num <<

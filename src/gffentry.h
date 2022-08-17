@@ -19,7 +19,7 @@ namespace gff
 class GffEntry
 {
   public:
-    GffEntry(const std::vector<std::string>& gffcols);
+    GffEntry(std::vector<std::string>& gffcols);
     GffEntry();
     ~GffEntry();
     const std::string& sequence() const;
@@ -52,7 +52,7 @@ class GffEntry
     std::vector<gff::GffEntry> children;
     std::vector<gff::GffEntry> parents;
     std::unordered_map<std::string, std::vector<std::string>> comments;
-    void process_comments(const std::string& gff_comments);
+    void process_comments(std::string& gff_comments);
 };
 
 } //end namespace gff

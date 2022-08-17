@@ -15,7 +15,7 @@
 namespace gff
 {
 
-GffEntry::GffEntry(const std::vector<std::string>& gffcols)
+GffEntry::GffEntry(std::vector<std::string>& gffcols)
   :feat_seq(gffcols[0]), feat_source(gffcols[1]), feat_type(gffcols[2]),
    feat_start(std::stol(gffcols[3])), feat_end(std::stol(gffcols[4]))
 {
@@ -50,7 +50,7 @@ std::int_fast32_t GffEntry::start()
 std::int_fast32_t GffEntry::length()
   {return (feat_end - feat_start + 1); }
 
-void GffEntry::process_comments(const std::string& gff_comments)
+void GffEntry::process_comments(std::string& gff_comments)
 {
   int comment_count = 0;
   for(auto& i : linetools::tokenize(gff_comments, ';'))
