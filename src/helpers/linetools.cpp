@@ -66,4 +66,4 @@ namespace linetools
 
   std::string& trim(std::string &s)
     {return ltrim(rtrim(s));}
-} // namespace utils
+} // end namespace linetools

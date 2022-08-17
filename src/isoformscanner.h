@@ -11,11 +11,9 @@
 #include <unordered_map>
 #include <vector>
 
-#include "entrydb.h"
 #include "gfffile.h"
 #include "gffentry.h"
-#include "ivalnode.h"
-#include "locus.h"
+#include "locus/locus.h"
 
 class IsoformScanner : public gff::GffFile::Processor
 {
@@ -24,19 +22,16 @@ class IsoformScanner : public gff::GffFile::Processor
     ~IsoformScanner();
     int process_entry(gff::GffEntry e,
                        std::unordered_map<std::string,
-                       std::vector<std::string>>& header,
-                       gff::GffFile& file);
-    IntervalNode* insert(IntervalNode* root, IntervalNode* ival);
-    gff::GffEntry get_feature(const std::string& feature_name);
-    bool hasFeature(const std::string& feature_name);
-    const std::string get_locus_id(gff::GffEntry e);
-    void show_tree();
-    void show_loci();
-    void show_feature(gff::Locus::Feature* f,
-                      gff::Locus loc,
-                      std::unordered_map<std::string, std::vector<std::string>>& header);
-    gff::EntryDb entrydb;
-    void list_locus_features(gff::Locus& loc, std::unordered_map<std::string, std::vector<std::string>>& header) const;
+                       std::vector<std::string>>& header);
+    // gff::GffEntry get_feature(const std::string& feature_name);
+    // bool hasFeature(const std::string& feature_name);
+    // const std::string get_locus_id(gff::GffEntry e);
+    // void show_tree();
+    // void show_loci();
+    // void show_feature(gff::Locus::Feature* f,
+    //                   gff::Locus loc,
+    //                   std::unordered_map<std::string, std::vector<std::string>>& header);
+    // void list_locus_features(gff::Locus& loc, std::unordered_map<std::string, std::vector<std::string>>& header) const;
 
   private:
     std::string gffsource;
@@ -45,14 +40,10 @@ class IsoformScanner : public gff::GffFile::Processor
                                            "genome-build-accession",
                                            "genome-version"};
     std::vector<std::string> req_comments = {"protein_id", "locus_tag"};
-    IntervalNode* root = nullptr;
     std::unordered_map<std::string, gff::Locus> loci;
     std::unordered_map<std::string, gff::GffEntry> features;
-    std::vector<IntervalNode*> nodes;
     std::string prevloc;
-    bool isFeature(const IntervalNode* node, std::string feature);
     void assemble_locus(gff::GffEntry e, std::unordered_map<std::string, std::vector<std::string>>& header);
-    void walk_inorder(IntervalNode* root);
 };
 
 void usage();

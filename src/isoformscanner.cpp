@@ -17,8 +17,7 @@
 #include <vector>
 
 #include "gffentry.h"
-#include "locus.h"
-#include "overlap.h"
+#include "locus/locus.h"
 #include "gfffile.h"
 
 /**
@@ -38,13 +37,13 @@ IsoformScanner::IsoformScanner(std::string gffsource, int taxid)
  */
 IsoformScanner::~IsoformScanner()
 {
-  for(auto i : nodes)
+  /* for(auto i : nodes)
   {
     delete i;
-  }
+  } */
 }
 
-IntervalNode* IsoformScanner::insert(IntervalNode* root, IntervalNode* ival)
+/* IntervalNode* IsoformScanner::insert(IntervalNode* root, IntervalNode* ival)
 {
   if(root == 0)
   {
@@ -63,7 +62,7 @@ IntervalNode* IsoformScanner::insert(IntervalNode* root, IntervalNode* ival)
     root->max = ival->end;
   }
   return root;
-}
+} */
 
 /* Overlap& IsoformScanner::overlap(const IntervalNode* subject, const IntervalNode* query)
 {
@@ -88,7 +87,7 @@ IntervalNode* IsoformScanner::insert(IntervalNode* root, IntervalNode* ival)
   return root;
 } */
 
-void IsoformScanner::walk_inorder(IntervalNode* root)
+/* void IsoformScanner::walk_inorder(IntervalNode* root)
 {
   if(root == 0){ return; }
   walk_inorder(root->left);
@@ -96,15 +95,15 @@ void IsoformScanner::walk_inorder(IntervalNode* root)
             << "\t" << root->max << "\t" << root->left << "\t" << root->right
             << "\t" << root->entries[0].feature() <<  "\n";
   walk_inorder(root->right);
-}
+} */
 
-void IsoformScanner::show_tree()
+/* void IsoformScanner::show_tree()
 {
   std::cout << "#node\tstart\tend\tmax\tleft\tright\tfeature\n";
   walk_inorder(root);
-}
+} */
 
-int IsoformScanner::process_entry(gff::GffEntry e, std::unordered_map<std::string, std::vector<std::string>>& header, gff::GffFile& file)
+int IsoformScanner::process_entry(gff::GffEntry e, std::unordered_map<std::string, std::vector<std::string>>& header)
 {
   // std::cout << e.id() <<  "\n";
   // for(auto& i : header)
@@ -115,8 +114,8 @@ int IsoformScanner::process_entry(gff::GffEntry e, std::unordered_map<std::strin
   // root = insert(root, ival);
   //entrydb.add_entry(e);
   // nodes.push_back(ival);
-  features.insert({e.id(), e});
-  assemble_locus(e, header);
+  // features.insert({e.id(), e});
+  // assemble_locus(e, header);
   // don#t forget last entry
 }
 
@@ -124,7 +123,7 @@ int IsoformScanner::process_entry(gff::GffEntry e, std::unordered_map<std::strin
 without a parent feature. The search for a locus is initiated by the parent of
 the currently examined entry to save one iteration.
 */
-void IsoformScanner::assemble_locus(gff::GffEntry e, std::unordered_map<std::string, std::vector<std::string>>& header)
+/* void IsoformScanner::assemble_locus(gff::GffEntry e, std::unordered_map<std::string, std::vector<std::string>>& header)
 {
   if(!e.hasParent())  //  new locus
   {
@@ -158,9 +157,9 @@ void IsoformScanner::assemble_locus(gff::GffEntry e, std::unordered_map<std::str
     if(loci.contains(lid)) {loci.at(lid).add_entry(e);}
     else {std::cerr << "Error: locus " << lid << "not known\n";}
   }
-}
+} */
 
-const std::string IsoformScanner::get_locus_id(gff::GffEntry e)
+/* const std::string IsoformScanner::get_locus_id(gff::GffEntry e)
 {
   while(e.hasParent())
   {
@@ -173,24 +172,24 @@ const std::string IsoformScanner::get_locus_id(gff::GffEntry e)
     e = get_feature(e.parent());
   }
   return e.id();
-}
-bool IsoformScanner::hasFeature(const std::string& feature_name)
+} */
+/* bool IsoformScanner::hasFeature(const std::string& feature_name)
 {
   if(features.contains(feature_name)){return true;}
   std::cerr << "Error: " << feature_name << " not in storage\n";
   return false;
-}
+} */
 
-gff::GffEntry IsoformScanner::get_feature(const std::string& feature_name)
-{return features.at(feature_name);}
+/* gff::GffEntry IsoformScanner::get_feature(const std::string& feature_name)
+{return features.at(feature_name);} */
 
-void IsoformScanner::show_loci()
+/* void IsoformScanner::show_loci()
 {
   std::cout << "Listing loci\n";
   for(auto& i: loci){ i.second.show(); }
-}
+} */
 
-void IsoformScanner::show_feature(gff::Locus::Feature* f, gff::Locus loc,
+/* void IsoformScanner::show_feature(gff::Locus::Feature* f, gff::Locus loc,
   std::unordered_map<std::string, std::vector<std::string>>& header)
 {
     f->show();
@@ -211,9 +210,9 @@ void IsoformScanner::show_feature(gff::Locus::Feature* f, gff::Locus loc,
       if(header.contains(i)){ std::cout << "\t" << header[i].front(); }
     }
     std::cout << "\n";
-}
+} */
 
-void IsoformScanner::list_locus_features(gff::Locus& loc, std::unordered_map<std::string, std::vector<std::string>>& header) const
+/* void IsoformScanner::list_locus_features(gff::Locus& loc, std::unordered_map<std::string, std::vector<std::string>>& header) const
 {
   const std::unordered_map<std::string, std::unordered_map<std::string, gff::Locus::Feature>>& fm = loc.featuremap();
   for(const auto& i : fm.at("CDS"))
@@ -239,7 +238,7 @@ void IsoformScanner::list_locus_features(gff::Locus& loc, std::unordered_map<std
     // }
     std::cout << "\n";
   }
-}
+} */
 
 void usage()
 {

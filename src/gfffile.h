@@ -12,6 +12,8 @@
 #include <vector>
 
 #include "gffentry.h"
+#include "locus/featurepart.h"
+#include "helpers/linetools.h"
 
 namespace gff
 {
@@ -21,21 +23,21 @@ namespace gff
       class Processor
       {
         public:
-          virtual int process_entry(gff::GffEntry e, std::unordered_map<std::string, std::vector<std::string>>& header, gff::GffFile& file) = 0;
+          virtual int process_entry(gff::GffEntry e, std::unordered_map<std::string, std::vector<std::string>>& header) = 0;
       };
     GffFile(std::string gff_file);
     ~GffFile();
     int parse(gff::GffFile::Processor& proc);
 
   private:
-    const std::string path;
+    std::string path;
     std::ifstream gff_in;
     unsigned int line_num = 0;
     int open();
     void close();
     void parse_directive(const std::string& line);
     std::unordered_map<std::string, std::vector<std::string>> directives;
-    std::unordered_map<std::string, std::vector<std::string>> parse_attributes(const std::string& attributes);
+    const std::unordered_map<std::string, std::vector<std::string>> parse_attributes(const std::string& attributes) const;
     gff::GffFeaturePart row_to_featurepart(std::vector<std::string>&);
     int strand_to_int(std::string&);
     int phase_to_int(std::string&);

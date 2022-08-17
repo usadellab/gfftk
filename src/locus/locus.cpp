@@ -7,7 +7,7 @@
 
 #include <iostream>
 
-#include "locus.h"
+#include "locus/locus.h"
 #include "gffentry.h"
 
 namespace gff

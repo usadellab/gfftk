@@ -76,9 +76,8 @@ namespace gff
       }
       // gff::GffEntry e(linetools::tokenize(line, '\t'));
       // std::vector<std::string>& gffcols = linetools::tokenize(line, '\t');
-      row_to_featurepart(linetools::tokenize(line, '\t'));
-
-      // entry_status = proc.process_entry(e, directives);
+      gff::GffFeaturePart gfp = row_to_featurepart(linetools::tokenize(line, '\t'));
+            // entry_status = proc.process_entry(e, directives);
     }
     // gff::GffEntry fake;
     // entry_status = proc.process_entry(fake, directives);
@@ -105,7 +104,11 @@ namespace gff
     {
       score = std::stof(gffcols[5]);
     }
-    std::unordered_map<std::string, std::vector<std::string>> attribs = parse_attributes(gffcols[8]);
+    const std::unordered_map<std::string, std::vector<std::string>> attribs = parse_attributes(gffcols[8]);
+    for(const auto& i : attribs)
+      {
+        std::cout << i.first ;
+      }
     return gff::GffFeaturePart {gffcols[0],
                                 gffcols[1],
                                 gffcols[2],
@@ -159,7 +162,7 @@ namespace gff
       }
     }
   }
-  std::unordered_map<std::string, std::vector<std::string>> GffFile::parse_attributes(const std::string& attribute_line)
+  const std::unordered_map<std::string, std::vector<std::string>> GffFile::parse_attributes(const std::string& attribute_line) const
   {
     std::unordered_map<std::string, std::vector<std::string>> atrributes;
     int comment_count = 0;
@@ -169,7 +172,7 @@ namespace gff
       std::vector<std::string> comment = linetools::tokenize(linetools::strip(i), '=');
       if(comment.size() < 2)
       {
-        std::cerr << "WARNING: Skipping nonvalid key-value comment in line :" << line_num <<
+        std::cerr << "WARNING: Skipping invalid key-value comment on line :" << line_num <<
                       "\n\tComment nr: " << comment_count     <<
                       "\n\tComment key: " << comment.front()  << "\n";
       }
