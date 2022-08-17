@@ -30,6 +30,7 @@ namespace gff
     int parse(gff::GffFile::Processor& proc);
 
   private:
+
     std::string path;
     std::ifstream gff_in;
     unsigned int line_num = 0;
@@ -41,6 +42,7 @@ namespace gff
     gff::GffFeaturePart row_to_featurepart(const std::vector<std::string>&);
     int strand_to_int(const std::string&) const;
     int phase_to_int(const std::string&) const;
+    void show_attribute(const std::string& key, const std::unordered_map<std::string, std::vector<std::string>>);
     //                    type                          ID          feature
     // std::unordered_map<std::string, std::unordered_map<std::string, gff::Locus::Feature>> features;
   };

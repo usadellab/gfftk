@@ -13,8 +13,10 @@
 #include <unordered_map>
 #include <vector>
 
+// #include "row/datarow.h"
 #include "helpers/linetools.h"
 #include "locus/featurepart.h"
+
 
 namespace gff
 {
@@ -71,6 +73,7 @@ namespace gff
         parse_directive(line);
         continue;
       }
+
       gff::GffFeaturePart gfp = row_to_featurepart(linetools::tokenize(line, '\t'));
       std::cout << gfp.seqid << "\n";
       // entry_status = proc.process_entry(e, directives);
@@ -88,6 +91,7 @@ namespace gff
       score = std::stof(gffcols[5]);
     }
     const std::unordered_map<std::string, std::vector<std::string>> attribs = parse_attributes(gffcols[8]);
+    show_attribute("ID", attribs);
     return gff::GffFeaturePart {gffcols[0],
                                 gffcols[1],
                                 gffcols[2],
@@ -182,5 +186,17 @@ namespace gff
       }
     }
     return atrributes;
+  }
+  void GffFile::show_attribute(const std::string& key, const std::unordered_map<std::string, std::vector<std::string>> attribs)
+  {
+    if(attribs.count(key))
+    {
+      std::cout << key;
+      for(const auto& i : attribs.at(key))
+      {
+        std::cout << "\t" << i;
+      }
+      std::cout << "\n";
+    }
   }
 }//end namespace gff
