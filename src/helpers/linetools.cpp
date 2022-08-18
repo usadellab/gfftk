@@ -11,7 +11,7 @@
 #include <locale>
 #include <vector>
 
-#include "linetools.h"
+#include "helpers/linetools.h"
 
 namespace linetools
 {

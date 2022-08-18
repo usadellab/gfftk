@@ -13,7 +13,7 @@
 
 #include "gfffile.h"
 #include "gffentry.h"
-#include "locus/locus.h"
+#include "components/locus.h"
 
 class IsoformScanner : public gff::GffFile::Processor
 {

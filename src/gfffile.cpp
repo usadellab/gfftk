@@ -13,11 +13,6 @@
 #include <unordered_map>
 #include <vector>
 
-// #include "row/datarow.h"
-#include "helpers/linetools.h"
-#include "locus/featurepart.h"
-
-
 namespace gff
 {
   GffFile::GffFile(std::string gff_file)
@@ -43,18 +38,19 @@ namespace gff
   int GffFile::open()
   {
     std::filesystem::file_status fstat = std::filesystem::file_status {};
-    if(! std::filesystem::status_known(fstat) ? std::filesystem::exists(fstat) : std::filesystem::exists(path))
+    // ToDo: Not wroking as expected. Doe snot exit when given invalid path
+    if(!std::filesystem::status_known(fstat) ? std::filesystem::exists(fstat) : std::filesystem::exists(path))
     {
-      std::cerr << "[Error] " << path << " :File not found\n";
+      std::cerr << "[Error] " << path << " : File not found\n";
       return(EXIT_FAILURE);
     }
     gff_in.open(path);
     if(!gff_in.is_open())
     {
-      std::cerr << "[Error] " << path << " :failed to open\n";
+      std::cerr << "[Error] " << path << " : failed to open\n";
       exit(EXIT_FAILURE);
     }
-    std::cerr << "[Info] " << path << " :open for parsing\n";
+    std::cerr << "[Info] " << path << " : open for parsing\n";
     return EXIT_SUCCESS;
   }
 
@@ -63,7 +59,7 @@ namespace gff
     int entry_status = 0;
     for(std::string line; std::getline(gff_in, line);)
     {
-      ++line_num;
+      ++row_num;
       if(line.empty())
       {
         continue;
@@ -73,51 +69,23 @@ namespace gff
         parse_directive(line);
         continue;
       }
-
-      gff::GffFeaturePart gfp = row_to_featurepart(linetools::tokenize(line, '\t'));
-      std::cout << gfp.seqid << "\n";
+      gff::GffRow row(path, row_num);
+      const gff::GffFeaturePart part = row.parse(line);
+      // Add row error checks here
+      if(part.error == 1)
+      {
+        std::cerr << "[Error] " << path << "::" << row_num << " "
+                  << "Unexpected number of columns. Aborting\n";
+        exit(EXIT_FAILURE);
+      }
+      std::cout << part.seqid << "\n";
+      assemble_locus(part);
       // entry_status = proc.process_entry(e, directives);
     }
     // gff::GffEntry fake;
     // entry_status = proc.process_entry(fake, directives);
     return entry_status;
   }
-
-  gff::GffFeaturePart GffFile::row_to_featurepart(const std::vector<std::string>& gffcols)
-  {
-    float score = -1.0;
-    if(gffcols[5] != ".")
-    {
-      score = std::stof(gffcols[5]);
-    }
-    const std::unordered_map<std::string, std::vector<std::string>> attribs = parse_attributes(gffcols[8]);
-    show_attribute("ID", attribs);
-    return gff::GffFeaturePart {gffcols[0],
-                                gffcols[1],
-                                gffcols[2],
-                                std::stol(gffcols[3]),
-                                std::stol(gffcols[4]),
-                                score,
-                                strand_to_int(gffcols[6]),
-                                phase_to_int(gffcols[7])};
-  }
-
-  int GffFile::strand_to_int(const std::string& strandval) const
-  {
-    if(strandval == "+"){return 0;}
-    if(strandval == "-"){return 1;}
-    if(strandval == "."){return 2;}
-    std::cerr << "Warning: Bad vavlue for strand\n";
-    return -1; // Error
-  }
-
-  int GffFile::phase_to_int(const std::string& phaseval) const
-  {
-    if(phaseval == "."){return -1;}
-    return std::stoi(phaseval);
-  }
-
-
 
   void GffFile::parse_directive(const std::string& line)
   {
@@ -162,41 +130,39 @@ namespace gff
       }
     }
   }
-  const std::unordered_map<std::string, std::vector<std::string>> GffFile::parse_attributes(std::string attribute_line)
+  void GffFile::assemble_locus(const gff::GffFeaturePart& part)
   {
-    std::unordered_map<std::string, std::vector<std::string>> atrributes;
-    int comment_count = 0;
-    for(auto& i : linetools::tokenize(attribute_line, ';'))
+    /* if(!e.hasParent())  //  new locus
     {
-      ++comment_count;
-      const std::vector<std::string> comment = linetools::tokenize(linetools::strip(i), '=');
-      if(comment.size() < 2)
+      if(!prevloc.empty())
       {
-        std::cerr << "WARNING: Skipping invalid key-value comment on line :" << line_num <<
-                      "\n\tComment nr: " << comment_count     <<
-                      "\n\tComment key: " << comment.front()  << "\n";
-      }
-      else
-      {
-        const auto &[it, pass] = atrributes.try_emplace(comment[0], std::vector<std::string> {comment[1]});
-        if(!pass)
+        std::cerr << "Assessing\n";
+        gff::Locus loc = loci.at(prevloc);
+        // loc.show();
+        gff::Locus::Feature* lf = loci.at(prevloc).find_longest_feature("CDS");
+        if(lf)
         {
-          it->second.push_back(comment[1]);
+          std::cerr << "Found longest " << lf->type << " on " << loc.id() << ": "
+                    << lf->id   << "\t" << lf->isSelected <<"\n";
+          // show_feature(lf, loc, header);
         }
+        list_locus_features(loci.at(prevloc), header);
       }
+      gff::Locus locus = gff::Locus(e);
+      loci.insert({e.id(), locus});
+      std::cerr << "== New Locus: " << locus.id() << "\n";
+      prevloc = locus.id();
     }
-    return atrributes;
-  }
-  void GffFile::show_attribute(const std::string& key, const std::unordered_map<std::string, std::vector<std::string>> attribs)
-  {
-    if(attribs.count(key))
+    else  //  part-of relation
     {
-      std::cout << key;
-      for(const auto& i : attribs.at(key))
-      {
-        std::cout << "\t" << i;
-      }
-      std::cout << "\n";
-    }
+      //  Test if parnet feature is known to isoformscanner
+      if(!hasFeature(e.parent())) {std::exit(EXIT_FAILURE);}
+      gff::GffEntry p = get_feature(e.parent()); // dangerous, fix later
+      p.add_child(e);
+      e.add_parent(p);
+      const std::string lid = get_locus_id(p);
+      if(loci.contains(lid)) {loci.at(lid).add_entry(e);}
+      else {std::cerr << "Error: locus " << lid << "not known\n";}
+    } */
   }
 }//end namespace gff

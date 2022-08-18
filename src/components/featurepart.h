@@ -15,6 +15,8 @@ namespace gff
 {
   typedef struct
   {
+    std::string id;
+    std::vector<std::string> parents { };
     std::string seqid;
     std::string source;
     std::string type;
@@ -23,8 +25,7 @@ namespace gff
     float score;
     int strand;
     int phase;
-    std::vector<std::string> children { };
-    std::vector<std::string> parents { };
     std::unordered_map<std::string, std::vector<std::string>> attributes;
+    int error = 0;
   } GffFeaturePart;
 } // namespace gff

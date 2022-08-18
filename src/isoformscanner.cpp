@@ -16,9 +16,7 @@
 #include <getopt.h>
 #include <vector>
 
-#include "gffentry.h"
-#include "locus/locus.h"
-#include "gfffile.h"
+
 
 /**
  * @brief Construct a new Isoform Scanner:: Isoform Scanner object

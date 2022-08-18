@@ -3,11 +3,11 @@ CXXFLAGS=-Wall -std=c++20
 VPATH=.:../src
 INCLUDES=-I. -I../src -I/usr/include
 
-objects = linetools.o locus.o gfffile.o gffentry.o isoformscanner.o
+objects = linetools.o locus.o gfffile.o gffentry.o isoformscanner.o gffrow.o
 
 .PHONY : all clean
 
-gfffile.o:	gfffile.cpp gfffile.h locus/featurepart.h helpers/linetools.h row/datarow.h
+gfffile.o:	gfffile.cpp gfffile.h components/featurepart.h helpers/linetools.h components/gffrow.h
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
 linetools.o:	helpers/linetools.cpp helpers/linetools.h
@@ -16,10 +16,13 @@ linetools.o:	helpers/linetools.cpp helpers/linetools.h
 gffentry.o:	gffentry.cpp gffentry.h helpers/linetools.h
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
-locus.o:	locus/locus.cpp locus/locus.h gffentry.h
+locus.o:	components/locus.cpp components/locus.h gffentry.h
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
-isoformscanner.o:	isoformscanner.cpp isoformscanner.h gfffile.h gffentry.h locus/locus.h
+gffrow.o:	components/gffrow.cpp components/gffrow.h helpers/linetools.h
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
+
+isoformscanner.o:	isoformscanner.cpp isoformscanner.h gfffile.h gffentry.h components/locus.h
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
 isoformscanner:	$(objects)

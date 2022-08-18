@@ -4,11 +4,9 @@
  * \copyright 2021
  * -------------------------------------------------------------------------------
  */
+#include "components/locus.h"
 
 #include <iostream>
-
-#include "locus/locus.h"
-#include "gffentry.h"
 
 namespace gff
 {

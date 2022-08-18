@@ -12,8 +12,11 @@
 #include <vector>
 
 #include "gffentry.h"
-#include "locus/featurepart.h"
+#include "components/featurepart.h"
+#include "components/locus.h"
+#include "components/gffrow.h"
 #include "helpers/linetools.h"
+
 
 namespace gff
 {
@@ -33,17 +36,15 @@ namespace gff
 
     std::string path;
     std::ifstream gff_in;
-    unsigned int line_num = 0;
+    unsigned int row_num = 0;
     int open();
     void close();
     void parse_directive(const std::string& line);
     std::unordered_map<std::string, std::vector<std::string>> directives;
-    const std::unordered_map<std::string, std::vector<std::string>> parse_attributes(std::string attributes);
-    gff::GffFeaturePart row_to_featurepart(const std::vector<std::string>&);
-    int strand_to_int(const std::string&) const;
-    int phase_to_int(const std::string&) const;
     void show_attribute(const std::string& key, const std::unordered_map<std::string, std::vector<std::string>>);
+    void assemble_locus(const gff::GffFeaturePart&);
     //                    type                          ID          feature
     // std::unordered_map<std::string, std::unordered_map<std::string, gff::Locus::Feature>> features;
+    std::unordered_map<std::string, gff::Locus> loci;
   };
 }//end gff namespace
