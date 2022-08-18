@@ -26,10 +26,10 @@ namespace gff
                 << "Unexpected number of columns: " << gffcols.size()
                 << ". Expected: " << expected_columns << "\n";
       gff::GffFeaturePart gfp;
-      gfp.error = 1;
+      gfp.set_error(1);
       return gfp;
     }
-
+    parse_attributes(gffcols[8]);
     const float score = (gffcols[5] == ".") ? -1.0 : std::stof(gffcols[5]);
     const int strand = convert_strand(gffcols[6]);
     if(strand < 0)
@@ -38,20 +38,28 @@ namespace gff
     const int phase = (gffcols[7] == ".") ? -1 : std::stoi(gffcols[7]);
     if(phase < -1 || phase > 2)
       {std::cerr << "Warning: Bad value for phase\n";}
-    parse_attributes(gffcols[8]);
-    return gff::GffFeaturePart
+
+    std::string id {};
+    if(attributes.count(id_key))
     {
-      (attributes.count(id_key) > 0) ? attributes[id_key][0] : std::string(),                 // featurepart ID
-      (attributes.count(parent_key) > 0) ? attributes[id_key] : std::vector<std::string> {},  // parents
-      gffcols[0],                                                                             // seqid
+      id = attributes[id_key][0];
+      attributes.erase(id_key);
+    }
+    std::vector<std::string> parents {};
+    if(attributes.count(parent_key))
+    {
+      parents = attributes[id_key];
+      attributes.erase(parent_key);
+    }
+    gff::GffFeaturePart gfp(id, parents, gffcols[0],
       gffcols[1],                                                                             // source
       gffcols[2],                                                                             // type
       std::stol(gffcols[3]),                                                                  // start
       std::stol(gffcols[4]),                                                                  // end
       score,
       strand,
-      phase
-    };
+      phase,
+      error);
   }
 
   int GffRow::convert_strand(const std::string& strandstr) const

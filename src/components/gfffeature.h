@@ -9,7 +9,7 @@
 
 #include <iostream>
 
-#include "locus/featurepart.h"
+#include "components/featurepart.h"
 
 namespace gff
 {
