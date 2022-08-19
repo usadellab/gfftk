@@ -23,7 +23,7 @@ namespace gff
 
   GffFile::~GffFile()
   {
-
+    close();
   }
 
   void GffFile::close()
@@ -32,6 +32,10 @@ namespace gff
     {
       std::cerr << "Info: Closing GFF: " << path << "\n";
       gff_in.close();
+    }
+    if(!gff_in.is_open())
+    {
+      std::cerr << "Info: Closed GFF: " << path << "\n";
     }
   }
 
@@ -69,17 +73,16 @@ namespace gff
         parse_directive(line);
         continue;
       }
-      gff::GffRow row(path, row_num);
-      const gff::GffFeaturePart part = row.parse(line);
+      gff::GffRow row(line, path, row_num);
       // Add row error checks here
-      if(part.error == 1)
+      if(row.err_code == 1)
       {
         std::cerr << "[Error] " << path << "::" << row_num << " "
                   << "Unexpected number of columns. Aborting\n";
         exit(EXIT_FAILURE);
       }
-      std::cout << part.seqid << "\n";
-      assemble_locus(part);
+      // std::cout << row.id << "\n";
+      assemble_locus(row);
       // entry_status = proc.process_entry(e, directives);
     }
     // gff::GffEntry fake;
@@ -130,39 +133,42 @@ namespace gff
       }
     }
   }
-  void GffFile::assemble_locus(const gff::GffFeaturePart& part)
+  void GffFile::assemble_locus(const gff::GffRow& row)
   {
-    /* if(!e.hasParent())  //  new locus
+    if(row.parents.empty())  //  new locus
     {
-      if(!prevloc.empty())
-      {
-        std::cerr << "Assessing\n";
-        gff::Locus loc = loci.at(prevloc);
-        // loc.show();
-        gff::Locus::Feature* lf = loci.at(prevloc).find_longest_feature("CDS");
-        if(lf)
-        {
-          std::cerr << "Found longest " << lf->type << " on " << loc.id() << ": "
-                    << lf->id   << "\t" << lf->isSelected <<"\n";
-          // show_feature(lf, loc, header);
-        }
-        list_locus_features(loci.at(prevloc), header);
-      }
-      gff::Locus locus = gff::Locus(e);
-      loci.insert({e.id(), locus});
-      std::cerr << "== New Locus: " << locus.id() << "\n";
-      prevloc = locus.id();
+      std::cerr << "[Info] " << path << "::" << row_num << " "
+                << "New Locus: " << row.id << "\n";
+
+    //   if(!prevloc.empty())
+    //   {
+    //     std::cerr << "Assessing\n";
+    //     gff::Locus loc = loci.at(prevloc);
+    //     // loc.show();
+    //     gff::Locus::Feature* lf = loci.at(prevloc).find_longest_feature("CDS");
+    //     if(lf)
+    //     {
+    //       std::cerr << "Found longest " << lf->type << " on " << loc.id() << ": "
+    //                 << lf->id   << "\t" << lf->isSelected <<"\n";
+    //       // show_feature(lf, loc, header);
+    //     }
+    //     list_locus_features(loci.at(prevloc), header);
+    //   }
+    //   gff::Locus locus = gff::Locus(e);
+    //   loci.insert({e.id(), locus});
+    //   std::cerr << "== New Locus: " << locus.id() << "\n";
+    //   prevloc = locus.id();
+    // }
+    // else  //  part-of relation
+    // {
+    //   //  Test if parnet feature is known to isoformscanner
+    //   if(!hasFeature(e.parent())) {std::exit(EXIT_FAILURE);}
+    //   gff::GffEntry p = get_feature(e.parent()); // dangerous, fix later
+    //   p.add_child(e);
+    //   e.add_parent(p);
+    //   const std::string lid = get_locus_id(p);
+    //   if(loci.contains(lid)) {loci.at(lid).add_entry(e);}
+    //   else {std::cerr << "Error: locus " << lid << "not known\n";}
     }
-    else  //  part-of relation
-    {
-      //  Test if parnet feature is known to isoformscanner
-      if(!hasFeature(e.parent())) {std::exit(EXIT_FAILURE);}
-      gff::GffEntry p = get_feature(e.parent()); // dangerous, fix later
-      p.add_child(e);
-      e.add_parent(p);
-      const std::string lid = get_locus_id(p);
-      if(loci.contains(lid)) {loci.at(lid).add_entry(e);}
-      else {std::cerr << "Error: locus " << lid << "not known\n";}
-    } */
   }
 }//end namespace gff

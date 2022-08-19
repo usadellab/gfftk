@@ -6,25 +6,37 @@
 #pragma once
 
 #include <iostream>
+#include <unordered_map>
 
 #include "helpers/linetools.h"
-#include "components/featurepart.h"
 
 namespace gff
 {
   class GffRow
   {
     public:
-      GffRow(const std::string& gff_file, int row_number);
+      GffRow(std::string& gff_row, const std::string& gff_file, int row_number);
       ~GffRow();
-      const gff::GffFeaturePart parse(std::string& gffrow);
+      using attributemap = std::unordered_map<std::string, std::vector<std::string>>;
+      void parse(std::string& gffrow);
+      std::string id;
+      std::string seqid;
+      std::string source;
+      std::string type;
+      std::int_fast32_t start;
+      std::int_fast32_t end;
+      float score;
+      int strand;
+      int phase;
+      std::vector<std::string> parents;
+      int err_code;
+      const attributemap& comment(const std::string& comment); // ToDo
 
     private:
-      using attributemap = std::unordered_map<std::string, std::vector<std::string>>;
       using columns = std::vector<std::string>;
       const std::string& gff_file;
       const long unsigned int expected_columns = 9;
-      int row_number;
+      int rownum;
       int convert_strand(const std::string&) const;
       void parse_attributes(std::string& attribute_line);
       attributemap attributes;

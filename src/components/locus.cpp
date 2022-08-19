@@ -11,7 +11,7 @@
 namespace gff
 {
 
-Locus::Locus(GffEntry e)
+Locus::Locus()
  : loc_feature(e)
 {
   // std::cout << "INIT: "<<  e.start << "\t"  << e.end << "\t" << this->start << "\t" << this->end << "\n";

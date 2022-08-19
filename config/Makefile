@@ -7,7 +7,7 @@ objects = linetools.o locus.o gfffile.o gffentry.o isoformscanner.o gffrow.o
 
 .PHONY : all clean
 
-gfffile.o:	gfffile.cpp gfffile.h components/featurepart.h helpers/linetools.h components/gffrow.h
+gfffile.o:	gfffile.cpp gfffile.h helpers/linetools.h components/gffrow.h
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
 linetools.o:	helpers/linetools.cpp helpers/linetools.h
