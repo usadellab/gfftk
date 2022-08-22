@@ -7,12 +7,6 @@
 
 #include "gfffile.h"
 
-#include <iostream>
-#include <filesystem>
-#include <fstream>
-#include <unordered_map>
-#include <vector>
-
 namespace gff
 {
   GffFile::GffFile(std::string gff_file)
@@ -23,7 +17,7 @@ namespace gff
 
   GffFile::~GffFile()
   {
-    close();
+    clean_up();
   }
 
   void GffFile::close()
@@ -133,13 +127,28 @@ namespace gff
       }
     }
   }
+
   void GffFile::assemble_locus(const gff::GffRow& row)
   {
     if(row.parents.empty())  //  new locus
     {
-      std::cerr << "[Info] " << path << "::" << row_num << " "
-                << "New Locus: " << row.id << "\n";
-
+      std::cerr << "[Info] " << path << "::" << row_num << " " << "New Locus: " << row.id << "\n";
+      gff::Locus* locus = add_locus(row);
+      locus->show();
+    }
+    else  //  part-of relation
+    {
+      gff::Locus* loc = locus(row.id);
+      if(!loc)
+      {
+        std::cerr << "Can't find locus " << row.id << " . Skipping\n";
+        // ToDo: If this really happens:
+        // 0. Create temporary locus with this id
+        // 1. If locus is found later, reorganize locus
+        return;
+      }
+      loc->add_feature(row);
+    }
     //   if(!prevloc.empty())
     //   {
     //     std::cerr << "Assessing\n";
@@ -169,6 +178,54 @@ namespace gff
     //   const std::string lid = get_locus_id(p);
     //   if(loci.contains(lid)) {loci.at(lid).add_entry(e);}
     //   else {std::cerr << "Error: locus " << lid << "not known\n";}
+    // }
+  }
+  gff::Locus* GffFile::locus(const std::string& id)
+  {
+    if(loci.count(id))
+    {
+      return loci[id];
     }
+    std::cerr << "[Warning] " << path << "::" << row_num << " "
+              << "Trying to access unknown locus " << id << "\n";
+    return nullptr;
+  }
+
+  gff::Locus* GffFile::add_locus(const gff::GffRow& row)
+  {
+    if(loci.count(row.id))
+    {
+      loci[row.id]->extend_with_row(row);
+      std::cout << "Extended locus " << loci[row.id]->id << "\n";
+      return loci[row.id];
+    }
+    gff::Locus* locus = new gff::Locus(row.id, row.type, row.start, row.end);
+    const auto &[it, inserted] = loci.emplace(locus->id, locus);
+    if(inserted)
+    {
+      std::cout << "Inserted locus " << locus->id << "\n";
+      return locus;
+    }
+    std::cerr << "[Error] " << path << "::" << row_num << " "
+              << "Storing locus " << locus->id << "failed. Aborting\n";
+    clean_up();
+    exit(EXIT_FAILURE);
+  }
+
+  void GffFile::clean_up()
+  {
+    delete_loci();
+    close();
+  }
+
+  void GffFile::delete_loci()
+  {
+    std::cout << "Loci size: " << loci.size() << "\n";
+    for(auto it = loci.cbegin(); it != loci.cend();)
+    {
+      delete(it->second);
+      it = loci.erase(it++);
+    }
+    std::cout << "Loci size: " << loci.size() << "\n";
   }
 }//end namespace gff

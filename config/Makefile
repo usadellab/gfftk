@@ -16,10 +16,10 @@ linetools.o:	helpers/linetools.cpp helpers/linetools.h
 gffentry.o:	gffentry.cpp gffentry.h helpers/linetools.h
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
-locus.o:	components/locus.cpp components/locus.h gffentry.h
+locus.o:	components/locus.cpp components/locus.h gfftypes.h gffentry.h components/gffrow.h
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
-gffrow.o:	components/gffrow.cpp components/gffrow.h helpers/linetools.h
+gffrow.o:	components/gffrow.cpp components/gffrow.h helpers/linetools.h gfftypes.h
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
 isoformscanner.o:	isoformscanner.cpp isoformscanner.h gfffile.h gffentry.h components/locus.h

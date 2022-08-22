@@ -11,8 +11,8 @@
 namespace gff
 {
 
-Locus::Locus()
- : loc_feature(e)
+Locus::Locus(const std::string& id, const std::string& type, std::int_fast32_t start, std::int_fast32_t end)
+ : id(id), type(type), positions{ {start, end} }
 {
   // std::cout << "INIT: "<<  e.start << "\t"  << e.end << "\t" << this->start << "\t" << this->end << "\n";
 }
@@ -22,30 +22,42 @@ Locus::~Locus()
   // std::cout <<"Destructing\t" << this->end << " \n";
 }
 
-const std::string& Locus::id(){return loc_feature.id();}
-const std::int_fast32_t Locus::start(){return loc_feature.start();}
-const std::int_fast32_t Locus::end(){return loc_feature.end();}
-
 void Locus::show()
 {
-  std::cerr << "Locus: "<< id() << "\tType: " << loc_feature.feature()
-            << "\tCoords: " << start() << "-" << end() << "\n";
-  show_features();
-}
-
-void Locus::show_features()
-{
-  for(auto& i : features)
+  std::cerr << "Locus: "<< id << "\tType: " << type << "\tCoords:";
+  for(const auto& i : positions)
   {
-    for(auto& j : i.second)
-    {
-      j.second.show();
-    }
-    std::cerr << "\n";
+    std::cerr << "\t" << i.start << "-" << i.end << "\n";
   }
+  // show_features();
 }
 
-void Locus::add_entry(GffEntry e)
+void Locus::extend_with_row(const gff::GffRow& row)
+{
+  for(const auto& i : positions)
+  {
+    if(i.start == row.start && i.end == row.end)
+    {
+      std::cerr << "[ Warning ] Duplicate row detected while extending locus: "<<  id << "\trow: " <<  row.id << "\n";
+      return;
+    }
+  }
+  add_positions(row.start, row.end);
+  std::cerr << "[ Info ] Extended locus: " << id << " with row: " << row.id << " ("<< row.rownum << ")\n";
+}
+
+const std::vector<Locus::Coordinates>& Locus::coordinates() const
+{
+  return positions;
+}
+
+void Locus::add_positions(std::int_fast32_t start, std::int_fast32_t end)
+{
+  positions.emplace(positions.end(), Coordinates{start, end});
+}
+
+
+void Locus::add_feature(const gff::GffRow& row)
 {
   // if(e.id().empty()) //  No ID for entry. Possible, e.g. ENSEMBLE gff's
     // {return;}
@@ -61,7 +73,7 @@ void Locus::add_entry(GffEntry e)
    features.insert({feat.type, std::unordered_map<std::string, Locus::Feature> {{feat.parent_id, feat}}});
   }
 }
-
+/*
 bool Locus::hasFeature(const std::string& level)
   {return features.contains(level);}
 
@@ -154,5 +166,5 @@ const std::unordered_map<std::string, std::unordered_map<std::string, gff::Locus
 {
   return features;
 }
-
+*/
 } // namespace gff

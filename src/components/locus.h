@@ -11,57 +11,43 @@
 #include <vector>
 #include <unordered_map>
 
-#include "gffentry.h"
+
+#include "components/gffrow.h"
+#include "gfftypes.h"
+
 
 namespace gff
 {
 class Locus
 {
   public:
-    class Feature
-    {
-      public:
-        Feature(gff::GffEntry& e);
-        Feature(const std::string& id);
-        ~Feature();
-        std::string id;
-        std::string type;
-        std::string parent_id;
-        std::int_fast32_t start;
-        std::int_fast32_t end;
-        const std::int_fast32_t length() const;
-        void add_entry(gff::GffEntry e);
-        void show_entries();
-        void update_coords(gff::GffEntry e);
-        void show();
-        const std::vector<std::string> get_comment(const std::string& key) const;
-        const std::string& sequence() const;
-        bool hasComment(const std::string& commentkey);
-        bool isSelected = false;
-
-      private:
-        std::vector<gff::GffEntry> entries;
-        void update_length(std::int_fast32_t entry_len);
-        std::int_fast32_t feat_length = 0;
-    };
-
-    Locus(gff::GffEntry e);
+    Locus(const std::string& id, const std::string& type, std::int_fast32_t start, std::int_fast32_t end);
     ~Locus();
-    const std::string& id();
-    const std::int_fast32_t start();
-    const std::int_fast32_t end();
-    void add_feature(gff::GffEntry e);
-    void add_entry(gff::GffEntry e);
+    struct Coordinates
+    {
+      std::int_fast32_t start;
+      std::int_fast32_t end;
+    };
+    std::string id;
+    std::string type;
+    void extend_with_row(const gff::GffRow& row);
+    void add_feature(const gff::GffRow& row);
+    void extend_feature(const gff::GffRow& row);
     void show();
     void show_features();
-    Locus::Feature* find_longest_feature(const std::string& level);
     bool hasFeature(const std::string& level);
-    const std::unordered_map<std::string, std::unordered_map<std::string, gff::Locus::Feature>>& featuremap();
+    const std::vector<Coordinates>& coordinates() const;
+    // void add_feature(gff::GffEntry e);
+    // void add_entry(gff::GffEntry e);
+    // Locus::Feature* find_longest_feature(const std::string& level);
+    // const std::unordered_map<std::string, std::unordered_map<std::string, gff::Locus::Feature>>& featuremap();
 
   private:
+    std::vector<Coordinates> positions;
+    void add_positions(std::int_fast32_t start, std::int_fast32_t end);
     //                    type                          ID          feature
-    std::unordered_map<std::string, std::unordered_map<std::string, gff::Locus::Feature>> features;
-    GffEntry loc_feature;
+    // std::unordered_map<std::string, std::unordered_map<std::string, gff::Locus::Feature>> features;
+    // GffEntry loc_feature;
 };
 
 } // namespace gff

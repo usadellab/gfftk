@@ -5,8 +5,6 @@
 
 #include "components/gffrow.h"
 
-#include <iostream>
-
 namespace gff
 {
   GffRow::GffRow(std::string& gff_row, const std::string& gff_file, int rownum)
