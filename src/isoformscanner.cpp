@@ -11,13 +11,6 @@
 
 #include "isoformscanner.h"
 
-#include <cstdlib>
-#include <iostream>
-#include <getopt.h>
-#include <vector>
-
-#include "gfffile.h"
-
 /**
  * @brief Construct a new Isoform Scanner:: Isoform Scanner object
  *

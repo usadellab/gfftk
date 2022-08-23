@@ -8,7 +8,7 @@
 namespace gff
 {
   GffRow::GffRow(std::string& gff_row, const std::string& gff_file, int rownum)
-    : gff_file(gff_file),rownum(rownum)
+    : rownum(rownum), gff_file(gff_file)
   {
     parse(gff_row);
   }
@@ -20,13 +20,14 @@ namespace gff
   // 1. Store the row vector and create getters ?
   void GffRow::parse(std::string& gffrow)
   {
-    int error = 0;  // for later use
     columns gffcols = linetools::tokenize(gffrow, '\t');
     if(gffcols.size() != expected_columns)
     {
       std::cerr << "[Error] " << gff_file << "::" << rownum << " "
                 << "Unexpected number of columns: " << gffcols.size()
                 << ". Expected: " << expected_columns << "\n";
+      err_code = 100;
+      return;
     }
 
     seqid = gffcols[0];
@@ -44,6 +45,13 @@ namespace gff
       {std::cerr << "Warning: Bad value for phase\n";}
 
     parse_attributes(gffcols[8]);
+    if(!attributes.count(id_key) && !attributes.count(parent_key))
+    {
+      std::cerr << "[Warning] " << gff_file << "::" << rownum << " "
+                << "Invalid GFF entry. Missing ID and Parent attribute\n";
+      err_code = 200;
+      return;
+    }
     if(attributes.count(id_key))
     {
       auto nh = attributes.extract(id_key);

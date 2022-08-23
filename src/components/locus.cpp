@@ -6,13 +6,12 @@
  */
 #include "components/locus.h"
 
-#include <iostream>
-
 namespace gff
 {
 
 Locus::Locus(const std::string& id, const std::string& type, std::int_fast32_t start, std::int_fast32_t end)
- : id(id), type(type), positions{ {start, end} }
+//  : id(id), type(type), positions{ {start, end} }
+: Feature{id, type, start, end}
 {
   // std::cout << "INIT: "<<  e.start << "\t"  << e.end << "\t" << this->start << "\t" << this->end << "\n";
 }
@@ -38,40 +37,29 @@ void Locus::extend_with_row(const gff::GffRow& row)
   {
     if(i.start == row.start && i.end == row.end)
     {
-      std::cerr << "[ Warning ] Duplicate row detected while extending locus: "<<  id << "\trow: " <<  row.id << "\n";
+      std::cerr << "[ Warning ] Duplicate row detected while extending locus: "
+                <<  id << "\trow: " <<  row.id << "\n";
       return;
     }
   }
   add_positions(row.start, row.end);
-  std::cerr << "[ Info ] Extended locus: " << id << " with row: " << row.id << " ("<< row.rownum << ")\n";
+  std::cerr << "[ Info ] Extended locus: " << id << " with row: "
+            << row.id << " ("<< row.rownum << ")\n";
 }
-
-const std::vector<Locus::Coordinates>& Locus::coordinates() const
-{
-  return positions;
-}
-
-void Locus::add_positions(std::int_fast32_t start, std::int_fast32_t end)
-{
-  positions.emplace(positions.end(), Coordinates{start, end});
-}
-
 
 void Locus::add_feature(const gff::GffRow& row)
 {
-  // if(e.id().empty()) //  No ID for entry. Possible, e.g. ENSEMBLE gff's
-    // {return;}
-  gff::Locus::Feature feat(e);
-  if(features.contains(feat.type))
-  {
-    const auto &[it, pass] = features[e.feature()].try_emplace(feat.parent_id, feat);
-    if(!pass)
-      {it->second.update_coords(e);}
-  }
-  else
-  {
-   features.insert({feat.type, std::unordered_map<std::string, Locus::Feature> {{feat.parent_id, feat}}});
-  }
+  gff::Feature* feature = new gff::Feature(row.id, row.type, row.start, row.end);
+  // if(features.contains(feat.type))
+  // {
+  //   const auto &[it, pass] = features[e.feature()].try_emplace(feat.parent_id, feat);
+  //   if(!pass)
+  //     {it->second.update_coords(e);}
+  // }
+  // else
+  // {
+  //  features.insert({feat.type, std::unordered_map<std::string, Locus::Feature> {{feat.parent_id, feat}}});
+  // }
 }
 /*
 bool Locus::hasFeature(const std::string& level)

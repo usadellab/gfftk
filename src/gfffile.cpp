@@ -69,11 +69,17 @@ namespace gff
       }
       gff::GffRow row(line, path, row_num);
       // Add row error checks here
-      if(row.err_code == 1)
+      if(row.err_code == 100)
       {
         std::cerr << "[Error] " << path << "::" << row_num << " "
                   << "Unexpected number of columns. Aborting\n";
         exit(EXIT_FAILURE);
+      }
+      if(row.err_code == 200)
+      {
+        std::cerr << "[Error] " << path << "::" << row_num << " "
+                  << "Invalid GFF entry. Missing ID and Parent attribute. Skipping.\n";
+        return row.err_code;
       }
       // std::cout << row.id << "\n";
       assemble_locus(row);
@@ -138,16 +144,33 @@ namespace gff
     }
     else  //  part-of relation
     {
-      gff::Locus* loc = locus(row.id);
-      if(!loc)
+      std::cout << row.id << "\n";
+      for(const auto& i : row.parents)
       {
-        std::cerr << "Can't find locus " << row.id << " . Skipping\n";
-        // ToDo: If this really happens:
-        // 0. Create temporary locus with this id
-        // 1. If locus is found later, reorganize locus
-        return;
+        if(is_locus(i)) // parent is a locus, add as child feature of locus
+        {
+          gff::Locus* loc = locus(i);
+          loc->add_feature(row);
+          loc->show();
+
+        }
+        else  // get parent and add as child feature of feature
+        {
+
+        }
+        std::cout << "\t" << i << "\n";
       }
-      loc->add_feature(row);
+      // gff::Locus* loc = locus(row.id);
+      // if(!loc)
+      // {
+      //   std::cerr << "Can't find locus " << row.id << " . Skipping\n";
+      //   // ToDo: If this really happens:
+      //   // 0. Create temporary locus with this id
+      //   // 1. If locus is found later, reorganize locus
+      //   // Warn and skip now
+      //   return;
+      // }
+      // loc->add_feature(row);
     }
     //   if(!prevloc.empty())
     //   {
@@ -180,6 +203,12 @@ namespace gff
     //   else {std::cerr << "Error: locus " << lid << "not known\n";}
     // }
   }
+
+  bool GffFile::is_locus(const std::string& locid)
+  {
+    return (loci.count(locid)) ? true : false;
+  }
+
   gff::Locus* GffFile::locus(const std::string& id)
   {
     if(loci.count(id))

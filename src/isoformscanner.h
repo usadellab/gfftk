@@ -10,6 +10,8 @@
 #include <iostream>
 #include <unordered_map>
 #include <vector>
+#include <cstdlib>
+#include <getopt.h>
 
 #include "gfffile.h"
 #include "gffentry.h"

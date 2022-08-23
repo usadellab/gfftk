@@ -34,7 +34,6 @@ namespace gff
     int parse(gff::GffFile::Processor& proc);
 
   private:
-
     std::string path;
     std::ifstream gff_in;
     unsigned int row_num = 0;
@@ -49,6 +48,7 @@ namespace gff
     void extend_locus(gff::Locus* locus, const gff::GffRow& row);
     void delete_loci();
     void clean_up();
+    bool is_locus(const std::string& locid);
     //                    type                          ID          feature
     // std::unordered_map<std::string, std::unordered_map<std::string, gff::Locus::Feature>> features;
     std::unordered_map<std::string, gff::Locus*> loci;

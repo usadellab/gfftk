@@ -14,17 +14,16 @@
 
 #include "components/gffrow.h"
 #include "components/feature.h"
-#include "gfftypes.h"
 
 
 namespace gff
 {
 
-class Locus : public gff::Feature
+class TypeFeature : public gff::Feature
 {
   public:
-    Locus(const std::string& id, const std::string& type, std::int_fast32_t start, std::int_fast32_t end);
-    ~Locus();
+    TypeFeature(const std::string& id, const std::string& type, std::int_fast32_t start, std::int_fast32_t end);
+    ~TypeFeature();
     void extend_with_row(const gff::GffRow& row);
     void add_feature(const gff::GffRow& row);
     void extend_feature(const gff::GffRow& row);
