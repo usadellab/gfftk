@@ -94,7 +94,7 @@ IsoformScanner::~IsoformScanner()
   walk_inorder(root);
 } */
 
-int IsoformScanner::process_entry(gff::GffEntry e, std::unordered_map<std::string, std::vector<std::string>>& header)
+int IsoformScanner::process_entry(gff::Locus* locus)
 {
   // std::cout << e.id() <<  "\n";
   // for(auto& i : header)

@@ -144,21 +144,20 @@ namespace gff
     }
     else  //  part-of relation
     {
-      std::cout << row.id << "\n";
       for(const auto& i : row.parents)
       {
-        if(is_locus(i)) // parent is a locus, add as child feature of locus
+        if(is_locus(i)) // parent is a locus; add as child feature of locus
         {
           gff::Locus* loc = locus(i);
           loc->add_feature(row);
-          loc->show();
+          // loc->show();
 
         }
         else  // get parent and add as child feature of feature
         {
 
         }
-        std::cout << "\t" << i << "\n";
+        // std::cout << "\t" << i << "\n";
       }
       // gff::Locus* loc = locus(row.id);
       // if(!loc)
@@ -228,7 +227,7 @@ namespace gff
       std::cout << "Extended locus " << loci[row.id]->id << "\n";
       return loci[row.id];
     }
-    gff::Locus* locus = new gff::Locus(row.id, row.type, row.start, row.end);
+    gff::Locus* locus = new gff::Locus(row.seqid, row.id, row.source, row.type, row.start, row.end);
     const auto &[it, inserted] = loci.emplace(locus->id, locus);
     if(inserted)
     {

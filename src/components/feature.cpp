@@ -7,12 +7,14 @@
 
 namespace gff
 {
-  Feature::Feature(const std::string& id, const std::string& type, std::int_fast32_t start, std::int_fast32_t end)
-    : id(id), type(type), positions{ {start, end} }
+  Feature::Feature(const std::string& seqid, const std::string& id, const std::string& source, const std::string& type, std::int_fast32_t start, std::int_fast32_t end)
+    : seqid(seqid), id(id), source(source), type(type), positions{ {start, end}}
   {  }
 
   Feature::~Feature()
-  {  }
+  {
+    empty_featuremap();
+  }
 
   void Feature::add_positions(std::int_fast32_t start, std::int_fast32_t end)
   {
@@ -24,9 +26,19 @@ namespace gff
     return positions;
   }
 
-  gff::Feature* Feature::add_feature(gff::Feature*)
+  void Feature::empty_featuremap()
   {
-
+    std::cout << "Feat size: " << features.size() << "\n";
+    for(auto it = features.begin(); it != features.end();)
+    {
+      for(auto itt = it->second.begin(); itt != it->second.end();)
+      {
+        delete(itt->second);
+        itt++;
+      }
+      it++;
+    }
+    features.clear();
+    std::cout << "Feat size: " << features.size() << "\n";
   }
-
 } // namespace gff

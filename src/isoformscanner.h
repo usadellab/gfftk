@@ -14,7 +14,6 @@
 #include <getopt.h>
 
 #include "gfffile.h"
-#include "gffentry.h"
 #include "components/locus.h"
 
 class IsoformScanner : public gff::GffFile::Processor
@@ -22,9 +21,7 @@ class IsoformScanner : public gff::GffFile::Processor
   public:
     IsoformScanner(std::string gffsource, int taxid = 0);
     ~IsoformScanner();
-    int process_entry(gff::GffEntry e,
-                       std::unordered_map<std::string,
-                       std::vector<std::string>>& header);
+    int process_entry(gff::Locus* locus);
     // gff::GffEntry get_feature(const std::string& feature_name);
     // bool hasFeature(const std::string& feature_name);
     // const std::string get_locus_id(gff::GffEntry e);
@@ -42,10 +39,6 @@ class IsoformScanner : public gff::GffFile::Processor
                                            "genome-build-accession",
                                            "genome-version"};
     std::vector<std::string> req_comments = {"protein_id", "locus_tag"};
-    std::unordered_map<std::string, gff::Locus> loci;
-    std::unordered_map<std::string, gff::GffEntry> features;
-    std::string prevloc;
-    void assemble_locus(gff::GffEntry e, std::unordered_map<std::string, std::vector<std::string>>& header);
 };
 
 void usage();

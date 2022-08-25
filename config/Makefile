@@ -3,7 +3,7 @@ CXXFLAGS=-Wall -std=c++20
 VPATH=.:../src
 INCLUDES=-I. -I../src -I/usr/include
 
-objects = linetools.o locus.o gfffile.o gffentry.o isoformscanner.o gffrow.o typefeature.o feature.o
+objects = linetools.o locus.o gfffile.o isoformscanner.o gffrow.o typefeature.o feature.o
 
 .PHONY : all clean
 
@@ -13,27 +13,23 @@ gfffile.o:	gfffile.cpp gfffile.h components/gffrow.h components/locus.h helpers/
 linetools.o:	helpers/linetools.cpp helpers/linetools.h
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
-gffentry.o:	gffentry.cpp gffentry.h helpers/linetools.h
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
-
-locus.o:	components/locus.cpp components/locus.h components/gffrow.h components/feature.h gfftypes.h
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
-
 gffrow.o:	components/gffrow.cpp components/gffrow.h helpers/linetools.h gfftypes.h
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
-feature.o:	components/feature.cpp components/feature.h gfftypes.h
+feature.o:	components/feature.cpp components/feature.h components/gffrow.h gfftypes.h
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
-typefeature.o:	components/typefeature.cpp components/typefeature.h components/feature.h
+typefeature.o:	components/typefeature.cpp components/typefeature.h components/feature.h components/gffrow.h
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
-isoformscanner.o:	isoformscanner.cpp isoformscanner.h gfffile.h gffentry.h components/locus.h
+locus.o:	components/locus.cpp components/locus.h components/gffrow.h components/feature.h components/typefeature.h gfftypes.h
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
+
+isoformscanner.o:	isoformscanner.cpp isoformscanner.h gfffile.h components/locus.h
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
 isoformscanner:	$(objects)
 	$(CXX) $(CXXFLAGS) $(INCLUDES)  -o $@ $+
-
 
 
 clean:

@@ -16,7 +16,6 @@
 #include "components/locus.h"
 #include "components/gffrow.h"
 #include "helpers/linetools.h"
-#include "gffentry.h"
 
 
 namespace gff
@@ -27,7 +26,7 @@ namespace gff
       class Processor
       {
         public:
-          virtual int process_entry(gff::GffEntry e, std::unordered_map<std::string, std::vector<std::string>>& header) = 0;
+          virtual int process_entry(gff::Locus* locus) = 0;
       };
     GffFile(std::string gff_file);
     ~GffFile();

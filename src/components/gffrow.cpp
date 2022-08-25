@@ -7,6 +7,8 @@
 
 namespace gff
 {
+  std::int_fast32_t GffRow::anon_feat_count = 0;
+
   GffRow::GffRow(std::string& gff_row, const std::string& gff_file, int rownum)
     : rownum(rownum), gff_file(gff_file)
   {
@@ -56,6 +58,11 @@ namespace gff
     {
       auto nh = attributes.extract(id_key);
       id = nh.mapped()[0];
+      //std::hash<std::string>{}(seqid+source+type+std::to_string(positions[0].start)+std::to_string(positions[-1].end));
+    }
+    else
+    {
+      id = std::string("anon")+std::to_string(anon_feat_count++);
     }
     if(attributes.count(parent_key))
     {

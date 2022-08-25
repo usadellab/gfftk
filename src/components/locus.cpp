@@ -9,17 +9,12 @@
 namespace gff
 {
 
-Locus::Locus(const std::string& id, const std::string& type, std::int_fast32_t start, std::int_fast32_t end)
-//  : id(id), type(type), positions{ {start, end} }
-: Feature{id, type, start, end}
-{
-  // std::cout << "INIT: "<<  e.start << "\t"  << e.end << "\t" << this->start << "\t" << this->end << "\n";
-}
+Locus::Locus(const std::string& seqid, const std::string& id, const std::string& source, const std::string& type, std::int_fast32_t start, std::int_fast32_t end)
+: Feature{seqid, id, source, type, start, end}
+{ }
 
 Locus::~Locus()
-{
-  // std::cout <<"Destructing\t" << this->end << " \n";
-}
+{ }
 
 void Locus::show()
 {
@@ -47,23 +42,35 @@ void Locus::extend_with_row(const gff::GffRow& row)
             << row.id << " ("<< row.rownum << ")\n";
 }
 
-void Locus::add_feature(const gff::GffRow& row)
+gff::Feature* Locus::add_feature(const gff::GffRow& row)
 {
-  gff::Feature* feature = new gff::Feature(row.id, row.type, row.start, row.end);
-  // if(features.contains(feat.type))
-  // {
-  //   const auto &[it, pass] = features[e.feature()].try_emplace(feat.parent_id, feat);
-  //   if(!pass)
-  //     {it->second.update_coords(e);}
-  // }
-  // else
-  // {
-  //  features.insert({feat.type, std::unordered_map<std::string, Locus::Feature> {{feat.parent_id, feat}}});
-  // }
+  std::cout << row.id << "\t" << row.type << "----------------------\n";
+  if(features.count(row.type))  // feature exists at locus.
+  {
+      // 0. Get feature type entry
+      // 1. Get paret either same ID or same parent(s)
+      // 2. extend feature
+  }
+  else  // feature type and feature do not exis at locus
+  {
+      // 0. Add new feature type, e.g. mRNA
+      // 1. Add new feature to specified type
+
+    std::cout << "NEW FEATURE: " << row.id << "\t" << row.type << "\n";
+    const auto &[it, pass] = features.try_emplace(row.type, std::unordered_map<std::string, gff::Feature*>{});
+    // gff::TypeFeature* feature = new gff::TypeFeature(row.seqid, row.id, row.source, row.type, row.start, row.end);
+    // store_feature(feature);
+    for(const auto& i: features)
+    {
+      std::cout << "\t\t" << i.first << "\n";
+      for(const auto& j : i.second)
+      {
+        std::cout << j.first << "\t" << j.second->id << "\n";
+      }
+    }
+  }
 }
 /*
-bool Locus::hasFeature(const std::string& level)
-  {return features.contains(level);}
 
 Locus::Feature* Locus::find_longest_feature(const std::string& level)
 {
@@ -92,21 +99,6 @@ Locus::Feature* Locus::find_longest_feature(const std::string& level)
   return long_feat;
 }
 
-Locus::Feature::Feature(GffEntry& e)
- : id(e.id()), type(e.feature()), parent_id(e.parent()), start(e.start()), end(e.end())
-{
-  update_length(e.length());
-  entries.push_back(e);
-}
-
-Locus::Feature::Feature(const std::string& parent_id)
- : parent_id(parent_id)
-{ }
-
-Locus::Feature::~Feature(){ }
-
-const std::int_fast32_t Locus::Feature::length() const
-  {return feat_length;}
 
 void Locus::Feature::update_coords(GffEntry e)
 {
@@ -117,42 +109,6 @@ void Locus::Feature::update_coords(GffEntry e)
     {end = e.end();}
   add_entry(e);
 }
-
-void Locus::Feature::update_length(std::int_fast32_t entry_len)
-  {feat_length += entry_len;}
-
-void Locus::Feature::add_entry(GffEntry e)
-  {entries.push_back(e);}
-
-void Locus::Feature::show_entries()
-{
-  for(auto& i : entries)
-  {
-    i.show();
-  }
-}
-
-void Locus::Feature::show()
-{
-  std::cerr << "\n\t" "Feature: " << id << "\t" << type << "\t"
-            << start << "-" << end << "\t" << length() << "\n\tEntries:\n";
-  show_entries();
-}
-
-const std::vector<std::string> Locus::Feature::get_comment(const std::string& key) const
-  {return entries.front().get_comment(key);}
-
-const std::string& Locus::Feature::sequence() const
-  {return entries.front().sequence();}
-
-bool Locus::Feature::hasComment(const std::string& commentkey)
-{
-  return entries.front().hasComment(commentkey);
-}
-
-const std::unordered_map<std::string, std::unordered_map<std::string, gff::Locus::Feature>>& Locus::featuremap()
-{
-  return features;
-}
 */
+
 } // namespace gff

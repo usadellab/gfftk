@@ -28,12 +28,13 @@ namespace gff
       int strand;
       int phase;
       std::vector<std::string> parents;
-      int err_code;
       int rownum;
+      int err_code;
       void parse(std::string& gffrow);
       const attributemap& comment(const std::string& comment); // ToDo
 
     private:
+      constinit static std::int_fast32_t anon_feat_count;
       const std::string& gff_file;
       const long unsigned int expected_columns = 9;
       int convert_strand(const std::string&) const;
