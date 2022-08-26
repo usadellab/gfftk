@@ -28,7 +28,7 @@ namespace gff
 
   void Feature::empty_featuremap()
   {
-    std::cout << "Feat size: " << features.size() << "\n";
+    std::cout << "On: " << id << ": predel feat size: " << features.size() << "\n";
     for(auto it = features.begin(); it != features.end();)
     {
       for(auto itt = it->second.begin(); itt != it->second.end();)
@@ -39,6 +39,6 @@ namespace gff
       it++;
     }
     features.clear();
-    std::cout << "Feat size: " << features.size() << "\n";
+    std::cout << "On: " << id << ": postdel feat size: " << features.size() << "\n";
   }
 } // namespace gff

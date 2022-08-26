@@ -18,4 +18,9 @@ namespace gff
   {
     // std::cout <<"Destructing\t" << this->end << " \n";
   }
+
+  gff::Feature* TypeFeature::add_feature(const gff::GffRow& row)
+  {
+
+  }
 }

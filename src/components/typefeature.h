@@ -28,7 +28,7 @@ class TypeFeature : public gff::Feature
     // void add_feature(const gff::GffRow& row);
     // void extend_feature(const gff::GffRow& row);
     // void show();
-    // void add_feature(gff::GffEntry e);
+    gff::Feature* add_feature(const gff::GffRow& row);
     // void add_entry(gff::GffEntry e);
     // Locus::Feature* find_longest_feature(const std::string& level);
     // const std::unordered_map<std::string, std::unordered_map<std::string, gff::Locus::Feature>>& featuremap();
