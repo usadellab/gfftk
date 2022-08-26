@@ -41,4 +41,37 @@ namespace gff
     features.clear();
     std::cout << "On: " << id << ": postdel feat size: " << features.size() << "\n";
   }
+
+  const Feature::typemap& Feature::get_type_features(const std::string& type) const
+  {
+    if(features.count(type)) // check if feature exist
+    {
+      return features.at(type);
+    }
+    return typemap {};
+  }
+
+  void Feature::add_parent(gff::Feature* parent)
+  {
+    const auto &[it, inserted] = parents.try_emplace(parent->id, parent);
+    if(!inserted)
+    {
+      std::cout << "Insertion of parnent: " << parent->id << " failed\n";
+      exit(EXIT_FAILURE);
+    }
+  }
+
+  gff::Feature* Feature::get_parent(const std::string& parent_id) const
+  {
+    if(parents.count(parent_id))
+    {
+      return parents.at(parent_id);
+    }
+    return nullptr;
+  }
+
+  // bool Feature::is_parent(const std::string& parent_id)
+  // {
+  //   if
+  // }
 } // namespace gff

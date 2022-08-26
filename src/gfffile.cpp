@@ -155,7 +155,11 @@ namespace gff
         }
         else  // get parent and add as child feature of feature
         {
-
+          std::cerr << "[Info] " << path << "::" << row_num << " " << "subfeat: " << row.id << "\t" << row.type << "\n";
+          for(auto & i: row.parents)
+          {
+            std::cerr << "\tparent: " << i << "\n";
+          }
         }
         // std::cout << "\t" << i << "\n";
       }

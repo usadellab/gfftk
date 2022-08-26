@@ -26,16 +26,21 @@ namespace gff
       std::string source;
       std::string type;
       const std::vector<Coordinates>& coordinates() const;
+      void add_parent(gff::Feature* parent);
+      gff::Feature* get_parent(const std::string& parent_id) const;
+      // bool is_parent(const std::string& parent_id);
 
     protected:
       std::vector<Coordinates> positions;
-      std::set<gff::Feature*> parents;
-      std::set<gff::Feature*> children;
+      std::unordered_map<std::string, gff::Feature*> parents;
+      std::unordered_map<std::string, gff::Feature*> children;
       //                                    feattype                            featid        feat
       using featuremap = std::unordered_map<std::string, std::unordered_map<std::string, gff::Feature*>>;
+      using typemap = std::unordered_map<std::string, gff::Feature*>;
       featuremap features;
       void add_positions(std::int_fast32_t start, std::int_fast32_t end);
       virtual gff::Feature* add_feature(const gff::GffRow& row) = 0;
+      const typemap& get_type_features(const std::string& type) const;
       // void add_parent(s);
       void empty_featuremap();
   };

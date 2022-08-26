@@ -48,26 +48,51 @@ gff::Feature* Locus::add_feature(const gff::GffRow& row)
   const auto &[it, inserted] = features.try_emplace(row.type, std::unordered_map<std::string, gff::Feature*>{});
   if(inserted)  // feature type and feature do not exis at locus
   {
-     // 0. Add new feature type, e.g. mRNA
-     // 1. Add new feature to specified type
-     std::cout << "inserted new feature " << row.id << "\n";
-     gff::TypeFeature* feat = new gff::TypeFeature(row.seqid, row.id, row.source, row.type, row.start, row.end);
-     const auto &[it, inserted] = features[row.type].emplace(row.id, feat);
-     if(inserted)
-     {
-       std::cout << "inserted feature " << feat->id << " in " << feat->type << "\n";
-     }
-     else
-     {
-       std::cout << "insertion of feature " << feat->id << " in " << feat->type << "failed\n";
-     }
-   }
-  else // feature exists at locus
+    // 0. Add new feature type, e.g. mRNA
+    // 1. Add new feature to specified type
+    std::cout << "inserted new feature " << row.id << "\n";
+    gff::TypeFeature* feat = new gff::TypeFeature(row.seqid, row.id, row.source, row.type, row.start, row.end);
+    const auto &[it, inserted] = features[row.type].emplace(row.id, feat);
+    if(inserted)
+    {
+      feat->add_parent(this);
+      std::cout << "inserted feature " << feat->id << " in " << feat->type << "\n";
+      return feat;
+    }
+    std::cout << "insertion failed of feature " << feat->id << " in " << feat->type << "\n";
+    return nullptr;
+  }
+  else // feature of this type exists at locus
   {
     // 0. Get feature type entry
     // 1. Get paret either same ID or same parent(s)
     // 2. extend feature
     std::cout << "EXISTING FEATURE: " << row.id << "\t" << row.type << "\n";
+    const Feature::typemap& types = get_type_features(row.type);
+    if(types.count(row.id))
+    {
+      std::cout << "EXTEND EXISTING FEATURE: " << row.id << "\t" << row.type << "\n";
+    }
+    else // screen parents to find
+    {
+
+      for(const auto& j : types)
+      {
+        bool typefeat_has_parent = true;
+        for(const auto& i : row.parents)
+        {
+          if(!j.second->get_parent(i))
+          {
+            typefeat_has_parent = false;
+          }
+        }
+        if(typefeat_has_parent)
+        {
+          std::cout << "SHARED PARENTS: " << row.id << "\t" << row.type << "\t<->\t"
+                    << j.second->id << "\t" << j.second->type << "\n";
+        }
+      }
+    }
   }
 
   for(const auto& i: features)
@@ -79,6 +104,7 @@ gff::Feature* Locus::add_feature(const gff::GffRow& row)
       }
     }
 }
+
 /*
 
 Locus::Feature* Locus::find_longest_feature(const std::string& level)
