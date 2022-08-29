@@ -28,11 +28,12 @@ namespace gff
 
   void Feature::empty_featuremap()
   {
-    std::cout << "On: " << id << ": predel feat size: " << features.size() << "\n";
+    std::cout << "Feature : " << id << " : stored subfeatures: " << features.size() << "\n";
     for(auto it = features.begin(); it != features.end();)
     {
       for(auto itt = it->second.begin(); itt != it->second.end();)
       {
+        std::cout << "\tDeleting : " << itt ->second->id << "\n";
         delete(itt->second);
         itt++;
       }
@@ -56,7 +57,17 @@ namespace gff
     const auto &[it, inserted] = parents.try_emplace(parent->id, parent);
     if(!inserted)
     {
-      std::cout << "Insertion of parnent: " << parent->id << " failed\n";
+      std::cout << "Insertion of parent: " << parent->id << " failed\n";
+      exit(EXIT_FAILURE);
+    }
+  }
+
+  void Feature::add_child(gff::Feature* child)
+  {
+    const auto &[it, inserted] = children.try_emplace(child->id, child);
+    if(!inserted)
+    {
+      std::cout << "Insertion of child: " << child->id << " failed\n";
       exit(EXIT_FAILURE);
     }
   }
@@ -70,8 +81,9 @@ namespace gff
     return nullptr;
   }
 
-  // bool Feature::is_parent(const std::string& parent_id)
-  // {
-  //   if
-  // }
+  const std::unordered_map<std::string, gff::Feature*>& Feature::get_parents()
+  {
+    return parents;
+  }
+
 } // namespace gff

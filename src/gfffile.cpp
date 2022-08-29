@@ -138,6 +138,7 @@ namespace gff
   {
     if(row.parents.empty())  //  new locus
     {
+      // ToDo: double check if locus already exists
       std::cerr << "[Info] " << path << "::" << row_num << " " << "New Locus: " << row.id << "\n";
       gff::Locus* locus = add_locus(row);
       locus->show();
@@ -151,19 +152,16 @@ namespace gff
           gff::Locus* loc = locus(i);
           loc->add_feature(row);
           // loc->show();
-
         }
-        else  // get parent and add as child feature of feature
-        {
-          std::cerr << "[Info] " << path << "::" << row_num << " " << "subfeat: " << row.id << "\t" << row.type << "\n";
-          for(auto & i: row.parents)
-          {
-            std::cerr << "\tparent: " << i << "\n";
-          }
-        }
-        // std::cout << "\t" << i << "\n";
+        // else  // get parent and add as child feature of feature
+        // {
+        //   std::cerr << "[Info] " << path << "::" << row_num << " " << "subfeat: " << row.id << "\t" << row.type << "\n";
+        //   for(auto & i: row.parents)
+        //   {
+        //     std::cerr << "\tparent: " << i << "\n";
+        //   }
+        // }
       }
-      // gff::Locus* loc = locus(row.id);
       // if(!loc)
       // {
       //   std::cerr << "Can't find locus " << row.id << " . Skipping\n";
@@ -252,12 +250,12 @@ namespace gff
 
   void GffFile::delete_loci()
   {
-    std::cout << "Loci size: " << loci.size() << "\n";
+    std::cout << "Stored loci: " << loci.size() << "\n";
     for(auto it = loci.cbegin(); it != loci.cend();)
     {
       delete(it->second);
       it = loci.erase(it++);
     }
-    std::cout << "Loci size: " << loci.size() << "\n";
+    std::cout << "Deleted stored loci: " << loci.size() << "\n";
   }
 }//end namespace gff

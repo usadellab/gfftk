@@ -44,65 +44,27 @@ void Locus::extend_with_row(const gff::GffRow& row)
 
 gff::Feature* Locus::add_feature(const gff::GffRow& row)
 {
-  std::cout << row.id << "\t" << row.type << "----------------------\n";
-  const auto &[it, inserted] = features.try_emplace(row.type, std::unordered_map<std::string, gff::Feature*>{});
-  if(inserted)  // feature type and feature do not exis at locus
+  std::cout << "Inserting feature type " << row.type << " to " << this->id << ":\t";
+  const auto &[it_typ, inserted_type] = features.try_emplace(row.type, std::unordered_map<std::string, gff::Feature*>{});
+  // get parent feature
+  if(inserted_type)  // feature type does not exis at locus
   {
-    // 0. Add new feature type, e.g. mRNA
-    // 1. Add new feature to specified type
-    std::cout << "inserted new feature " << row.id << "\n";
-    gff::TypeFeature* feat = new gff::TypeFeature(row.seqid, row.id, row.source, row.type, row.start, row.end);
-    const auto &[it, inserted] = features[row.type].emplace(row.id, feat);
-    if(inserted)
-    {
-      feat->add_parent(this);
-      std::cout << "inserted feature " << feat->id << " in " << feat->type << "\n";
-      return feat;
-    }
-    std::cout << "insertion failed of feature " << feat->id << " in " << feat->type << "\n";
-    return nullptr;
+    std::cout << "new feature type\n";
   }
-  else // feature of this type exists at locus
+  gff::TypeFeature* feat = new gff::TypeFeature(row.seqid, row.id, row.source, row.type, row.start, row.end);
+  // 0. Get feature type entry
+  // 1. Get paret either same ID or same parent(s) ?
+  const auto &[it, inserted_feat] = features[feat->type].try_emplace(feat->id, feat);
+  if(inserted_feat)
   {
-    // 0. Get feature type entry
-    // 1. Get paret either same ID or same parent(s)
+    feat->add_parent(this);
+    std::cout << "Inserted " << feat->id << " as " << feat->type << " with parent: " << this->id << "\n";
+    return feat;
+  }
     // 2. extend feature
-    std::cout << "EXISTING FEATURE: " << row.id << "\t" << row.type << "\n";
-    const Feature::typemap& types = get_type_features(row.type);
-    if(types.count(row.id))
-    {
-      std::cout << "EXTEND EXISTING FEATURE: " << row.id << "\t" << row.type << "\n";
-    }
-    else // screen parents to find
-    {
-
-      for(const auto& j : types)
-      {
-        bool typefeat_has_parent = true;
-        for(const auto& i : row.parents)
-        {
-          if(!j.second->get_parent(i))
-          {
-            typefeat_has_parent = false;
-          }
-        }
-        if(typefeat_has_parent)
-        {
-          std::cout << "SHARED PARENTS: " << row.id << "\t" << row.type << "\t<->\t"
-                    << j.second->id << "\t" << j.second->type << "\n";
-        }
-      }
-    }
-  }
-
-  for(const auto& i: features)
-    {
-      std::cout << "\t\t" << i.first << "\n";
-      for(const auto& j : i.second)
-      {
-        std::cout << j.first << "\t" << j.second->id << "\n";
-      }
-    }
+    std::cout << "ToDo: Extending " << features[feat->type][feat->id] << "\n";
+    return features[feat->type][feat->id];
+  // or create new parent feature
 }
 
 /*
