@@ -16,7 +16,7 @@ namespace gff
   using position = std::int_fast32_t;
   using Coordinates = struct GffCoordinates
                       {
-                        std::int_fast32_t start;
-                        std::int_fast32_t end;
+                        position start;
+                        position end;
                       };
 } // end namespace gff

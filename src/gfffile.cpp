@@ -68,7 +68,7 @@ namespace gff
         continue;
       }
       gff::GffRow row(line, path, row_num);
-      // Add row error checks here
+      // ToDo: Add row error checks here
       if(row.err_code == 100)
       {
         std::cerr << "[Error] " << path << "::" << row_num << " "
@@ -81,7 +81,6 @@ namespace gff
                   << "Invalid GFF entry. Missing ID and Parent attribute. Skipping.\n";
         return row.err_code;
       }
-      // std::cout << row.id << "\n";
       assemble_locus(row);
       // entry_status = proc.process_entry(e, directives);
     }
@@ -89,26 +88,11 @@ namespace gff
     std::cout << "====== Feature summary ======\n";
     for(const auto &i : features)
     {
-      /* std::cout << i.first << ":\n";
-      for(const auto& j : i.second->get_children())
-      {
-        std::cout << "\t" << j.first << "\n";
-        for(const auto& k : j.second)
-        {
-          std::cout << "\t\t" << k.second->id << "\t";
-          for(const auto& l : k.second->coordinates())
-          {
-            std::cout << "\t\t\t" << l.start << "\t" << l.end << "\n";
-          }
-        }
-      } */
       if(i.second->is_locus())
       {
         walk_features(i.second, 0);
       }
     }
-    // gff::GffEntry fake;
-    // entry_status = proc.process_entry(fake, directives);
     return entry_status;
   }
 

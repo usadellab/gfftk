@@ -69,17 +69,5 @@ Locus::Feature* Locus::find_longest_feature(const std::string& level)
   }
   return long_feat;
 }
-
-
-void Locus::Feature::update_coords(GffEntry e)
-{
-  update_length(e.length());
-  if(e.start() < start)
-    {start = e.start();}
-  if(e.end() > end)
-    {end = e.end();}
-  add_entry(e);
-}
 */
-
 } // namespace gff
