@@ -14,7 +14,9 @@
 #include <filesystem>
 
 #include "components/locus.h"
+#include "components/typefeature.h"
 #include "components/gffrow.h"
+#include "gfftypes.h"
 #include "helpers/linetools.h"
 
 
@@ -31,6 +33,8 @@ namespace gff
     GffFile(std::string gff_file);
     ~GffFile();
     int parse(gff::GffFile::Processor& proc);
+    gff::TypeFeature* add_feature(const gff::GffRow& row);
+    gff::TypeFeature* get_feature(const std::string& id);
 
   private:
     std::string path;
@@ -42,14 +46,12 @@ namespace gff
     std::unordered_map<std::string, std::vector<std::string>> directives;
     void show_attribute(const std::string& key, const std::unordered_map<std::string, std::vector<std::string>>) const;
     void assemble_locus(const gff::GffRow& row);
-    gff::Locus* add_locus(const gff::GffRow& row);
-    gff::Locus* locus(const std::string& id);
-    void extend_locus(gff::Locus* locus, const gff::GffRow& row);
-    void delete_loci();
+    void empty_features();
     void clean_up();
-    bool is_locus(const std::string& locid);
+    void walk_features(const gff::Feature* feat, int level);
     //                    type                          ID          feature
     // std::unordered_map<std::string, std::unordered_map<std::string, gff::Locus::Feature>> features;
-    std::unordered_map<std::string, gff::Locus*> loci;
+    using featuremap = std::unordered_map<std::string, gff::TypeFeature*>;
+    featuremap features;
   };
 }//end gff namespace

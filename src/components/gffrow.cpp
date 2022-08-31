@@ -88,9 +88,9 @@ namespace gff
       std::vector<std::string> comment = linetools::tokenize(linetools::strip(i), '=');
       if(comment.size() != 2)
       {
-        std::cerr << "WARNING: Skipping invalid key-value comment on line :" << rownum <<
-                      "\n\tComment nr: " << comment_count     <<
-                      "\n\tComment key: " << comment.front()  << "\n";
+        std::cerr << "WARNING: Skipping invalid key-value comment on line :"
+                   << rownum << "\tComment nr: " << comment_count
+                   << "\tComment key: " << comment.front()  << "\n";
       }
       else
       {

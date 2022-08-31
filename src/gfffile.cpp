@@ -85,9 +85,48 @@ namespace gff
       assemble_locus(row);
       // entry_status = proc.process_entry(e, directives);
     }
+
+    std::cout << "====== Feature summary ======\n";
+    for(const auto &i : features)
+    {
+      /* std::cout << i.first << ":\n";
+      for(const auto& j : i.second->get_children())
+      {
+        std::cout << "\t" << j.first << "\n";
+        for(const auto& k : j.second)
+        {
+          std::cout << "\t\t" << k.second->id << "\t";
+          for(const auto& l : k.second->coordinates())
+          {
+            std::cout << "\t\t\t" << l.start << "\t" << l.end << "\n";
+          }
+        }
+      } */
+      if(i.second->is_locus())
+      {
+        walk_features(i.second, 0);
+      }
+    }
     // gff::GffEntry fake;
     // entry_status = proc.process_entry(fake, directives);
     return entry_status;
+  }
+
+  void GffFile::walk_features(const gff::Feature* feat, int level)
+  {
+    std::cout << std::string(level, '\t') << feat->id << "\t" << feat->type <<  "\n";
+    if(feat->get_children().size())
+    {
+      ++level;
+      for(auto& i : feat->get_children())
+      {
+        for(auto& j : i.second)
+        {
+          walk_features(j.second, level);
+        }
+      }
+      --level;
+    }
   }
 
   void GffFile::parse_directive(const std::string& line)
@@ -134,45 +173,55 @@ namespace gff
     }
   }
 
+  gff::TypeFeature* GffFile::add_feature(const gff::GffRow& row)
+  {
+    gff::TypeFeature* feat = new gff::TypeFeature(row.seqid, row.id, row.source, row.type, row.start, row.end);
+    std::cout << "[Info] " << feat->id << "\t" << feat->type << "\t";
+    for(const auto &i : row.parents)
+    {
+      feat->add_parent(get_feature(i));
+    }
+
+    const auto &[it, inserted] = features.try_emplace(feat->id, feat);
+    if(inserted)  // feature type does not exist at locus
+    {
+      std::cout << "\tinserted\n";
+      return feat;
+    }
+    if(feat->is_duplicate(it->second)) // check for duplicate entry
+    {
+      std::cerr << "[Warning] identified likely identical features" << path << "::" << row_num
+                << " " << it->second->id << " and " << feat->id << "\n";
+      delete feat;
+      return nullptr;
+    }
+    std::cerr << "\textending with " << it->second->id << "\n";
+    if(!it->second->extend_with(feat))
+    {
+      std::cerr << "[Warning] Extending " << feat->id << " with " << it->second
+                << "failed\n";
+      return nullptr;
+    }
+    delete feat;
+    return it->second;
+  }
+
+  gff::TypeFeature* GffFile::get_feature(const std::string& id)
+  {
+    if(features.count(id))
+    {
+      return features[id];
+    }
+    std::cerr << "Warning: feature " << id << " not found\n";
+    return nullptr;
+  }
+
   void GffFile::assemble_locus(const gff::GffRow& row)
   {
-    if(row.parents.empty())  //  new locus
-    {
-      // ToDo: double check if locus already exists
-      std::cerr << "[Info] " << path << "::" << row_num << " " << "New Locus: " << row.id << "\n";
-      gff::Locus* locus = add_locus(row);
-      locus->show();
-    }
-    else  //  part-of relation
-    {
-      for(const auto& i : row.parents)
-      {
-        if(is_locus(i)) // parent is a locus; add as child feature of locus
-        {
-          gff::Locus* loc = locus(i);
-          loc->add_feature(row);
-          // loc->show();
-        }
-        // else  // get parent and add as child feature of feature
-        // {
-        //   std::cerr << "[Info] " << path << "::" << row_num << " " << "subfeat: " << row.id << "\t" << row.type << "\n";
-        //   for(auto & i: row.parents)
-        //   {
-        //     std::cerr << "\tparent: " << i << "\n";
-        //   }
-        // }
-      }
-      // if(!loc)
-      // {
-      //   std::cerr << "Can't find locus " << row.id << " . Skipping\n";
-      //   // ToDo: If this really happens:
-      //   // 0. Create temporary locus with this id
-      //   // 1. If locus is found later, reorganize locus
-      //   // Warn and skip now
-      //   return;
-      // }
-      // loc->add_feature(row);
-    }
+    // std::cerr << "[Info] " << path << "::" << row_num << " " << "New Locus: " << row.id << "\n";
+    gff::Feature* feat = add_feature(row);
+
+      // locus->show();
     //   if(!prevloc.empty())
     //   {
     //     std::cerr << "Assessing\n";
@@ -205,57 +254,22 @@ namespace gff
     // }
   }
 
-  bool GffFile::is_locus(const std::string& locid)
-  {
-    return (loci.count(locid)) ? true : false;
-  }
-
-  gff::Locus* GffFile::locus(const std::string& id)
-  {
-    if(loci.count(id))
-    {
-      return loci[id];
-    }
-    std::cerr << "[Warning] " << path << "::" << row_num << " "
-              << "Trying to access unknown locus " << id << "\n";
-    return nullptr;
-  }
-
-  gff::Locus* GffFile::add_locus(const gff::GffRow& row)
-  {
-    if(loci.count(row.id))
-    {
-      loci[row.id]->extend_with_row(row);
-      std::cout << "Extended locus " << loci[row.id]->id << "\n";
-      return loci[row.id];
-    }
-    gff::Locus* locus = new gff::Locus(row.seqid, row.id, row.source, row.type, row.start, row.end);
-    const auto &[it, inserted] = loci.emplace(locus->id, locus);
-    if(inserted)
-    {
-      std::cout << "Inserted locus " << locus->id << "\n";
-      return locus;
-    }
-    std::cerr << "[Error] " << path << "::" << row_num << " "
-              << "Storing locus " << locus->id << "failed. Aborting\n";
-    clean_up();
-    exit(EXIT_FAILURE);
-  }
 
   void GffFile::clean_up()
   {
-    delete_loci();
+    empty_features();
     close();
   }
 
-  void GffFile::delete_loci()
+  void GffFile::empty_features()
   {
-    std::cout << "Stored loci: " << loci.size() << "\n";
-    for(auto it = loci.cbegin(); it != loci.cend();)
+    std::cout << "Stored features: " << features.size() << "\n";
+    for(auto it = features.cbegin(); it != features.cend();)
     {
+      std::cerr << "[Info] Deleting " << it->first << "\n";
       delete(it->second);
-      it = loci.erase(it++);
+      it = features.erase(it++);
     }
-    std::cout << "Deleted stored loci: " << loci.size() << "\n";
+    std::cout << "Remaining features: " << features.size() << "\n";
   }
 }//end namespace gff

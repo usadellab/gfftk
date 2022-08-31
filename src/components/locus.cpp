@@ -9,7 +9,7 @@
 namespace gff
 {
 
-Locus::Locus(const std::string& seqid, const std::string& id, const std::string& source, const std::string& type, std::int_fast32_t start, std::int_fast32_t end)
+Locus::Locus(const std::string& seqid, const std::string& id, const std::string& source, const std::string& type, position start, position end)
 : Feature{seqid, id, source, type, start, end}
 { }
 
@@ -41,32 +41,6 @@ void Locus::extend_with_row(const gff::GffRow& row)
   std::cerr << "[ Info ] Extended locus: " << id << " with row: "
             << row.id << " ("<< row.rownum << ")\n";
 }
-
-gff::Feature* Locus::add_feature(const gff::GffRow& row)
-{
-  std::cout << "Inserting feature type " << row.type << " to " << this->id << ":\t";
-  const auto &[it_typ, inserted_type] = features.try_emplace(row.type, std::unordered_map<std::string, gff::Feature*>{});
-  // get parent feature
-  if(inserted_type)  // feature type does not exis at locus
-  {
-    std::cout << "new feature type\n";
-  }
-  gff::TypeFeature* feat = new gff::TypeFeature(row.seqid, row.id, row.source, row.type, row.start, row.end);
-  // 0. Get feature type entry
-  // 1. Get paret either same ID or same parent(s) ?
-  const auto &[it, inserted_feat] = features[feat->type].try_emplace(feat->id, feat);
-  if(inserted_feat)
-  {
-    feat->add_parent(this);
-    std::cout << "Inserted " << feat->id << " as " << feat->type << " with parent: " << this->id << "\n";
-    return feat;
-  }
-    // 2. extend feature
-    std::cout << "ToDo: Extending " << features[feat->type][feat->id] << "\n";
-    return features[feat->type][feat->id];
-  // or create new parent feature
-}
-
 /*
 
 Locus::Feature* Locus::find_longest_feature(const std::string& level)

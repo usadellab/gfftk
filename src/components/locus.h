@@ -24,10 +24,9 @@ namespace gff
 class Locus : public gff::Feature
 {
   public:
-    Locus(const std::string& seqid, const std::string& id, const std::string& source, const std::string& type, std::int_fast32_t start, std::int_fast32_t end);
+    Locus(const std::string& seqid, const std::string& id, const std::string& source, const std::string& type, position start, position end);
     ~Locus();
     void extend_with_row(const gff::GffRow& row);
-    gff::Feature* add_feature(const gff::GffRow& row);
     void show();
     // Locus::Feature* find_longest_feature(const std::string& level);
     // const std::unordered_map<std::string, std::unordered_map<std::string, gff::Locus::Feature>>& featuremap();

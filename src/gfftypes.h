@@ -13,6 +13,7 @@ namespace gff
 {
   using attributemap = std::unordered_map<std::string, std::vector<std::string>>;
   using columns = std::vector<std::string>;
+  using position = std::int_fast32_t;
   using Coordinates = struct GffCoordinates
                       {
                         std::int_fast32_t start;

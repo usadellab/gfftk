@@ -22,13 +22,12 @@ namespace gff
 class TypeFeature : public gff::Feature
 {
   public:
-    TypeFeature(const std::string& seqid, const std::string& id, const std::string& source, const std::string& type, std::int_fast32_t start, std::int_fast32_t end);
+    TypeFeature(const std::string& seqid, const std::string& id, const std::string& source, const std::string& type, position start, position end);
     ~TypeFeature();
     // void extend_with_row(const gff::GffRow& row);
     // void add_feature(const gff::GffRow& row);
     // void extend_feature(const gff::GffRow& row);
     // void show();
-    gff::Feature* add_feature(const gff::GffRow& row);
     // void add_entry(gff::GffEntry e);
     // Locus::Feature* find_longest_feature(const std::string& level);
     // const std::unordered_map<std::string, std::unordered_map<std::string, gff::Locus::Feature>>& featuremap();

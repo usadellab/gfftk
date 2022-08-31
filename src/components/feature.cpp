@@ -7,16 +7,14 @@
 
 namespace gff
 {
-  Feature::Feature(const std::string& seqid, const std::string& id, const std::string& source, const std::string& type, std::int_fast32_t start, std::int_fast32_t end)
+  Feature::Feature(const std::string& seqid, const std::string& id, const std::string& source, const std::string& type, position start, position end)
     : seqid(seqid), id(id), source(source), type(type), positions{ {start, end}}
   {  }
 
   Feature::~Feature()
-  {
-    empty_featuremap();
-  }
+  {  }
 
-  void Feature::add_positions(std::int_fast32_t start, std::int_fast32_t end)
+  void Feature::add_positions(const position start, const position end)
   {
     positions.emplace(positions.end(), Coordinates{start, end});
   }
@@ -26,49 +24,62 @@ namespace gff
     return positions;
   }
 
-  void Feature::empty_featuremap()
+  // void Feature::empty_featuremap()
+  // {
+  //   std::cout << "Feature : " << id << " : stored subfeatures: " << features.size() << "\n";
+  //   for(auto it = features.begin(); it != features.end();)
+  //   {
+  //     for(auto itt = it->second.begin(); itt != it->second.end();)
+  //     {
+  //       std::cout << "\tDeleting : " << itt ->second->id << "\n";
+  //       delete(itt->second);
+  //       itt++;
+  //     }
+  //     it++;
+  //   }
+  //   features.clear();
+  //   std::cout << "On: " << id << ": postdel feat size: " << features.size() << "\n";
+  // }
+
+  bool Feature::is_locus()
   {
-    std::cout << "Feature : " << id << " : stored subfeatures: " << features.size() << "\n";
-    for(auto it = features.begin(); it != features.end();)
-    {
-      for(auto itt = it->second.begin(); itt != it->second.end();)
-      {
-        std::cout << "\tDeleting : " << itt ->second->id << "\n";
-        delete(itt->second);
-        itt++;
-      }
-      it++;
-    }
-    features.clear();
-    std::cout << "On: " << id << ": postdel feat size: " << features.size() << "\n";
+    return parents.empty();
   }
 
-  const Feature::typemap& Feature::get_type_features(const std::string& type) const
+  const std::unordered_map<std::string, gff::Feature*>& Feature::get_kids()
   {
-    if(features.count(type)) // check if feature exist
+    std::unordered_map<std::string, gff::Feature*> kids;
+    for(auto& i : children)
     {
-      return features.at(type);
+      for(auto& j : i.second)
+      {
+        kids[j.first] = j.second;
+      }
     }
-    return typemap {};
+    return kids;
   }
 
   void Feature::add_parent(gff::Feature* parent)
   {
     const auto &[it, inserted] = parents.try_emplace(parent->id, parent);
-    if(!inserted)
+    if(inserted)
     {
-      std::cout << "Insertion of parent: " << parent->id << " failed\n";
-      exit(EXIT_FAILURE);
+      std::cout << " inserted parent: " << parent->id;
     }
+    else
+    {
+      std::cout << " parent known: " << parent->id;
+    }
+    parent->add_child(this);
   }
 
   void Feature::add_child(gff::Feature* child)
   {
-    const auto &[it, inserted] = children.try_emplace(child->id, child);
+    children.try_emplace(child->type, std::unordered_map<std::string, gff::Feature*> {});
+    const auto &[it, inserted] = children[child->type].try_emplace(child->id, child);
     if(!inserted)
     {
-      std::cout << "Insertion of child: " << child->id << " failed\n";
-      exit(EXIT_FAILURE);
+      std::cout << "[Info] feature " << id << ": child known: " << it->second->id << "\n";
     }
   }
 
@@ -86,4 +97,42 @@ namespace gff
     return parents;
   }
 
+  bool Feature::is_duplicate(const gff::Feature* rhs) const // ToDo: overload == operator
+  {
+    if(seqid != rhs->seqid)
+    {return false;}
+    if(positions.size() != rhs->coordinates().size())
+      {return false;}
+    if(type != rhs->type)
+      {return false;}
+    for(long unsigned int i = 0; i < positions.size(); ++i)
+    {
+      if(positions[i].start != rhs->coordinates()[i].start)
+        {return false;}
+      if(positions[i].end != rhs->coordinates()[i].end)
+        {return false;}
+    }
+    return true;
+  }
+
+  bool Feature::extend_with(const gff::Feature* extender)
+  {
+    if(id != extender->id)
+    {
+      std::cout << "[Error] feature " << id << " cannot be extended with " << extender->id << "\n";
+      return false;
+    }
+    for(auto i : extender->coordinates())
+    {
+      positions.push_back(std::move(i));
+    }
+    //merge attribute comments somehow
+    return true;
+  }
+
+
+  const Feature::childrenmap& Feature::get_children() const
+  {
+    return children;
+  }
 } // namespace gff
