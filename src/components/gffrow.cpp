@@ -85,8 +85,8 @@ namespace gff
     for(std::string& i : linetools::tokenize(attribute_line, ';'))
     {
       ++comment_count;
-      const std::vector<std::string> comment = linetools::tokenize(linetools::strip(i), '=');
-      if(comment.size() < 2)
+      std::vector<std::string> comment = linetools::tokenize(linetools::strip(i), '=');
+      if(comment.size() != 2)
       {
         std::cerr << "WARNING: Skipping invalid key-value comment on line :" << rownum <<
                       "\n\tComment nr: " << comment_count     <<
@@ -94,10 +94,13 @@ namespace gff
       }
       else
       {
-        const auto &[it, pass] = attributes.try_emplace(comment[0], std::vector<std::string> {comment[1]});
+        const std::vector<std::string> values = linetools::tokenize(comment[1], ',');
+        const auto &[it, pass] = attributes.try_emplace(comment[0], values);
         if(!pass)
         {
-          it->second.push_back(comment[1]);
+          it->second.insert(it->second.end(),
+                            std::make_move_iterator(values.cbegin()),
+                            std::make_move_iterator(values.cend()));
         }
       }
     }
