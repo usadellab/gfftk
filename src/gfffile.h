@@ -37,6 +37,8 @@ namespace gff
     gff::TypeFeature* get_feature(const std::string& id);
 
   private:
+    gff::Feature* prev_loc = nullptr;
+    unsigned long int loc_count = 0;
     std::string path;
     std::ifstream gff_in;
     unsigned int row_num = 0;
@@ -45,7 +47,7 @@ namespace gff
     void parse_directive(const std::string& line);
     std::unordered_map<std::string, std::vector<std::string>> directives;
     void show_attribute(const std::string& key, const std::unordered_map<std::string, std::vector<std::string>>) const;
-    void assemble_locus(const gff::GffRow& row);
+    gff::Feature* assemble_locus(gff::Feature* feature);
     void empty_features();
     void clean_up();
     void walk_features(const gff::Feature* feat, int level);

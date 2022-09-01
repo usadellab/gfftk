@@ -81,18 +81,20 @@ namespace gff
                   << "Invalid GFF entry. Missing ID and Parent attribute. Skipping.\n";
         return row.err_code;
       }
-      assemble_locus(row);
+      gff::Feature* feat = add_feature(row);
+      assemble_locus(feat);
       // entry_status = proc.process_entry(e, directives);
     }
+    assemble_locus(prev_loc);
 
-    std::cout << "====== Feature summary ======\n";
-    for(const auto &i : features)
-    {
-      if(i.second->is_locus())
-      {
-        walk_features(i.second, 0);
-      }
-    }
+    // std::cout << "====== Feature summary ======\n";
+    // for(const auto &i : features)
+    // {
+    //   if(i.second->is_locus())
+    //   {
+    //     walk_features(i.second, 0);
+    //   }
+    // }
     return entry_status;
   }
 
@@ -167,7 +169,7 @@ namespace gff
     }
 
     const auto &[it, inserted] = features.try_emplace(feat->id, feat);
-    if(inserted)  // feature type does not exist at locus
+    if(inserted)  // feature does not exist at locus
     {
       std::cout << "\tinserted\n";
       return feat;
@@ -200,10 +202,18 @@ namespace gff
     return nullptr;
   }
 
-  void GffFile::assemble_locus(const gff::GffRow& row)
+  gff::Feature* GffFile::assemble_locus(gff::Feature* feat)
   {
-    // std::cerr << "[Info] " << path << "::" << row_num << " " << "New Locus: " << row.id << "\n";
-    gff::Feature* feat = add_feature(row);
+    if(feat->is_locus())
+    {
+      if(prev_loc)
+      {
+        walk_features(prev_loc, 0);
+      }
+      prev_loc = feat;
+    }
+
+
 
       // locus->show();
     //   if(!prevloc.empty())

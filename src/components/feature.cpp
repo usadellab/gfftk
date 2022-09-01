@@ -7,7 +7,9 @@
 
 namespace gff
 {
-  Feature::Feature(const std::string& seqid, const std::string& id, const std::string& source, const std::string& type, position start, position end)
+  Feature::Feature(const std::string& seqid, const std::string& id,
+                   const std::string& source, const std::string& type,
+                   position start, position end)
     : seqid(seqid), id(id), source(source), type(type), positions{ {start, end}}
   {  }
 
@@ -46,19 +48,6 @@ namespace gff
     return parents.empty();
   }
 
-  const std::unordered_map<std::string, gff::Feature*>& Feature::get_kids()
-  {
-    std::unordered_map<std::string, gff::Feature*> kids;
-    for(auto& i : children)
-    {
-      for(auto& j : i.second)
-      {
-        kids[j.first] = j.second;
-      }
-    }
-    return kids;
-  }
-
   void Feature::add_parent(gff::Feature* parent)
   {
     const auto &[it, inserted] = parents.try_emplace(parent->id, parent);
@@ -81,6 +70,23 @@ namespace gff
     {
       std::cout << "[Info] feature " << id << ": child known: " << it->second->id << "\n";
     }
+  }
+
+  gff::Feature* Feature::locus()
+  {
+    if(is_locus())
+    {
+      return this;
+    }
+    gff::Feature* feat = this;
+    while(!feat->is_locus())
+    {
+      for(auto& i : feat->get_parents())
+      {
+        feat = i.second;
+      }
+    }
+    return feat;
   }
 
   gff::Feature* Feature::get_parent(const std::string& parent_id) const
