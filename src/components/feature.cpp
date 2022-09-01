@@ -21,6 +21,21 @@ namespace gff
     positions.emplace(positions.end(), Coordinates{start, end});
   }
 
+  const unsigned long int Feature::length() const
+  {
+    unsigned long int length = 0;
+    for(auto& i : positions)
+    {
+      length += i.end - i.start + 1;
+    }
+    return length;
+  }
+
+  const unsigned long int Feature::size() const
+  {
+    return positions.size();
+  }
+
   const std::vector<Coordinates>& Feature::coordinates() const
   {
     return positions;

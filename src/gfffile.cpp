@@ -100,7 +100,8 @@ namespace gff
 
   void GffFile::walk_features(const gff::Feature* feat, int level)
   {
-    std::cout << std::string(level, '\t') << feat->id << "\t" << feat->type <<  "\n";
+    std::cout << std::string(level, '\t') << feat->id << "\t" << feat->type
+              << "\t" <<  feat->length() << "\t" << feat->size() <<"\n";
     if(feat->get_children().size())
     {
       ++level;
@@ -147,7 +148,7 @@ namespace gff
           {
             std::string directive = line.substr(directive_beg, i-1);
             std::string val = line.substr(i+1);
-            const auto &[it, pass] = directives.try_emplace(linetools::strip(directive), std::vector<std::string>{linetools::strip(val)});
+            const auto &[it, pass] = directives.try_emplace(stringtools::strip(directive), std::vector<std::string>{stringtools::strip(val)});
             if(!pass)
               {it->second.push_back(line.substr(i+1));}
             return;

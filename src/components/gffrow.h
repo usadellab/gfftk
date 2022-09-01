@@ -8,7 +8,7 @@
 #include <iostream>
 #include <unordered_map>
 
-#include "helpers/linetools.h"
+#include "helpers/stringtools.h"
 #include "gfftypes.h"
 
 namespace gff

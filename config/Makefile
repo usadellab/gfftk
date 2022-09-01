@@ -3,17 +3,17 @@ CXXFLAGS=-Wall -std=c++20
 VPATH=.:../src
 INCLUDES=-I. -I../src -I/usr/include
 
-objects = linetools.o locus.o gfffile.o isoformscanner.o gffrow.o typefeature.o feature.o
+objects = stringtools.o locus.o gfffile.o isoformscanner.o gffrow.o typefeature.o feature.o
 
 .PHONY : all clean
 
-gfffile.o:	gfffile.cpp gfffile.h components/gffrow.h components/locus.h helpers/linetools.h components/typefeature.h
+gfffile.o:	gfffile.cpp gfffile.h components/gffrow.h components/locus.h helpers/stringtools.h components/typefeature.h
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
-linetools.o:	helpers/linetools.cpp helpers/linetools.h
+stringtools.o:	helpers/stringtools.cpp helpers/stringtools.h
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
-gffrow.o:	components/gffrow.cpp components/gffrow.h helpers/linetools.h gfftypes.h
+gffrow.o:	components/gffrow.cpp components/gffrow.h helpers/stringtools.h gfftypes.h
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
 feature.o:	components/feature.cpp components/feature.h components/gffrow.h gfftypes.h

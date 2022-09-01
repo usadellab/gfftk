@@ -22,7 +22,7 @@ namespace gff
   // 1. Store the row vector and create getters ?
   void GffRow::parse(std::string& gffrow)
   {
-    columns gffcols = linetools::tokenize(gffrow, '\t');
+    columns gffcols = stringtools::tokenize(gffrow, '\t');
     if(gffcols.size() != expected_columns)
     {
       std::cerr << "[Error] " << gff_file << "::" << rownum << " "
@@ -82,10 +82,10 @@ namespace gff
   void GffRow::parse_attributes(std::string& attribute_line)
   {
     int comment_count = 0;
-    for(std::string& i : linetools::tokenize(attribute_line, ';'))
+    for(std::string& i : stringtools::tokenize(attribute_line, ';'))
     {
       ++comment_count;
-      std::vector<std::string> comment = linetools::tokenize(linetools::strip(i), '=');
+      std::vector<std::string> comment = stringtools::tokenize(stringtools::strip(i), '=');
       if(comment.size() != 2)
       {
         std::cerr << "WARNING: Skipping invalid key-value comment on line :"
@@ -94,7 +94,7 @@ namespace gff
       }
       else
       {
-        const std::vector<std::string> values = linetools::tokenize(comment[1], ',');
+        const std::vector<std::string> values = stringtools::tokenize(comment[1], ',');
         const auto &[it, pass] = attributes.try_emplace(comment[0], values);
         if(!pass)
         {

@@ -17,7 +17,7 @@
 #include "components/typefeature.h"
 #include "components/gffrow.h"
 #include "gfftypes.h"
-#include "helpers/linetools.h"
+#include "helpers/stringtools.h"
 
 
 namespace gff

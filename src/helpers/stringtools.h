@@ -10,7 +10,7 @@
 #include <iostream>
 #include <vector>
 
-namespace linetools
+namespace stringtools
 {
   std::vector<std::string> tokenize(std::string& line, char delim);
 
@@ -20,4 +20,4 @@ namespace linetools
   std::string& ltrim(std::string &s);
   std::string& rtrim(std::string &s);
   std::string& trim(std::string &s);
-} // namespace linetools
+} // namespace stringtools

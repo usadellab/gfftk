@@ -36,6 +36,8 @@ namespace gff
       bool extend_with(const gff::Feature*);
       bool is_locus();
       gff::Feature* locus();
+      const unsigned long int length() const;
+      const unsigned long int size() const;
 
     protected:
       std::vector<Coordinates> positions;

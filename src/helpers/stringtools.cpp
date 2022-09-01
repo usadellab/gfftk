@@ -11,9 +11,9 @@
 #include <locale>
 #include <vector>
 
-#include "helpers/linetools.h"
+#include "helpers/stringtools.h"
 
-namespace linetools
+namespace stringtools
 {
   std::vector<std::string> tokenize(std::string& line, char delim)
   {
@@ -66,4 +66,4 @@ namespace linetools
 
   std::string& trim(std::string &s)
     {return ltrim(rtrim(s));}
-} // end namespace linetools
+} // end namespace stringtools
