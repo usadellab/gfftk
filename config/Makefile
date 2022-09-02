@@ -3,9 +3,15 @@ CXXFLAGS=-Wall -std=c++20
 VPATH=.:../src
 INCLUDES=-I. -I../src -I/usr/include
 
-objects = stringtools.o locus.o gfffile.o isoformscanner.o gffrow.o typefeature.o feature.o
+objects = stringtools.o locus.o gfffile.o isoformscanner.o gffrow.o typefeature.o feature.o command.o extractor.o
 
 .PHONY : all clean
+
+command.o: commands/command.cpp commands/command.h
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
+
+extractor.o: commands/extractor.cpp commands/extractor.h	commands/command.h
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
 gfffile.o:	gfffile.cpp gfffile.h components/gffrow.h components/locus.h helpers/stringtools.h components/typefeature.h
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
@@ -25,14 +31,17 @@ typefeature.o:	components/typefeature.cpp components/typefeature.h components/fe
 locus.o:	components/locus.cpp components/locus.h components/gffrow.h components/feature.h components/typefeature.h gfftypes.h
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
+
+gfftk.o: gfftk.cpp gfftk.h gfffile.h commands/extractor.h
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
+
 isoformscanner.o:	isoformscanner.cpp isoformscanner.h gfffile.h components/locus.h
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
 isoformscanner:	$(objects)
 	$(CXX) $(CXXFLAGS) $(INCLUDES)  -o $@ $+
 
-
-clean:
+ clean:
 	-rm isoformscanner $(objects)
 
 all:	isoformscanner
