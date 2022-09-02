@@ -18,18 +18,23 @@ namespace gff
   GffFile::~GffFile()
   {
     clean_up();
+    std::cerr << "[Info] Finished parsing: " << path << "\n";
   }
 
   void GffFile::close()
   {
     if(gff_in.is_open())
     {
-      std::cerr << "Info: Closing GFF: " << path << "\n";
+      std::cerr << "[Info] Closing GFF: " << path << "\t";
       gff_in.close();
     }
     if(!gff_in.is_open())
     {
-      std::cerr << "Info: Closed GFF: " << path << "\n";
+      std::cerr << "OK\n";
+    }
+    else
+    {
+      std::cerr << "failed\n";
     }
   }
 
@@ -100,8 +105,11 @@ namespace gff
 
   void GffFile::walk_features(const gff::Feature* feat, int level)
   {
-    std::cout << std::string(level, '\t') << feat->id << "\t" << feat->type
-              << "\t" <<  feat->length() << "\t" << feat->size() <<"\n";
+    if(feat->type == "exon")
+    {
+      std::cout << std::string(level, '\t') << feat->id << "\t" << feat->type
+                << "\t" <<  feat->length() << "\t" << feat->size() <<"\n";
+    }
     if(feat->get_children().size())
     {
       ++level;
@@ -252,19 +260,24 @@ namespace gff
 
   void GffFile::clean_up()
   {
+    std::cerr << "[Info] Cleaning up: \t";
     empty_features();
     close();
   }
 
   void GffFile::empty_features()
   {
-    std::cout << "Stored features: " << features.size() << "\n";
+    std::cerr << features.size() << " features \n";
     for(auto it = features.cbegin(); it != features.cend();)
     {
-      std::cerr << "[Info] Deleting " << it->first << "\n";
+      std::cerr << "[Info]\tDeleting: " << it->first << "\n";
       delete(it->second);
       it = features.erase(it++);
     }
-    std::cout << "Remaining features: " << features.size() << "\n";
+    if(!features.empty())
+    {
+      std::cerr << "[Error] Cleaning failed. Remaining " << features.size() << "features.\n";
+    }
+    std::cout << "[Info] Cleaning: OK\n";
   }
 }//end namespace gff
