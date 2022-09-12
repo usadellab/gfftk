@@ -86,50 +86,18 @@ namespace gff
                   << "Invalid GFF entry. Missing ID and Parent attribute. Skipping.\n";
         return row.err_code;
       }
-      gff::Feature* feat = add_feature(row);
-      gff::Feature* loc = assemble_locus(feat);
+      gff::TypeFeature* loc = assemble_locus(add_feature(row));
       if(loc)
       {
-        entry_status = proc.process_entry(loc);
+        entry_status = proc.process_locus(loc);
       }
-      // entry_status = proc.process_entry(e, directives);
     }
-    gff::Feature* loc = assemble_locus(prev_loc);
+    gff::TypeFeature* loc = assemble_locus(prev_loc);
     if(loc)
     {
-      entry_status = proc.process_entry(loc);
+      entry_status = proc.process_locus(loc);
     }
-
-    // std::cout << "====== Feature summary ======\n";
-    // for(const auto &i : features)
-    // {
-    //   if(i.second->is_locus())
-    //   {
-    //     walk_features(i.second, 0);
-    //   }
-    // }
     return entry_status;
-  }
-
-  void GffFile::walk_features(const gff::Feature* feat, int level)
-  {
-    if(feat->type == "exon")
-    {
-      std::cout << std::string(level, '\t') << feat->id << "\t" << feat->type
-                << "\t" <<  feat->length() << "\t" << feat->size() <<"\n";
-    }
-    if(feat->get_children().size())
-    {
-      ++level;
-      for(auto& i : feat->get_children())
-      {
-        for(auto& j : i.second)
-        {
-          walk_features(j.second, level);
-        }
-      }
-      --level;
-    }
   }
 
   void GffFile::parse_directive(const std::string& line)
@@ -219,53 +187,19 @@ namespace gff
     return nullptr;
   }
 
-  gff::Feature* GffFile::assemble_locus(gff::Feature* feat)
+  gff::TypeFeature* GffFile::assemble_locus(gff::TypeFeature* feat)
   {
     if(feat->is_locus())
     {
       if(prev_loc)
       {
-        gff::Feature* loc = prev_loc;
+        gff::TypeFeature* loc = prev_loc;
         prev_loc = feat;
         return loc;
-        // walk_features(prev_loc, 0);
       }
       prev_loc = feat;
     }
     return nullptr;
-
-
-      // locus->show();
-    //   if(!prevloc.empty())
-    //   {
-    //     std::cerr << "Assessing\n";
-    //     gff::Locus loc = loci.at(prevloc);
-    //     // loc.show();
-    //     gff::Locus::Feature* lf = loci.at(prevloc).find_longest_feature("CDS");
-    //     if(lf)
-    //     {
-    //       std::cerr << "Found longest " << lf->type << " on " << loc.id() << ": "
-    //                 << lf->id   << "\t" << lf->isSelected <<"\n";
-    //       // show_feature(lf, loc, header);
-    //     }
-    //     list_locus_features(loci.at(prevloc), header);
-    //   }
-    //   gff::Locus locus = gff::Locus(e);
-    //   loci.insert({e.id(), locus});
-    //   std::cerr << "== New Locus: " << locus.id() << "\n";
-    //   prevloc = locus.id();
-    // }
-    // else  //  part-of relation
-    // {
-    //   //  Test if parnet feature is known to isoformscanner
-    //   if(!hasFeature(e.parent())) {std::exit(EXIT_FAILURE);}
-    //   gff::GffEntry p = get_feature(e.parent()); // dangerous, fix later
-    //   p.add_child(e);
-    //   e.add_parent(p);
-    //   const std::string lid = get_locus_id(p);
-    //   if(loci.contains(lid)) {loci.at(lid).add_entry(e);}
-    //   else {std::cerr << "Error: locus " << lid << "not known\n";}
-    // }
   }
 
 
@@ -283,12 +217,7 @@ namespace gff
     {
       std::cerr << "[Info]\tDeleting: " << it->first << "\n";
       delete(it->second);
-      it = features.erase(it++);
+      it++;
     }
-    if(!features.empty())
-    {
-      std::cerr << "[Error] Cleaning failed. Remaining " << features.size() << "features.\n";
-    }
-    std::cout << "[Info] Cleaning: OK\n";
   }
 }//end namespace gff

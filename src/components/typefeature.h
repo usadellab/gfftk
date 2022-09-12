@@ -22,11 +22,14 @@ namespace gff
 class TypeFeature : public gff::Feature
 {
   public:
-    TypeFeature(const std::string& seqid, const std::string& id, const std::string& source, const std::string& type, position start, position end);
+    TypeFeature(const std::string& seqid, const std::string& id,
+                const std::string& source, const std::string& type,
+                position start, position end);
     ~TypeFeature();
+    void get_types(const std::string& type, std::vector<const gff::Feature*>& container);
 
-    private:
-
+  private:
+    void bfs(const gff::Feature* feat, const std::string& type, std::vector<const gff::Feature*>& container, int level = 0);
 };
 
 } // namespace gff

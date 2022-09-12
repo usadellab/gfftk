@@ -41,23 +41,6 @@ namespace gff
     return positions;
   }
 
-  // void Feature::empty_featuremap()
-  // {
-  //   std::cout << "Feature : " << id << " : stored subfeatures: " << features.size() << "\n";
-  //   for(auto it = features.begin(); it != features.end();)
-  //   {
-  //     for(auto itt = it->second.begin(); itt != it->second.end();)
-  //     {
-  //       std::cout << "\tDeleting : " << itt ->second->id << "\n";
-  //       delete(itt->second);
-  //       itt++;
-  //     }
-  //     it++;
-  //   }
-  //   features.clear();
-  //   std::cout << "On: " << id << ": postdel feat size: " << features.size() << "\n";
-  // }
-
   bool Feature::is_locus()
   {
     return parents.empty();
@@ -80,10 +63,11 @@ namespace gff
   void Feature::add_child(gff::Feature* child)
   {
     children.try_emplace(child->type, std::unordered_map<std::string, gff::Feature*> {});
-    const auto &[it, inserted] = children[child->type].try_emplace(child->id, child);
-    if(!inserted)
+    const auto &[it, ins] = children[child->type].try_emplace(child->id, child);
+    if(!ins)
     {
-      std::cout << "[Info] feature " << id << ": child known: " << it->second->id << "\n";
+      std::cout << "[Info] feature " << id << ": child known: "
+                << it->second->id << "\n";
     }
   }
 
@@ -140,7 +124,8 @@ namespace gff
   {
     if(id != extender->id)
     {
-      std::cout << "[Error] feature " << id << " cannot be extended with " << extender->id << "\n";
+      std::cout << "[Error] feature " << id << " cannot be extended with "
+                << extender->id << "\n";
       return false;
     }
     for(auto i : extender->coordinates())

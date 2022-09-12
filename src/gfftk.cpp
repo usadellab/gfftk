@@ -28,7 +28,10 @@
     {
       if(i->command() == argv[1])
       {
-        i->setup(argc, argv);
+        if(i->setup(argc, argv))
+        {
+          exit(EXIT_FAILURE);
+        }
         i->run();
         exit(EXIT_SUCCESS);
       }

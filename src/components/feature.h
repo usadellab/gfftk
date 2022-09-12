@@ -19,7 +19,9 @@ namespace gff
   class Feature
   {
     public:
-      Feature(const std::string& seqid, const std::string& id, const std::string& source, const std::string& type, position start, position end);
+      Feature(const std::string& seqid, const std::string& id,
+              const std::string& source, const std::string& type,
+              position start, position end);
       virtual ~Feature();
       std::string seqid;
       std::string id;
@@ -44,6 +46,7 @@ namespace gff
       std::unordered_map<std::string, gff::Feature*> parents;
       childrenmap children;
       void add_positions(const position start, const position end);
+
 
   };
 } // end namespace gff

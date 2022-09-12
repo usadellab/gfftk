@@ -24,5 +24,6 @@ namespace gff
       usage();
       return EXIT_FAILURE;
     }
+    return EXIT_SUCCESS;
   }
 } // namespace gff

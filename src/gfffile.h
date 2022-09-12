@@ -28,7 +28,7 @@ namespace gff
       class Processor
       {
         public:
-          virtual int process_entry(gff::Feature* locus) = 0;
+          virtual int process_locus(gff::TypeFeature* locus) = 0;
       };
     GffFile(std::string gff_file);
     ~GffFile();
@@ -37,7 +37,7 @@ namespace gff
     gff::TypeFeature* get_feature(const std::string& id);
 
   private:
-    gff::Feature* prev_loc = nullptr;
+    gff::TypeFeature* prev_loc = nullptr;
     unsigned long int loc_count = 0;
     std::string path;
     std::ifstream gff_in;
@@ -47,12 +47,9 @@ namespace gff
     void parse_directive(const std::string& line);
     std::unordered_map<std::string, std::vector<std::string>> directives;
     void show_attribute(const std::string& key, const std::unordered_map<std::string, std::vector<std::string>>) const;
-    gff::Feature* assemble_locus(gff::Feature* feature);
+    gff::TypeFeature* assemble_locus(gff::TypeFeature* feature);
     void empty_features();
     void clean_up();
-    void walk_features(const gff::Feature* feat, int level);
-    //                    type                          ID          feature
-    // std::unordered_map<std::string, std::unordered_map<std::string, gff::Locus::Feature>> features;
     using featuremap = std::unordered_map<std::string, gff::TypeFeature*>;
     featuremap features;
   };

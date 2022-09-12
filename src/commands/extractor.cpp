@@ -18,9 +18,14 @@ namespace gff
   void Extractor::usage()
   {
     std::cout <<  "Extracting features from GFF, e.g. CDS features\n"
-              <<  "\t--input, -i <path>           Path to GFF file\n"
-              <<  "\t--taxid, -t <NCBI taxid>:    NCBI taxid\n"
-              <<  "\t--help, -h:                  Show help\n";
+              <<  "\t--input, -i <path>         Path to GFF file\n"
+              <<  "\t--taxid, -x <NCBI taxid>   NCBI taxid\n"
+              <<  "\t--type, -t  <type>         GFF type, e.g. mRNA\n"
+              <<  "\t--longest, -l              longest type\n"
+              <<  "\t--shortest, -s             shortest type\n"
+              // <<  "\t--min                      min lentgth\n"
+              // <<  "\t--max                      max lentgth\n"
+              <<  "\t--help, -h                 Show help\n";
     exit(1);
   }
 
@@ -55,8 +60,20 @@ namespace gff
           gff_file = optarg;
           break;
 
-        case 't':
+        case 'x':
           taxid = atol(optarg);
+          break;
+
+        case 't':
+          type = optarg;
+          break;
+
+        case 'l':
+          get_longest = true;
+          break;
+
+        case 's':
+          get_shortest = true;
           break;
 
         case 'h': // -h or --help
@@ -65,16 +82,59 @@ namespace gff
 
         case '?': // Unrecognized option
           return EXIT_FAILURE;
+
         default:
           usage();
           break;
       }
     }
     test_input_file();
+    return EXIT_SUCCESS;
   }
 
-  int Extractor::process_entry(gff::Feature* locus)
+  int Extractor::process_locus(gff::TypeFeature* locus)
   {
-    std::cout << "jallo\n";
+    std::vector<const gff::Feature*> results;
+    if(get_longest)
+    {
+      longest_type(locus, results);
+    }
+    else if(get_shortest)
+    {
+      /* code */
+    }
+    else
+    {
+
+    }
+
+
+    for(auto& i : results)
+    {
+      std::cout << i->id << "\t" << i->type << "\t" << i->length() << "\n";
+    }
+    return EXIT_SUCCESS;
+  }
+
+  void Extractor::longest_type(gff::TypeFeature* locus, std::vector<const gff::Feature*>& results)
+  {
+    std::vector<const gff::Feature*> types;
+    locus->get_types(type, types);
+    if(types.empty())
+    {
+      std::cerr << "[ Info ]\tType not found: " << type <<  "\n";
+      return;
+    }
+    const gff::Feature* longest = types[0];
+    for(const auto i : types)
+    {
+      // std::cerr << locus->id << "\t" << i->id << "\t" << i->type << "\t" << i->length() << "\n";
+      if(i->length() > longest->length())
+      {
+        longest = i;
+      }
+      // std::cout << i->id << "\t" <<i->type << "\t"  << LONG_MAX << "\n";
+    }
+    results.push_back(longest);
   }
 } // namespace gff
