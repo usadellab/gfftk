@@ -13,8 +13,7 @@ namespace gff
   {  }
 
   Extractor::~Extractor()
-  {
-  }
+  {  }
 
   void Extractor::usage()
   {
@@ -25,7 +24,23 @@ namespace gff
     exit(1);
   }
 
-  int Extractor::parse(int argc, char **argv)
+  void Extractor::run()
+  {
+    gff::GffFile gff(gff_file);
+    gff.parse(*this);
+  }
+
+  const std::string& Extractor::description()
+  {
+    return descr;
+  }
+
+  const std::string& Extractor::command()
+  {
+    return name;
+  }
+
+  int Extractor::setup(int argc, char **argv)
   {
     while(true)
     {
@@ -55,5 +70,11 @@ namespace gff
           break;
       }
     }
+    test_input_file();
+  }
+
+  int Extractor::process_entry(gff::Feature* locus)
+  {
+    std::cout << "jallo\n";
   }
 } // namespace gff

@@ -7,23 +7,29 @@
 
 #include "gfftk.h"
 
-namespace gff
-{
+
   GffTk::GffTk()
-  { }
+  {  }
 
   GffTk::~GffTk()
-  { }
+  {
+    cleanup();
+  }
 
   void GffTk::parse_args(int argc, char **argv)
   {
-    bool cmd_exists = false;
-    for(auto& i : commands)
+    if(argc < 2)
     {
-      if(i.name == argv[1])
+      std::cerr <<  "Expecting a command\n";
+      list_commands();
+      exit(EXIT_FAILURE);
+    }
+    for(auto i : commands)
+    {
+      if(i->command() == argv[1])
       {
-        cmd_exists = true;
-        i.cmd->run();
+        i->setup(argc, argv);
+        i->run();
         exit(EXIT_SUCCESS);
       }
     }
@@ -36,23 +42,27 @@ namespace gff
   {
     for(auto& i : commands)
     {
-      delete i.cmd;
+      delete i;
     }
   }
 
   void GffTk::list_commands()
   {
+    std::cout << "Available commands:\n";
     for(const auto& i : commands)
     {
-      std::cout << i.name << "\t" << i.cmd->description << "\n";
+      std::cout << "\t" << i->command() << "\t\t:" << i->description() << "\n";
     }
   }
 
   void GffTk::setup_commands()
   {
-    commands.push_back(
-      Command{"extract", new gff::Extractor}
+    commands.push_back(new gff::Extractor());
+  }
 
-      );
-  };
-} // namespace gff
+int main(int argc, char **argv)
+{
+  GffTk gfftk;
+  gfftk.setup_commands();
+  gfftk.parse_args(argc, argv);
+}

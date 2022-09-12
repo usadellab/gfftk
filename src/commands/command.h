@@ -15,11 +15,12 @@ namespace gff
   {
     public:
       Command();
-      ~Command();
-      virtual int parse(int argc, char **argv) = 0;
+      virtual ~Command();
+      virtual int setup(int argc, char **argv) = 0;
       virtual void usage() = 0;
       virtual void run() = 0;
-      const std::string description;
+      virtual const std::string& description() = 0;
+      virtual const std::string& command() = 0;
 
     protected:
       const char* const short_opts = {};

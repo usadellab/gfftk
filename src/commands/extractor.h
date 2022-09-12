@@ -12,17 +12,21 @@
 
 namespace gff
 {
-  class Extractor : public Command
+  class Extractor : public Command, GffFile::Processor
   {
     public:
       Extractor();
       ~Extractor();
-      int parse(int argc, char **argv);
+      int setup(int argc, char **argv);
       void usage();
       void run();
-      const std::string description = "Extract features from GFF file";
+      const std::string& description();
+      const std::string& command();
+      int process_entry(gff::Feature* locus);
 
     private:
+      const std::string descr = "Extract features from GFF file";
+      const std::string name = "extract";
       const char* const short_opts = "i:th";
       const option long_opts[4] =
       {

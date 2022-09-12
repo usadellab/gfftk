@@ -28,7 +28,7 @@ namespace gff
       class Processor
       {
         public:
-          virtual int process_entry(gff::Locus* locus) = 0;
+          virtual int process_entry(gff::Feature* locus) = 0;
       };
     GffFile(std::string gff_file);
     ~GffFile();

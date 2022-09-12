@@ -3,20 +3,20 @@ CXXFLAGS=-Wall -std=c++20
 VPATH=.:../src
 INCLUDES=-I. -I../src -I/usr/include
 
-objects = stringtools.o locus.o gfffile.o isoformscanner.o gffrow.o typefeature.o feature.o command.o extractor.o
+objects = gfftk.o stringtools.o locus.o gfffile.o gffrow.o feature.o typefeature.o command.o extractor.o
 
 .PHONY : all clean
 
-command.o: commands/command.cpp commands/command.h
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
-
-extractor.o: commands/extractor.cpp commands/extractor.h	commands/command.h
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
-
-gfffile.o:	gfffile.cpp gfffile.h components/gffrow.h components/locus.h helpers/stringtools.h components/typefeature.h
+gfftk.o: gfftk.cpp gfftk.h gfffile.h commands/extractor.h
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
 stringtools.o:	helpers/stringtools.cpp helpers/stringtools.h
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
+
+locus.o:	components/locus.cpp components/locus.h components/gffrow.h components/feature.h components/typefeature.h gfftypes.h
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
+
+gfffile.o:	gfffile.cpp gfffile.h components/gffrow.h components/locus.h helpers/stringtools.h components/typefeature.h
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
 gffrow.o:	components/gffrow.cpp components/gffrow.h helpers/stringtools.h gfftypes.h
@@ -28,23 +28,19 @@ feature.o:	components/feature.cpp components/feature.h components/gffrow.h gffty
 typefeature.o:	components/typefeature.cpp components/typefeature.h components/feature.h components/gffrow.h
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
-locus.o:	components/locus.cpp components/locus.h components/gffrow.h components/feature.h components/typefeature.h gfftypes.h
+command.o: commands/command.cpp commands/command.h
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
-
-gfftk.o: gfftk.cpp gfftk.h gfffile.h commands/extractor.h
+extractor.o: commands/extractor.cpp commands/extractor.h	commands/command.h
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
-isoformscanner.o:	isoformscanner.cpp isoformscanner.h gfffile.h components/locus.h
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
-
-isoformscanner:	$(objects)
+gfftk: gfftk.o stringtools.o locus.o gfffile.o gffrow.o typefeature.o feature.o command.o extractor.o
 	$(CXX) $(CXXFLAGS) $(INCLUDES)  -o $@ $+
 
  clean:
-	-rm isoformscanner $(objects)
+	-rm gfftk $(objects)
 
-all:	isoformscanner
+all:	gfftk
 
 ### Variables
 # https://www.gnu.org/software/make/manual/html_node/Automatic-Variables.html

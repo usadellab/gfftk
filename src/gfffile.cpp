@@ -87,10 +87,18 @@ namespace gff
         return row.err_code;
       }
       gff::Feature* feat = add_feature(row);
-      assemble_locus(feat);
+      gff::Feature* loc = assemble_locus(feat);
+      if(loc)
+      {
+        entry_status = proc.process_entry(loc);
+      }
       // entry_status = proc.process_entry(e, directives);
     }
-    assemble_locus(prev_loc);
+    gff::Feature* loc = assemble_locus(prev_loc);
+    if(loc)
+    {
+      entry_status = proc.process_entry(loc);
+    }
 
     // std::cout << "====== Feature summary ======\n";
     // for(const auto &i : features)
@@ -217,11 +225,14 @@ namespace gff
     {
       if(prev_loc)
       {
-        walk_features(prev_loc, 0);
+        gff::Feature* loc = prev_loc;
+        prev_loc = feat;
+        return loc;
+        // walk_features(prev_loc, 0);
       }
       prev_loc = feat;
     }
-
+    return nullptr;
 
 
       // locus->show();
