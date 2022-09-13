@@ -26,8 +26,8 @@ namespace gff
   {
     if(feat->type == type)
     {
-      // std::cout << std::string(level, '\t') << feat->id << "\t" << feat->type
-                // << "\t" <<  feat->length() << "\t" << feat->size() <<"\n";
+      std::cout << std::string(level, '\t') << feat->id << "\t" << feat->type
+                << "\t" <<  feat->length() << "\t" << feat->size() <<"\n";
       container.push_back(feat);
     }
     if(feat->get_children().size())
