@@ -33,7 +33,7 @@ namespace gff
       void add_child(gff::Feature* child);
       void add_parent(gff::Feature* parent);
       gff::Feature* get_parent(const std::string& parent_id) const;
-      const std::unordered_map<std::string, gff::Feature*>& get_parents();
+      const std::unordered_map<std::string, gff::Feature*>& get_parents() const;
       bool is_duplicate(const gff::Feature*) const;
       bool extend_with(const gff::Feature*);
       bool is_locus();

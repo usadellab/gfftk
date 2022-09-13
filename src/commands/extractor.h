@@ -46,5 +46,7 @@ namespace gff
       bool get_longest = false;
       bool get_shortest = false;
       void longest_type(gff::TypeFeature* locus, std::vector<const gff::Feature*>& results);
+      void shortest_type(gff::TypeFeature* locus, std::vector<const gff::Feature*>& results);
+      void type_by_length(gff::TypeFeature* locus, std::vector<const gff::Feature*>& results, unsigned long min = 0, unsigned long max = LONG_MAX);
   };
 } // namespace gff

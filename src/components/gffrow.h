@@ -34,7 +34,8 @@ namespace gff
       const attributemap& comment(const std::string& comment); // ToDo
 
     private:
-      constinit static std::int_fast32_t anon_feat_count;
+      //constinit static std::int_fast32_t anon_feat_count; // only most recent gcc
+      static std::int_fast32_t anon_feat_count;
       const std::string& gff_file;
       const long unsigned int expected_columns = 9;
       int convert_strand(const std::string&) const;

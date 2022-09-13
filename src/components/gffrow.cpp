@@ -25,7 +25,7 @@ namespace gff
     columns gffcols = stringtools::tokenize(gffrow, '\t');
     if(gffcols.size() != expected_columns)
     {
-      std::cerr << "[Error] " << gff_file << "::" << rownum << " "
+      std::cerr << "[ Error ] " << gff_file << "::" << rownum << " "
                 << "Unexpected number of columns: " << gffcols.size()
                 << ". Expected: " << expected_columns << "\n";
       err_code = 100;
@@ -34,22 +34,22 @@ namespace gff
 
     seqid = gffcols[0];
     source = gffcols[1];
-    type = gffcols[2];
+    type = stringtools::lowercase(gffcols[2]);
     start = std::stol(gffcols[3]);
     end = std::stol(gffcols[4]);
     score = (gffcols[5] == ".") ? -1.0 : std::stof(gffcols[5]);
     strand = convert_strand(gffcols[6]);
     if(strand < 0)
-      {std::cerr << "Warning: Bad value for strand\n";}
+      {std::cerr << "[ Warning ]: Bad value for strand\n";}
 
     phase = (gffcols[7] == ".") ? -1 : std::stoi(gffcols[7]);
     if(phase < -1 || phase > 2)
-      {std::cerr << "Warning: Bad value for phase\n";}
+      {std::cerr << "[ Warning ]: Bad value for phase\n";}
 
     parse_attributes(gffcols[8]);
     if(!attributes.count(id_key) && !attributes.count(parent_key))
     {
-      std::cerr << "[Warning] " << gff_file << "::" << rownum << " "
+      std::cerr << "[ Warning ] " << gff_file << "::" << rownum << " "
                 << "Invalid GFF entry. Missing ID and Parent attribute\n";
       err_code = 200;
       return;
@@ -88,7 +88,7 @@ namespace gff
       std::vector<std::string> comment = stringtools::tokenize(stringtools::strip(i), '=');
       if(comment.size() != 2)
       {
-        std::cerr << "WARNING: Skipping invalid key-value comment on line :"
+        std::cerr << "[ Warning ] Skipping invalid key-value comment on line :"
                    << rownum << "\tComment nr: " << comment_count
                    << "\tComment key: " << comment.front()  << "\n";
       }

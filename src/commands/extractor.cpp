@@ -47,6 +47,7 @@ namespace gff
 
   int Extractor::setup(int argc, char **argv)
   {
+    std::string sopt;
     while(true)
     {
       const auto opt = getopt_long(argc, argv, short_opts, long_opts, nullptr);
@@ -65,7 +66,8 @@ namespace gff
           break;
 
         case 't':
-          type = optarg;
+          sopt = optarg;
+          type = stringtools::lowercase(sopt);
           break;
 
         case 'l':
@@ -94,25 +96,29 @@ namespace gff
 
   int Extractor::process_locus(gff::TypeFeature* locus)
   {
+    std::cout <<  locus->id << "\n";
     std::vector<const gff::Feature*> results;
     if(get_longest)
     {
       longest_type(locus, results);
     }
-    else if(get_shortest)
+    if(get_shortest)
     {
       /* code */
     }
-    else
+    // if(!get_longest && !get_shortest)
+
+    for(const auto& i : results)
     {
 
+      std::string parents;
+      for(const auto& j : i->get_parents())
+      {
+        parents += j.first;
+      }
+      std::cout << i->seqid << "\t" << i->id << "\t" << i->type << "\t" << i->length() << "\t" << parents << "\n";
     }
-
-
-    for(auto& i : results)
-    {
-      std::cout << i->id << "\t" << i->type << "\t" << i->length() << "\n";
-    }
+    std::cout << "\n";
     return EXIT_SUCCESS;
   }
 
@@ -126,15 +132,52 @@ namespace gff
       return;
     }
     const gff::Feature* longest = types[0];
-    for(const auto i : types)
+    std::cerr << "\t" << locus->id << "\t" << longest->id << "\t" << longest->type << "\t" << longest->length() << "\n";
+    for(auto i = 1u; i < types.size(); ++i)
     {
-      // std::cerr << locus->id << "\t" << i->id << "\t" << i->type << "\t" << i->length() << "\n";
-      if(i->length() > longest->length())
+      std::cout << "\t" << locus->id << "\t" << types[i]->id << "\t" << types[i]->type << "\t" << types[i]->length() << "\n";
+      if(types[i]->length() > longest->length())
       {
-        longest = i;
+        longest = types[i];
       }
       // std::cout << i->id << "\t" <<i->type << "\t"  << LONG_MAX << "\n";
     }
     results.push_back(longest);
+  }
+
+  void Extractor::shortest_type(gff::TypeFeature* locus, std::vector<const gff::Feature*>& results)
+  {
+
+    // std::cerr << "\t" << locus->id << "\t" << longest->id << "\t" << longest->type << "\t" << longest->length() << "\n";
+    // for(auto i = 1u; i < types.size(); ++i)
+    // {
+    //   std::cout << "\t" << locus->id << "\t" << types[i]->id << "\t" << types[i]->type << "\t" << types[i]->length() << "\n";
+    //   if(types[i]->length() > longest->length())
+    //   {
+    //     longest = types[i];
+    //   }
+    //   // std::cout << i->id << "\t" <<i->type << "\t"  << LONG_MAX << "\n";
+    // }
+    // results.push_back(longest);
+  }
+
+  void Extractor::type_by_length(gff::TypeFeature* locus, std::vector<const gff::Feature*>& results, unsigned long min, unsigned long max)
+  {
+    std::vector<const gff::Feature*> types;
+    locus->get_types(type, types);
+    if(types.empty())
+    {
+      std::cerr << "[ Info ]\tType not found: " << type <<  "\n";
+      return;
+    }
+    const gff::Feature* longest = nullptr;
+    for(const auto& i : types)
+    {
+      std::cout << "\t" << locus->id << "\t" << i->id << "\t" << i->type << "\t" << i->length() << "\n";
+      if(i->length() <= min &&  i->length() <= max)
+      {
+        results.push_back(i);
+      }
+    }
   }
 } // namespace gff

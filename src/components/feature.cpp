@@ -51,11 +51,11 @@ namespace gff
     const auto &[it, inserted] = parents.try_emplace(parent->id, parent);
     if(inserted)
     {
-      std::cout << " inserted parent: " << parent->id;
+      std::cerr << " inserted parent: " << parent->id;
     }
     else
     {
-      std::cout << " parent known: " << parent->id;
+      std::cerr << " parent known: " << parent->id;
     }
     parent->add_child(this);
   }
@@ -66,7 +66,7 @@ namespace gff
     const auto &[it, ins] = children[child->type].try_emplace(child->id, child);
     if(!ins)
     {
-      std::cout << "[Info] feature " << id << ": child known: "
+      std::cerr << "[ Info ] feature " << id << " child known: "
                 << it->second->id << "\n";
     }
   }
@@ -97,7 +97,7 @@ namespace gff
     return nullptr;
   }
 
-  const std::unordered_map<std::string, gff::Feature*>& Feature::get_parents()
+  const std::unordered_map<std::string, gff::Feature*>& Feature::get_parents() const
   {
     return parents;
   }
@@ -124,7 +124,7 @@ namespace gff
   {
     if(id != extender->id)
     {
-      std::cout << "[Error] feature " << id << " cannot be extended with "
+      std::cerr << "[ Error ] feature " << id << " cannot be extended with "
                 << extender->id << "\n";
       return false;
     }

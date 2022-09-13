@@ -66,4 +66,11 @@ namespace stringtools
 
   std::string& trim(std::string &s)
     {return ltrim(rtrim(s));}
+
+  std::string& lowercase(std::string &s)
+  {
+    std::transform(s.begin(), s.end(), s.begin(),
+                  [](unsigned char c){ return std::tolower(c); });
+    return s;
+  }
 } // end namespace stringtools

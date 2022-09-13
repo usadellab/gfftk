@@ -18,14 +18,14 @@ namespace gff
   GffFile::~GffFile()
   {
     clean_up();
-    std::cerr << "[Info] Finished parsing: " << path << "\n";
+    std::cerr << "[ Info ] Finished parsing: " << path << "\n";
   }
 
   void GffFile::close()
   {
     if(gff_in.is_open())
     {
-      std::cerr << "[Info] Closing GFF: " << path << "\t";
+      std::cerr << "[ Info ] Closing GFF: " << path << "\t";
       gff_in.close();
     }
     if(!gff_in.is_open())
@@ -44,16 +44,16 @@ namespace gff
     // ToDo: Not wroking as expected. Doe snot exit when given invalid path
     if(!std::filesystem::status_known(fstat) ? std::filesystem::exists(fstat) : std::filesystem::exists(path))
     {
-      std::cerr << "[Error] " << path << " : File not found\n";
+      std::cerr << "[ Error ] " << path << " : File not found\n";
       return(EXIT_FAILURE);
     }
     gff_in.open(path);
     if(!gff_in.is_open())
     {
-      std::cerr << "[Error] " << path << " : failed to open\n";
+      std::cerr << "[ Error ] " << path << " : failed to open\n";
       exit(EXIT_FAILURE);
     }
-    std::cerr << "[Info] " << path << " : open for parsing\n";
+    std::cerr << "[ Info ] " << path << " : open for parsing\n";
     return EXIT_SUCCESS;
   }
 
@@ -76,13 +76,13 @@ namespace gff
       // ToDo: Add row error checks here
       if(row.err_code == 100)
       {
-        std::cerr << "[Error] " << path << "::" << row_num << " "
+        std::cerr << "[ Error ] " << path << "::" << row_num << " "
                   << "Unexpected number of columns. Aborting\n";
         exit(EXIT_FAILURE);
       }
       if(row.err_code == 200)
       {
-        std::cerr << "[Error] " << path << "::" << row_num << " "
+        std::cerr << "[ Error ] " << path << "::" << row_num << " "
                   << "Invalid GFF entry. Missing ID and Parent attribute. Skipping.\n";
         return row.err_code;
       }
@@ -147,7 +147,7 @@ namespace gff
   gff::TypeFeature* GffFile::add_feature(const gff::GffRow& row)
   {
     gff::TypeFeature* feat = new gff::TypeFeature(row.seqid, row.id, row.source, row.type, row.start, row.end);
-    std::cout << "[Info] " << feat->id << "\t" << feat->type << "\t";
+    std::cerr << "[ Info ] " << feat->id << "\t" << feat->type << "\t";
     for(const auto &i : row.parents)
     {
       feat->add_parent(get_feature(i));
@@ -156,12 +156,12 @@ namespace gff
     const auto &[it, inserted] = features.try_emplace(feat->id, feat);
     if(inserted)  // feature does not exist at locus
     {
-      std::cout << "\tinserted\n";
+      std::cerr << "\tinserted\n";
       return feat;
     }
     if(feat->is_duplicate(it->second)) // check for duplicate entry
     {
-      std::cerr << "[Warning] identified likely identical features" << path << "::" << row_num
+      std::cerr << "[ Warning ] identified likely identical features" << path << "::" << row_num
                 << " " << it->second->id << " and " << feat->id << "\n";
       delete feat;
       return nullptr;
@@ -169,8 +169,8 @@ namespace gff
     std::cerr << "\textending with " << it->second->id << "\n";
     if(!it->second->extend_with(feat))
     {
-      std::cerr << "[Warning] Extending " << feat->id << " with " << it->second
-                << "failed\n";
+      std::cerr << "[ Warning ] extending " << feat->id << " with "
+                << it->second << "failed\n";
       return nullptr;
     }
     delete feat;
@@ -183,7 +183,7 @@ namespace gff
     {
       return features[id];
     }
-    std::cerr << "Warning: feature " << id << " not found\n";
+    std::cerr << "[ Warning ] feature " << id << " not found\n";
     return nullptr;
   }
 
@@ -205,7 +205,7 @@ namespace gff
 
   void GffFile::clean_up()
   {
-    std::cerr << "[Info] Cleaning up: \t";
+    std::cerr << "[ Info ] Cleaning up: \t";
     empty_features();
     close();
   }
@@ -215,7 +215,7 @@ namespace gff
     std::cerr << features.size() << " features \n";
     for(auto it = features.cbegin(); it != features.cend();)
     {
-      std::cerr << "[Info]\tDeleting: " << it->first << "\n";
+      std::cerr << "[ Info ]\tDeleting: " << it->first << "\n";
       delete(it->second);
       it++;
     }
