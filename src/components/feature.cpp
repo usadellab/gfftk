@@ -163,6 +163,6 @@ namespace gff
   }
   const position Feature::end() const
   {
-    return positions[0].end;
+    return positions.back().end;
   }
 } // namespace gff

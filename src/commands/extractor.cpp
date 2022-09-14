@@ -126,7 +126,7 @@ namespace gff
                 << results.back()->end() << "\t" << results.back()->size() <<"s\n";
     }
 
-    for(const auto& i : results)
+/*     for(const auto& i : results)
     {
       std::string parents;
       for(const auto& j : i->get_parents())
@@ -136,7 +136,7 @@ namespace gff
 
       std::cout << i->seqid << "\t" << i->id << "\t" << i->type << "\t"
       << i->length() << "\t" << i->start() << "\t" << i->end() << "\t" << parents << "\n";
-    }
+    } */
     return EXIT_SUCCESS; // temporary
   }
 
