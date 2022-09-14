@@ -10,6 +10,7 @@
 #include <iostream>
 #include <vector>
 #include <unordered_map>
+#include <set>
 
 
 #include "components/gffrow.h"
@@ -26,10 +27,11 @@ class TypeFeature : public gff::Feature
                 const std::string& source, const std::string& type,
                 position start, position end);
     ~TypeFeature();
-    void get_types(const std::string& type, std::vector<const gff::Feature*>& container);
+    void get_types(const std::string& type, std::set<const gff::Feature*>& container);
 
   private:
-    void bfs(const gff::Feature* feat, const std::string& type, std::vector<const gff::Feature*>& container, int level = 0);
+    // void bfs(const gff::Feature* feat, const std::string& type, std::vector<const gff::Feature*>& container, int level = 0);
+    void bfs(const gff::Feature* feat, const std::string& type, std::set<const gff::Feature*>& container, int level = 0);
 };
 
 } // namespace gff

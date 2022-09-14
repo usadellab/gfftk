@@ -9,6 +9,7 @@
 
 #include <iostream>
 #include <set>
+#include <algorithm>
 
 #include "gfftypes.h"
 #include "components/gffrow.h"
@@ -27,6 +28,8 @@ namespace gff
       std::string id;
       std::string source;
       std::string type;
+      const position start() const;
+      const position end() const;
       using childrenmap = std::unordered_map<std::string, std::unordered_map<std::string, gff::Feature*>>;
       const childrenmap& get_children() const;
       const std::vector<Coordinates>& coordinates() const;
@@ -40,6 +43,7 @@ namespace gff
       gff::Feature* locus();
       const unsigned long int length() const;
       const unsigned long int size() const;
+      bool has_identical_parent(gff::Feature* feat);
 
     protected:
       std::vector<Coordinates> positions;

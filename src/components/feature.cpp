@@ -19,6 +19,9 @@ namespace gff
   void Feature::add_positions(const position start, const position end)
   {
     positions.emplace(positions.end(), Coordinates{start, end});
+    std::sort(positions.begin(), positions.end(),[](const Coordinates& lhs,
+       const Coordinates& rhs)
+       {return lhs.start > rhs.start;});
   }
 
   const unsigned long int Feature::length() const
@@ -38,6 +41,7 @@ namespace gff
 
   const std::vector<Coordinates>& Feature::coordinates() const
   {
+
     return positions;
   }
 
@@ -140,5 +144,25 @@ namespace gff
   const Feature::childrenmap& Feature::get_children() const
   {
     return children;
+  }
+
+  bool Feature::has_identical_parent(gff::Feature* feat)
+  {
+    for(const auto& i : feat->get_parents())
+    {
+      if(!parents.count(i.second->id ))
+      {
+        return false;
+      }
+    }
+    return true;
+  }
+  const position Feature::start() const
+  {
+    return positions[0].start;
+  }
+  const position Feature::end() const
+  {
+    return positions[0].end;
   }
 } // namespace gff

@@ -17,18 +17,18 @@ namespace gff
   TypeFeature::~TypeFeature()
   {  }
 
-  void TypeFeature::get_types(const std::string& type, std::vector<const gff::Feature*>& container)
+  void TypeFeature::get_types(const std::string& type, std::set<const gff::Feature*>& container)
   {
     bfs(this, type, container);
   }
 
-  void TypeFeature::bfs(const gff::Feature* feat, const std::string& type, std::vector<const gff::Feature*>& container, int level)
+  void TypeFeature::bfs(const gff::Feature* feat, const std::string& type, std::set<const gff::Feature*>& container, int level)
   {
     if(feat->type == type)
     {
-      std::cout << std::string(level, '\t') << feat->id << "\t" << feat->type
-                << "\t" <<  feat->length() << "\t" << feat->size() <<"\n";
-      container.push_back(feat);
+      // std::cout << std::string(level, '\t') << feat->id << "\t" << feat->type
+                // << "\t" <<  feat->length() << "\t" << feat->size() <<"\n";
+      container.insert(feat);
     }
     if(feat->get_children().size())
     {

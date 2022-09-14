@@ -106,12 +106,15 @@ namespace gff
 
     for(const auto& i : results)
     {
+
       std::string parents;
       for(const auto& j : i->get_parents())
       {
         parents += j.first;
       }
-      // std::cout << i->seqid << "\t" << i->id << "\t" << i->type << "\t" << i->length() << "\t" << parents << "\n";
+
+      std::cout << i->seqid << "\t" << i->id << "\t" << i->type << "\t"
+      << i->length() << "\t" << i->start() << "\t" << i->end() << "\t" << parents << "\n";
     }
     std::cout << "\n";
     return EXIT_SUCCESS;
@@ -119,7 +122,7 @@ namespace gff
 
   void Extractor::type_by_length(gff::TypeFeature* locus, std::vector<const gff::Feature*>& results, unsigned long min, unsigned long max)
   {
-    std::vector<const gff::Feature*> types;
+    std::set<const gff::Feature*> types;
     locus->get_types(type, types);
     if(types.empty())
     {
@@ -128,11 +131,11 @@ namespace gff
     }
     for(const auto& i : types)
     {
-      std::cout << "\t" << locus->id << "\t" << i->id << "\t" << i->type << "\t" << i->length() << "\n";
-      // if(i->length() >= min &&  i->length() <= max)
-      // {
-      //   results.push_back(i);
-      // }
+      // std::cout << "\t" << locus->id << "\t" << i->id << "\t" << i->type << "\t" << i->length() << "\n";
+      if(i->length() >= min &&  i->length() <= max)
+      {
+        results.push_back(i);
+      }
     }
   }
 } // namespace gff

@@ -8,7 +8,6 @@
 #include <iostream>
 #include <climits>
 #include <algorithm>
-#include <tuple>
 
 #include "commands/command.h"
 #include "gfffile.h"
