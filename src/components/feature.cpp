@@ -53,14 +53,14 @@ namespace gff
   void Feature::add_parent(gff::Feature* parent)
   {
     const auto &[it, inserted] = parents.try_emplace(parent->id, parent);
-    if(inserted)
+    /* if(inserted)
     {
       std::cerr << " inserted parent: " << parent->id;
     }
     else
     {
       std::cerr << " parent known: " << parent->id;
-    }
+    } */
     parent->add_child(this);
   }
 
@@ -68,11 +68,11 @@ namespace gff
   {
     children.try_emplace(child->type, std::unordered_map<std::string, gff::Feature*> {});
     const auto &[it, ins] = children[child->type].try_emplace(child->id, child);
-    if(!ins)
+    /* if(!ins)
     {
       std::cerr << "[ Info ] feature " << id << " child known: "
                 << it->second->id << "\n";
-    }
+    } */
   }
 
   gff::Feature* Feature::locus()

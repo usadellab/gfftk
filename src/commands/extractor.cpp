@@ -96,17 +96,38 @@ namespace gff
 
   int Extractor::process_locus(gff::TypeFeature* locus)
   {
-    std::cout <<  locus->id << "\n";
     std::vector<const gff::Feature*> results;
     type_by_length(locus, results);
-
+    if(results.empty())
+    {
+      return EXIT_SUCCESS;
+    }
     std::sort(results.begin(), results.end(),[](const gff::Feature* lhs,
        const gff::Feature* rhs)
        {return lhs->length() > rhs->length();});
 
+    if(get_longest && get_shortest && results.size() == 1)
+    {
+      std::cout << results[0]->seqid << "\t" << results[0]->id << "\t" << results[0]->type << "\t"
+                << results[0]->length() << "\t" << results[0]->start() << "\t" << results[0]->end() << "\t" << results[0]->size() <<"\n";
+
+      return EXIT_SUCCESS; // temporary
+    }
+    if(get_longest)
+    {
+      std::cout << results[0]->seqid << "\t" << results[0]->id << "\t" << results[0]->type << "\t"
+      << results[0]->length() << "\t" << results[0]->start() << "\t" << results[0]->end() << "\t" << results[0]->size() <<"l\n";
+    }
+    if(get_shortest)
+    {
+      std::cout << results.back()->seqid << "\t" << results.back()->id << "\t"
+                << results.back()->type << "\t" << results.back()->length()
+                << "\t" << results.back()->start() << "\t"
+                << results.back()->end() << "\t" << results.back()->size() <<"s\n";
+    }
+
     for(const auto& i : results)
     {
-
       std::string parents;
       for(const auto& j : i->get_parents())
       {
@@ -116,8 +137,7 @@ namespace gff
       std::cout << i->seqid << "\t" << i->id << "\t" << i->type << "\t"
       << i->length() << "\t" << i->start() << "\t" << i->end() << "\t" << parents << "\n";
     }
-    std::cout << "\n";
-    return EXIT_SUCCESS;
+    return EXIT_SUCCESS; // temporary
   }
 
   void Extractor::type_by_length(gff::TypeFeature* locus, std::vector<const gff::Feature*>& results, unsigned long min, unsigned long max)
@@ -126,7 +146,7 @@ namespace gff
     locus->get_types(type, types);
     if(types.empty())
     {
-      std::cerr << "[ Info ]\tType not found: " << type <<  "\n";
+      std::cerr << "[ Info ]\t"<< locus->id << ":" << type <<  " not found\n";
       return;
     }
     for(const auto& i : types)

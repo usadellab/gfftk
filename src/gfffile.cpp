@@ -147,7 +147,7 @@ namespace gff
   gff::TypeFeature* GffFile::add_feature(const gff::GffRow& row)
   {
     gff::TypeFeature* feat = new gff::TypeFeature(row.seqid, row.id, row.source, row.type, row.start, row.end);
-    std::cerr << "[ Info ] " << feat->id << "\t" << feat->type << "\t";
+    // std::cerr << "[ Info ] " << feat->id << "\t" << feat->type << "\t";
     for(const auto &i : row.parents)
     {
       feat->add_parent(get_feature(i));
@@ -156,7 +156,7 @@ namespace gff
     const auto &[it, inserted] = features.try_emplace(feat->id, feat);
     if(inserted)  // feature does not exist at locus
     {
-      std::cerr << "\tinserted\n";
+      // std::cerr << "\tinserted\n";
       return feat;
     }
     if(feat->is_duplicate(it->second)) // check for duplicate entry
@@ -166,7 +166,7 @@ namespace gff
       delete feat;
       return nullptr;
     }
-    std::cerr << "\textending with " << it->second->id << "\n";
+    // std::cerr << "\textending with " << it->second->id << "\n";
     if(!it->second->extend_with(feat))
     {
       std::cerr << "[ Warning ] extending " << feat->id << " with "
@@ -205,17 +205,17 @@ namespace gff
 
   void GffFile::clean_up()
   {
-    std::cerr << "[ Info ] Cleaning up: \t";
+    // std::cerr << "[ Info ] Cleaning up: \t";
     empty_features();
     close();
   }
 
   void GffFile::empty_features()
   {
-    std::cerr << features.size() << " features \n";
+    // std::cerr << features.size() << " features \n";
     for(auto it = features.cbegin(); it != features.cend();)
     {
-      std::cerr << "[ Info ]\tDeleting: " << it->first << "\n";
+      // std::cerr << "[ Info ]\tDeleting: " << it->first << "\n";
       delete(it->second);
       it++;
     }
