@@ -7,6 +7,8 @@
 
 #include "gfftk.h"
 
+namespace gff
+{
 
   GffTk::GffTk()
   {  }
@@ -21,7 +23,7 @@
     if(argc < 2)
     {
       std::cerr <<  "Expecting a command\n";
-      list_commands();
+      usage();
       exit(EXIT_FAILURE);
     }
     for(auto i : commands)
@@ -41,6 +43,14 @@
     exit(EXIT_FAILURE);
   }
 
+  void GffTk::usage()
+  {
+    std::cout << "usage: gfftk <command> [args]\n\n"
+              << "gfftk is a toolkit to analyze GFF files\n";
+    list_commands();
+    exit(EXIT_SUCCESS);
+  }
+
   void GffTk::cleanup()
   {
     for(auto& i : commands)
@@ -54,18 +64,20 @@
     std::cout << "Available commands:\n";
     for(const auto& i : commands)
     {
-      std::cout << "\t" << i->command() << "\t\t:" << i->description() << "\n";
+      std::cout << "\t" << i->command() << "\t\t" << i->description() << "\n";
     }
   }
 
   void GffTk::setup_commands()
   {
     commands.push_back(new gff::Extractor());
+    commands.push_back(new gff::Viewer());
   }
+} // namespace gff
 
 int main(int argc, char **argv)
 {
-  GffTk gfftk;
+  gff::GffTk gfftk;
   gfftk.setup_commands();
   gfftk.parse_args(argc, argv);
 }

@@ -3,7 +3,7 @@ CXXFLAGS=-Wall -std=c++20
 VPATH=.:../src
 INCLUDES=-I. -I../src -I/usr/include
 
-objects = gfftk.o stringtools.o locus.o gfffile.o gffrow.o feature.o typefeature.o command.o extractor.o
+objects = gfftk.o stringtools.o locus.o gfffile.o gffrow.o feature.o typefeature.o command.o extractor.o viewer.o
 
 .PHONY : all clean
 
@@ -34,7 +34,10 @@ command.o: commands/command.cpp commands/command.h
 extractor.o: commands/extractor.cpp commands/extractor.h	commands/command.h
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
-gfftk: gfftk.o stringtools.o locus.o gfffile.o gffrow.o typefeature.o feature.o command.o extractor.o
+viewer.o: commands/viewer.cpp commands/viewer.h	commands/command.h
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
+
+gfftk: $(objects)
 	$(CXX) $(CXXFLAGS) $(INCLUDES)  -o $@ $+
 
  clean:

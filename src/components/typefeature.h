@@ -30,7 +30,6 @@ class TypeFeature : public gff::Feature
     void get_types(const std::string& type, std::set<const gff::Feature*>& container);
 
   private:
-    // void bfs(const gff::Feature* feat, const std::string& type, std::vector<const gff::Feature*>& container, int level = 0);
     void bfs(const gff::Feature* feat, const std::string& type, std::set<const gff::Feature*>& container, int level = 0);
 };
 
