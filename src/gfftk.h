@@ -9,6 +9,10 @@
 #include <set>
 
 #include "commands/extractor.h"
+#include "commands/viewer.h"
+
+namespace gff
+{
 
 class GffTk
 {
@@ -24,3 +28,4 @@ class GffTk
       std::vector<gff::Command*> commands;
       void cleanup();
 };
+} // namespace gff
