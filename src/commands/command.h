@@ -23,9 +23,11 @@ namespace gff
       virtual const std::string& command() = 0;
 
     protected:
-      const char* const short_opts = {};
-      const option long_opts[0] = {};
       std::string gff_file;
       int test_input_file();
+
+    private:
+      const char* const short_opts = {};
+      const option long_opts[0] = {};
   };
 } // namespace gff

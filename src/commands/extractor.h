@@ -30,13 +30,13 @@ namespace gff
       const std::string descr = "Extract features from GFF file";
       const std::string name = "extract";
       const char* const short_opts = "i:t:xlsh";
-      const option long_opts[7] =
+      const option long_opts[8] =
       {
         {"input", required_argument, nullptr, 'i'},
         {"taxid", required_argument, nullptr, 'x'},
         {"type", required_argument, nullptr, 't'},
-        // {"min", required_argument, nullptr, ''},
-        // {"min", required_argument, nullptr, ''},
+        {"min", required_argument, nullptr, min},
+        // {"min", required_argument, nullptr, ""''""},
         {"shortest", no_argument, nullptr, 's'},
         {"longest", no_argument, nullptr, 'l'},
         {"help", no_argument, nullptr, 'h'},
