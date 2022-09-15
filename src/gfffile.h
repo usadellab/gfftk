@@ -19,7 +19,6 @@
 #include "gfftypes.h"
 #include "helpers/stringtools.h"
 
-
 namespace gff
 {
   class GffFile

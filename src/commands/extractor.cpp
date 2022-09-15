@@ -3,9 +3,9 @@
  * \copyright 2022
 */
 
-#include <iostream>
-
 #include "commands/extractor.h"
+
+#include <iostream>
 
 namespace gff
 {

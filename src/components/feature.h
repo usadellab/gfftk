@@ -14,7 +14,6 @@
 #include "gfftypes.h"
 #include "components/gffrow.h"
 
-
 namespace gff
 {
   class Feature
