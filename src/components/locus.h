@@ -24,7 +24,9 @@ namespace gff
 class Locus : public gff::Feature
 {
   public:
-    Locus(const std::string& seqid, const std::string& id, const std::string& source, const std::string& type, position start, position end);
+    Locus(const std::string& seqid, const std::string& id, const std::string&
+          source, const std::string& type, position start, position end,
+          attributemap& attribs);
     ~Locus();
     void extend_with_row(const gff::GffRow& row);
     void show();

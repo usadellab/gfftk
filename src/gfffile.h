@@ -45,7 +45,6 @@ namespace gff
     void close();
     void parse_directive(const std::string& line);
     std::unordered_map<std::string, std::vector<std::string>> directives;
-    void show_attribute(const std::string& key, const std::unordered_map<std::string, std::vector<std::string>>) const;
     gff::TypeFeature* assemble_locus(gff::TypeFeature* feature);
     void empty_features();
     void clean_up();

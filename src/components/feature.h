@@ -21,7 +21,7 @@ namespace gff
     public:
       Feature(const std::string& seqid, const std::string& id,
               const std::string& source, const std::string& type,
-              position start, position end);
+              position start, position end, attributemap attribs);
       virtual ~Feature();
       std::string seqid;
       std::string id;
@@ -43,12 +43,16 @@ namespace gff
       const unsigned long int length() const;
       const unsigned long int size() const;
       bool has_identical_parent(gff::Feature* feat);
+      // std::vector<std::string>& comment(const std::string& key);
+      const attributemap& comments() const;
 
     protected:
       std::vector<Coordinates> positions;
       std::unordered_map<std::string, gff::Feature*> parents;
       childrenmap children;
+      attributemap attributes;
       void add_positions(const position start, const position end);
+      void move_attributes_from_row(attributemap attribs);
 
 
   };

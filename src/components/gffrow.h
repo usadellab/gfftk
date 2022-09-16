@@ -30,8 +30,8 @@ namespace gff
       std::vector<std::string> parents;
       int rownum;
       int err_code;
+      attributemap attributes;
       void parse(std::string& gffrow);
-      const attributemap& comment(const std::string& comment); // ToDo
 
     private:
       //constinit static std::int_fast32_t anon_feat_count; // only most recent gcc
@@ -40,7 +40,6 @@ namespace gff
       const long unsigned int expected_columns = 9;
       int convert_strand(const std::string&) const;
       void parse_attributes(std::string& attribute_line);
-      attributemap attributes;
       const std::string id_key = "ID";
       const std::string parent_key= "Parent";
   };

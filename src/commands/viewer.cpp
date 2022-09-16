@@ -45,7 +45,7 @@ namespace gff
     while(true)
     {
       const auto opt = getopt_long(argc, argv, short_opts, long_opts, nullptr);
-      if (-1 == opt)
+      if (opt == -1)
         break;
 
       switch (opt)

@@ -132,7 +132,8 @@ namespace gff
           {
             std::string directive = line.substr(directive_beg, i-1);
             std::string val = line.substr(i+1);
-            const auto &[it, pass] = directives.try_emplace(stringtools::strip(directive), std::vector<std::string>{stringtools::strip(val)});
+            const auto &[it, pass] = directives.try_emplace(stringtools::strip(directive),
+                                                            std::vector<std::string>{stringtools::strip(val)});
             if(!pass)
               {it->second.push_back(line.substr(i+1));}
             return;
@@ -146,7 +147,9 @@ namespace gff
 
   gff::TypeFeature* GffFile::add_feature(const gff::GffRow& row)
   {
-    gff::TypeFeature* feat = new gff::TypeFeature(row.seqid, row.id, row.source, row.type, row.start, row.end);
+    gff::TypeFeature* feat = new gff::TypeFeature(row.seqid, row.id, row.source,
+                                                  row.type, row.start, row.end,
+                                                  row.attributes);
     // std::cerr << "[ Info ] " << feat->id << "\t" << feat->type << "\t";
     for(const auto &i : row.parents)
     {

@@ -9,8 +9,10 @@
 namespace gff
 {
 
-Locus::Locus(const std::string& seqid, const std::string& id, const std::string& source, const std::string& type, position start, position end)
-: Feature{seqid, id, source, type, start, end}
+Locus::Locus(const std::string& seqid, const std::string& id,
+             const std::string& source, const std::string& type, position start,
+             position end, attributemap& attribs)
+: Feature{seqid, id, source, type, start, end, attribs}
 { }
 
 Locus::~Locus()

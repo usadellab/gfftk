@@ -17,14 +17,18 @@ namespace gff
 
   void Extractor::usage()
   {
-    std::cout <<  "Extracting features from GFF, e.g. CDS features\n"
+    std::cout <<  "Extracting features from GFF, e.g. CDS features\n\n"
+              <<  "usage: gfftk extract --input <GFF> --type [mRNA, CDS,..] [OPTIONAL]\n\n"
+              <<  "Mandatory:\n"
               <<  "\t--input, -i <path>         Path to GFF file\n"
-              <<  "\t--taxid, -x <NCBI taxid>   NCBI taxid\n"
               <<  "\t--type, -t  <type>         GFF type, e.g. mRNA\n"
+              <<  "Optional:\n"
+              <<  "\t--taxid, -x <NCBI taxid>   NCBI taxid\n"
               <<  "\t--longest, -l              longest type\n"
               <<  "\t--shortest, -s             shortest type\n"
-              // <<  "\t--min                      min lentgth\n"
-              // <<  "\t--max                      max lentgth\n"
+              <<  "\t--min, -m <int>            min lentgth\n"
+              <<  "\t--max, -M <int>            max lentgth\n"
+              <<  "\t--attribute, -a <str>      select attribute\n"
               <<  "\t--help, -h                 Show help\n";
     exit(1);
   }
@@ -51,7 +55,6 @@ namespace gff
     while(true)
     {
       const auto opt = getopt_long(argc, argv, short_opts, long_opts, nullptr);
-
       if (opt == -1)
         break;
 
@@ -78,6 +81,18 @@ namespace gff
           get_shortest = true;
           break;
 
+        case 'm':
+          minlen = atol(optarg);
+          break;
+
+        case 'M':
+          maxlen = atol(optarg);
+          break;
+
+        case 'a':
+          attribute = optarg;
+          break;
+
         case 'h': // -h or --help
           usage();
           return EXIT_SUCCESS;
@@ -91,71 +106,102 @@ namespace gff
       }
     }
     test_input_file();
+    if(type.empty())
+    {
+      std::cerr << "Need to know the type, e.g. mRNA.\n";
+      usage();
+      return EXIT_FAILURE;
+    }
     return EXIT_SUCCESS;
   }
 
   int Extractor::process_locus(gff::TypeFeature* locus)
   {
     std::vector<const gff::Feature*> results;
-    type_by_length(locus, results);
-    if(results.empty())
+    if(!type_by_length(locus, results, minlen, maxlen))
     {
       return EXIT_SUCCESS;
     }
+
     std::sort(results.begin(), results.end(),[](const gff::Feature* lhs,
        const gff::Feature* rhs)
        {return lhs->length() > rhs->length();});
-
-    if(get_longest && get_shortest && results.size() == 1)
+    if(results.empty())
     {
-      std::cout << results[0]->seqid << "\t" << results[0]->id << "\t" << results[0]->type << "\t"
-                << results[0]->length() << "\t" << results[0]->start() << "\t" << results[0]->end() << "\t" << results[0]->size() <<"\n";
-
-      return EXIT_SUCCESS; // temporary
-    }
-    if(get_longest)
-    {
-      std::cout << results[0]->seqid << "\t" << results[0]->id << "\t" << results[0]->type << "\t"
-      << results[0]->length() << "\t" << results[0]->start() << "\t" << results[0]->end() << "\t" << results[0]->size() <<"l\n";
-    }
-    if(get_shortest)
-    {
-      std::cout << results.back()->seqid << "\t" << results.back()->id << "\t"
-                << results.back()->type << "\t" << results.back()->length()
-                << "\t" << results.back()->start() << "\t"
-                << results.back()->end() << "\t" << results.back()->size() <<"s\n";
+      std::cerr << "[ Info ]\t" << locus->id << ": no matches\n";
+      return EXIT_SUCCESS;
     }
 
-/*     for(const auto& i : results)
-    {
-      std::string parents;
-      for(const auto& j : i->get_parents())
-      {
-        parents += j.first;
-      }
-
-      std::cout << i->seqid << "\t" << i->id << "\t" << i->type << "\t"
-      << i->length() << "\t" << i->start() << "\t" << i->end() << "\t" << parents << "\n";
-    } */
+    show_results(locus, results);
     return EXIT_SUCCESS; // temporary
   }
 
-  void Extractor::type_by_length(gff::TypeFeature* locus, std::vector<const gff::Feature*>& results, unsigned long min, unsigned long max)
+  bool Extractor::type_by_length(gff::TypeFeature* locus, std::vector<const gff::Feature*>& results, unsigned long min, unsigned long max)
   {
     std::set<const gff::Feature*> types;
     locus->get_types(type, types);
     if(types.empty())
     {
-      std::cerr << "[ Info ]\t"<< locus->id << ":" << type <<  " not found\n";
-      return;
+      std::cerr << "[ Info ]\t"<< locus->id << ": no " << type <<  " found\n";
+      return false;
     }
     for(const auto& i : types)
     {
-      // std::cout << "\t" << locus->id << "\t" << i->id << "\t" << i->type << "\t" << i->length() << "\n";
       if(i->length() >= min &&  i->length() <= max)
       {
         results.push_back(i);
       }
     }
+    return true;
+  }
+
+  void Extractor::show_results(const gff::TypeFeature* locus, std::vector<const gff::Feature*>& results) const
+  {
+    if(results.empty())
+    {
+      std::cerr << "[ Info ]\t" << locus->id << ": no matches\n";
+      return;
+    }
+    if(results.size() == 1)
+    {
+      show_feature(results.front());
+    }
+    else if(get_longest)
+    {
+      show_feature(results.front());
+    }
+    else if(get_shortest)
+    {
+      show_feature(results.back());
+    }
+    else
+    {
+      for(const auto& i : results)
+      {
+        /* std::string parents;
+        for(const auto& j : i->get_parents())
+        {
+          parents += j.first;
+        }
+        std::cout << i->seqid << "\t" << i->id << "\t" << i->type << "\t"
+        << i->length() << "\t" << i->start() << "\t" << i->end() << "\t" << parents << "\n"; */
+        show_feature(i);
+      }
+    }
+  }
+
+  void Extractor::show_feature(const gff::Feature* feature) const
+  {
+    std::cout << feature->seqid << "\t" << feature->id << "\t" << feature->type
+              << "\t" << feature->length() << "\t" << feature->start() << "\t"
+              << feature->end() << "\t" << feature->size();
+    if(!attribute.empty())
+    {
+      if(feature->comments().count(attribute))
+      {
+        std::cout << "\t" << feature->comments().at(attribute)[0];
+      }
+    }
+    std::cout << "\n";
   }
 } // namespace gff

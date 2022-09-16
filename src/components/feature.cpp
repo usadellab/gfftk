@@ -9,9 +9,11 @@ namespace gff
 {
   Feature::Feature(const std::string& seqid, const std::string& id,
                    const std::string& source, const std::string& type,
-                   position start, position end)
-    : seqid(seqid), id(id), source(source), type(type), positions{ {start, end}}
-  {  }
+                   position start, position end, attributemap attribs)
+    : seqid(seqid), id(id), source(source), type(type), positions{{start, end}}
+  {
+    move_attributes_from_row(attribs);
+  }
 
   Feature::~Feature()
   {  }
@@ -165,4 +167,40 @@ namespace gff
   {
     return positions.back().end;
   }
+
+  // try an iterator to avoid vectro intermediate
+  void Feature::move_attributes_from_row(attributemap row_attribs)
+  {
+    std::vector<std::string> keys;
+    for(auto& i : row_attribs)
+    {
+      keys.push_back(i.first);
+    }
+    for(auto& i : keys)
+    {
+      auto at = row_attribs.extract(i);
+      at.key() = i;
+      attributes.insert(std::move(at));
+    }
+    /* std::cout << row_attribs.size() << "\t" << attributes.size() << "\n";
+    for(auto& i : attributes)
+    {
+      std::cout << i.first << "\n";
+    } */
+
+  }
+  const attributemap& Feature::comments() const
+  {
+    return attributes;
+  }
+
+  // std::vector<std::string>& Feature::comment(const std::string& key)
+  // {
+  //   if(!attributes.count(key))
+  //   {
+  //     std::cerr << "[ Info ]\tno attribute" << key <<  "\n";
+  //     return;
+  //   }
+  //   std::cout << attributes.at(key)[0] << "\n";
+  // }
 } // namespace gff
