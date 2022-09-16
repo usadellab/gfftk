@@ -1,5 +1,6 @@
 CXX=g++
-CXXFLAGS=-Wall -std=c++20
+# CXXFLAGS=-Wall -std=c++20
+CXXFLAGS=-Wall -std=c++2a
 VPATH=.:../src
 INCLUDES=-I. -I../src -I/usr/include
 
