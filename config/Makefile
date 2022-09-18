@@ -1,6 +1,6 @@
 CXX=g++
 # CXXFLAGS=-Wall -std=c++20
-CXXFLAGS=-Wall -std=c++2a
+CXXFLAGS=-Wall -std=c++2a -Wno-unused-function
 VPATH=.:../src
 INCLUDES=-I. -I../src -I/usr/include
 
