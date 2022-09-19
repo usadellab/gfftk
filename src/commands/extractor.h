@@ -5,9 +5,9 @@
 
 #pragma once
 
-#include <iostream>
-#include <climits>
 #include <algorithm>
+#include <climits>
+#include <iostream>
 
 #include "gfffile.h"
 #include "commands/command.h"
@@ -54,9 +54,12 @@ namespace gff
       bool get_shortest = false;
       unsigned long minlen = 0;
       unsigned long maxlen = LONG_MAX;
-      bool type_by_length(gff::TypeFeature* locus, std::vector<gff::Feature*>& results,
-                          unsigned long min = 0, unsigned long max = LONG_MAX);
-      void process_results(gff::TypeFeature* locus, std::vector<gff::Feature*>& results);
+      bool type_by_length(gff::TypeFeature* locus,
+                          std::vector<gff::Feature*>& results,
+                          unsigned long min = 0,
+                          unsigned long max = LONG_MAX);
+      void process_results(gff::TypeFeature* locus,
+                           std::vector<gff::Feature*>& results);
       void show_feature(const gff::Feature* feature) const;
       void extract();
       std::unordered_map<std::string, std::vector<gff::Feature*>> extractions;

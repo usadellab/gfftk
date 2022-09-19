@@ -41,7 +41,7 @@ namespace gff
   int GffFile::open()
   {
     std::filesystem::file_status fstat = std::filesystem::file_status {};
-    // ToDo: Not wroking as expected. Doe snot exit when given invalid path
+    // ToDo: Not wroking as expected. Does not exit when given invalid path
     if(!std::filesystem::status_known(fstat) ? std::filesystem::exists(fstat) : std::filesystem::exists(path))
     {
       std::cerr << "[ Error ] " << path << " : File not found\n";
@@ -148,7 +148,8 @@ namespace gff
   gff::TypeFeature* GffFile::add_feature(const gff::GffRow& row)
   {
     gff::TypeFeature* feat = new gff::TypeFeature(row.seqid, row.id, row.source,
-                                                  row.type, row.start, row.end,
+                                                  row.type, row.score, row.strand,
+                                                  row.phase, row.start, row.end,
                                                   row.attributes);
     // std::cerr << "[ Info ] " << feat->id << "\t" << feat->type << "\t";
     for(const auto &i : row.parents)

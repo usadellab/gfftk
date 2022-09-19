@@ -5,7 +5,13 @@
 
 #include "commands/extractor.h"
 
+#include <algorithm>
+#include <climits>
 #include <iostream>
+
+#include "gfffile.h"
+#include "fasta/fastafile.h"
+#include "commands/command.h"
 
 namespace gff
 {
@@ -48,21 +54,6 @@ namespace gff
   {
     fasta::FastaFile ff(fasta_in);
     ff.assemble(extractions);
-    /* for(auto& i : extractions)
-    {
-      std::cout << i.first << "\n";
-
-      for(auto& j: i.second)
-      {
-        std::cout << "\t" << j->id << "\n";
-
-        j->sort_coords();
-        for(auto& k: j->coordinates())
-        {
-          std::cout << "\t\t" << k.start << "-" << k.end << "\n";
-        }
-      }
-    } */
   }
 
   const std::string& Extractor::description()
@@ -185,7 +176,8 @@ namespace gff
     return true;
   }
 
-  void Extractor::process_results(gff::TypeFeature* locus, std::vector<gff::Feature*>& results)
+  void Extractor::process_results(gff::TypeFeature* locus,
+                                  std::vector<gff::Feature*>& results)
   {
     if(results.empty())
     {

@@ -13,7 +13,7 @@
 #include <iostream>
 #include <filesystem>
 
-#include "components/locus.h"
+// #include "components/locus.h"
 #include "components/typefeature.h"
 #include "components/gffrow.h"
 #include "gfftypes.h"

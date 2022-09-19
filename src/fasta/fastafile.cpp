@@ -5,6 +5,13 @@
 
 #include "fasta/fastafile.h"
 
+#include <algorithm>
+#include <filesystem>
+#include <unordered_map>
+
+#include <components/feature.h>
+#include <helpers/stringtools.h>
+
 namespace fasta
 {
   FastaFile::FastaFile(const std::string path)
@@ -54,7 +61,8 @@ namespace fasta
     }
   }
 
-  void FastaFile::assemble(const std::unordered_map<std::string, std::vector<gff::Feature*>>)
+  void FastaFile::assemble(const std::unordered_map<std::string,
+                           std::vector<gff::Feature*>> extractions)
   {
     std::string header;
     std::string sequence;
@@ -64,8 +72,31 @@ namespace fasta
       {
         if(!header.empty())
         {
-          // std::cout << header << "\n" << sequence << "\n";
-          std::cout << header << "\n";
+          if(extractions.count(header))
+          {
+            std::string seqpart;
+            for(auto& i : extractions.at(header))
+            {
+              std::cout << ">" << header << "\t" << i->strand << "\n";
+              for(auto& j : i->coordinates())
+              {
+                seqpart += sequence.substr(j.start-1, (j.end-j.start+1));
+              }
+              if(i->strand == 1)
+              {
+                reverse_complement(seqpart);
+              }
+              else
+              {
+                std::cout << seqpart;
+              }
+              // std::cout << seqpart.length() / 3 << "\t" << "\n";
+              // add checks: len % 3 == 0; len seqpart == len from gff
+              std::cout << "\n";
+              seqpart.erase();
+            }
+            std::cout << "\n";
+          }
           sequence.erase();
         }
         line = line.substr(1);
@@ -76,6 +107,16 @@ namespace fasta
         sequence += line;
       }
     }
-    std::cout << header << "\n" << sequence << "\n";
+    // std::cout << header << "\n" << sequence << "\n";
+  }
+
+
+  void FastaFile::reverse_complement(std::string& seq)
+  {
+    std::reverse(seq.begin(), seq.end());
+    for(const auto& i : seq)
+    {
+      std::cout << nuc_complement.at(i);
+    }
   }
 } // namespace fasta

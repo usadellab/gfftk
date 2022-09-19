@@ -9,9 +9,9 @@ namespace gff
 {
 
   TypeFeature::TypeFeature(const std::string& seqid, const std::string& id,
-                           const std::string& source, const std::string& type,
-                           position start, position end, attributemap attribs)
-  : Feature{seqid, id, source, type, start, end, attribs}
+      const std::string& source, const std::string& type, const float score,
+      int strand, int phase, position start, position end, attributemap attribs)
+  : Feature{seqid, id, source, type, score, strand, phase, start, end, attribs}
   {
     move_attributes_from_row(attribs);
   }
@@ -19,12 +19,14 @@ namespace gff
   TypeFeature::~TypeFeature()
   {  }
 
-  void TypeFeature::get_types(const std::string& type, std::set<gff::Feature*>& container)
+  void TypeFeature::get_types(const std::string& type,
+                              std::set<gff::Feature*>& container)
   {
     bfs(this, type, container);
   }
 
-  void TypeFeature::bfs(gff::Feature* feat, const std::string& type, std::set<gff::Feature*>& container, int level)
+  void TypeFeature::bfs(gff::Feature* feat, const std::string& type,
+                        std::set<gff::Feature*>& container, int level)
   {
     if(feat->type == type)
     {

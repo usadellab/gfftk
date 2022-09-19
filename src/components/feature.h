@@ -21,12 +21,16 @@ namespace gff
     public:
       Feature(const std::string& seqid, const std::string& id,
               const std::string& source, const std::string& type,
-              position start, position end, attributemap attribs);
+              const float score, int strand, int phase, position start, position end,
+              attributemap attribs);
       virtual ~Feature();
       std::string seqid;
       std::string id;
       std::string source;
       std::string type;
+      float score;
+      int strand;
+      int phase;
       const position start() const;
       const position end() const;
       using childrenmap = std::unordered_map<std::string, std::unordered_map<std::string, gff::Feature*>>;

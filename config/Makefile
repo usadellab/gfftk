@@ -4,7 +4,7 @@ CXXFLAGS=-Wall -std=c++2a -Wno-unused-function
 VPATH=.:../src
 INCLUDES=-I. -I../src -I/usr/include
 
-objects = gfftk.o stringtools.o locus.o gfffile.o gffrow.o feature.o typefeature.o command.o extractor.o viewer.o fastafile.o
+objects = gfftk.o stringtools.o gfffile.o gffrow.o feature.o typefeature.o command.o extractor.o viewer.o fastafile.o
 
 .PHONY : all clean
 
@@ -14,10 +14,7 @@ gfftk.o: gfftk.cpp gfftk.h gfffile.h commands/extractor.h
 stringtools.o:	helpers/stringtools.cpp helpers/stringtools.h
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
-locus.o:	components/locus.cpp components/locus.h components/gffrow.h components/feature.h components/typefeature.h gfftypes.h
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
-
-gfffile.o:	gfffile.cpp gfffile.h components/gffrow.h components/locus.h helpers/stringtools.h components/typefeature.h
+gfffile.o:	gfffile.cpp gfffile.h components/gffrow.h helpers/stringtools.h components/typefeature.h
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
 gffrow.o:	components/gffrow.cpp components/gffrow.h helpers/stringtools.h gfftypes.h
