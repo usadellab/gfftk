@@ -43,8 +43,8 @@ namespace gff
       const unsigned long int length() const;
       const unsigned long int size() const;
       bool has_identical_parent(gff::Feature* feat);
-      // std::vector<std::string>& comment(const std::string& key);
       const attributemap& comments() const;
+      void sort_coords();
 
     protected:
       std::vector<Coordinates> positions;

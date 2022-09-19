@@ -193,14 +193,10 @@ namespace gff
   {
     return attributes;
   }
-
-  // std::vector<std::string>& Feature::comment(const std::string& key)
-  // {
-  //   if(!attributes.count(key))
-  //   {
-  //     std::cerr << "[ Info ]\tno attribute" << key <<  "\n";
-  //     return;
-  //   }
-  //   std::cout << attributes.at(key)[0] << "\n";
-  // }
+  void Feature::sort_coords()
+  {
+    std::sort(positions.begin(), positions.end(),[](const Coordinates& lhs,
+                                                    const Coordinates& rhs)
+                                {return lhs.start < rhs.start;});
+  }
 } // namespace gff

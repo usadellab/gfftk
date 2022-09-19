@@ -19,12 +19,12 @@ namespace gff
   TypeFeature::~TypeFeature()
   {  }
 
-  void TypeFeature::get_types(const std::string& type, std::set<const gff::Feature*>& container)
+  void TypeFeature::get_types(const std::string& type, std::set<gff::Feature*>& container)
   {
     bfs(this, type, container);
   }
 
-  void TypeFeature::bfs(const gff::Feature* feat, const std::string& type, std::set<const gff::Feature*>& container, int level)
+  void TypeFeature::bfs(gff::Feature* feat, const std::string& type, std::set<gff::Feature*>& container, int level)
   {
     if(feat->type == type)
     {

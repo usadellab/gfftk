@@ -37,6 +37,20 @@ namespace gff
   {
     gff::GffFile gff(gff_file);
     gff.parse(*this);
+    for(auto& i: extractions)
+    {
+      std::cout << i.first << "\n";
+      for(auto& j: i.second)
+      {
+        std::cout << "\t" << j->id << "\n";
+
+        j->sort_coords();
+        for(auto& k: j->coordinates())
+        {
+          std::cout << "\t\t" << k.start << "-" << k.end << "\n";
+        }
+      }
+    }
   }
 
   const std::string& Extractor::description()
@@ -117,28 +131,28 @@ namespace gff
 
   int Extractor::process_locus(gff::TypeFeature* locus)
   {
-    std::vector<const gff::Feature*> results;
+    std::vector<gff::Feature*> results;
     if(!type_by_length(locus, results, minlen, maxlen))
-    {
-      return EXIT_SUCCESS;
-    }
+      {return EXIT_SUCCESS;}
 
     std::sort(results.begin(), results.end(),[](const gff::Feature* lhs,
-       const gff::Feature* rhs)
-       {return lhs->length() > rhs->length();});
+                                                const gff::Feature* rhs)
+                                {return lhs->length() > rhs->length();});
     if(results.empty())
     {
       std::cerr << "[ Info ]\t" << locus->id << ": no matches\n";
       return EXIT_SUCCESS;
     }
 
-    show_results(locus, results);
+    process_results(locus, results);
     return EXIT_SUCCESS; // temporary
   }
 
-  bool Extractor::type_by_length(gff::TypeFeature* locus, std::vector<const gff::Feature*>& results, unsigned long min, unsigned long max)
+  bool Extractor::type_by_length(gff::TypeFeature* locus,
+                                 std::vector<gff::Feature*>& results,
+                                 unsigned long min, unsigned long max)
   {
-    std::set<const gff::Feature*> types;
+    std::set<gff::Feature*> types;
     locus->get_types(type, types);
     if(types.empty())
     {
@@ -155,24 +169,28 @@ namespace gff
     return true;
   }
 
-  void Extractor::show_results(const gff::TypeFeature* locus, std::vector<const gff::Feature*>& results) const
+  void Extractor::process_results(gff::TypeFeature* locus, std::vector<gff::Feature*>& results)
   {
     if(results.empty())
     {
       std::cerr << "[ Info ]\t" << locus->id << ": no matches\n";
       return;
     }
+    extractions.try_emplace(locus->seqid, std::vector<gff::Feature*>{});
     if(results.size() == 1)
     {
       show_feature(results.front());
+      extractions.at(locus->seqid).push_back(results.front());
     }
     else if(get_longest)
     {
       show_feature(results.front());
+      extractions.at(locus->seqid).push_back(results.front());
     }
     else if(get_shortest)
     {
       show_feature(results.back());
+      extractions.at(locus->seqid).push_back(results.back());
     }
     else
     {
@@ -185,6 +203,8 @@ namespace gff
         }
         std::cout << i->seqid << "\t" << i->id << "\t" << i->type << "\t"
         << i->length() << "\t" << i->start() << "\t" << i->end() << "\t" << parents << "\n"; */
+        // extr_it->second.push_back(i);
+        extractions.at(locus->seqid).push_back(i);
         show_feature(i);
       }
     }
