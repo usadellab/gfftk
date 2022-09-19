@@ -9,7 +9,8 @@
 #include <fstream>
 #include <filesystem>
 
-#include <components/typefeature.h>
+#include <components/feature.h>
+#include <helpers/stringtools.h>
 
 
 namespace fasta
@@ -19,13 +20,14 @@ namespace fasta
     public:
       FastaFile(const std::string path);
       ~FastaFile();
+      void assemble(const std::unordered_map<std::string, std::vector<gff::Feature*>>);
 
     private:
       std::string path;
       std::ifstream fh;
       int open();
       void close();
-      void assemble(gff::TypeFeature* feature);
+
 
   };
 } // namespace fasta

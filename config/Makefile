@@ -32,13 +32,13 @@ typefeature.o:	components/typefeature.cpp components/typefeature.h components/fe
 command.o: commands/command.cpp commands/command.h
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
-extractor.o: commands/extractor.cpp commands/extractor.h	commands/command.h
+extractor.o: commands/extractor.cpp commands/extractor.h commands/command.h fasta/fastafile.h
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
-viewer.o: commands/viewer.cpp commands/viewer.h	commands/command.h
+viewer.o: commands/viewer.cpp commands/viewer.h commands/command.h
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
-fastafile.o: fasta/fastafile.cpp fasta/fastafile.h components/typefeature.h
+fastafile.o: fasta/fastafile.cpp fasta/fastafile.h components/feature.h helpers/stringtools.h
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
 gfftk: $(objects)

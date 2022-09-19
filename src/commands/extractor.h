@@ -9,8 +9,10 @@
 #include <climits>
 #include <algorithm>
 
-#include "commands/command.h"
 #include "gfffile.h"
+#include "commands/command.h"
+#include "fasta/fastafile.h"
+
 
 namespace gff
 {
@@ -29,8 +31,8 @@ namespace gff
     private:
       const std::string descr = "Extract features from GFF file";
       const std::string name = "extract";
-      const char* const short_opts = "i:t:x:m:M:a:slh";
-      const option long_opts[10] =
+      const char* const short_opts = "i:t:x:m:M:a:f:slh";
+      const option long_opts[11] =
       {
         {"input", required_argument, nullptr, 'i'},
         {"type", required_argument, nullptr, 't'},
@@ -38,6 +40,7 @@ namespace gff
         {"min", required_argument, nullptr, 'm'},
         {"max", required_argument, nullptr, 'M'},
         {"attribute", required_argument, nullptr, 'a'},
+        {"fasta", required_argument, nullptr, 'f'},
         {"shortest", no_argument, nullptr, 's'},
         {"longest", no_argument, nullptr, 'l'},
         {"help", no_argument, nullptr, 'h'},
@@ -46,6 +49,7 @@ namespace gff
       unsigned long int taxid;
       std::string type;
       std::string attribute;
+      std::string fasta_in;
       bool get_longest = false;
       bool get_shortest = false;
       unsigned long minlen = 0;
@@ -54,7 +58,7 @@ namespace gff
                           unsigned long min = 0, unsigned long max = LONG_MAX);
       void process_results(gff::TypeFeature* locus, std::vector<gff::Feature*>& results);
       void show_feature(const gff::Feature* feature) const;
-      // void extract(const gff::Feature* feature) const;
+      void extract();
       std::unordered_map<std::string, std::vector<gff::Feature*>> extractions;
   };
 } // namespace gff

@@ -54,8 +54,28 @@ namespace fasta
     }
   }
 
-  void FastaFile::assemble(gff::TypeFeature* feature)
+  void FastaFile::assemble(const std::unordered_map<std::string, std::vector<gff::Feature*>>)
   {
-
+    std::string header;
+    std::string sequence;
+    for(std::string line; std::getline(fh, line);)
+    {
+      if(line[0] == '>')
+      {
+        if(!header.empty())
+        {
+          // std::cout << header << "\n" << sequence << "\n";
+          std::cout << header << "\n";
+          sequence.erase();
+        }
+        line = line.substr(1);
+        header = stringtools::tokenize(line, ' ')[0];
+      }
+      else
+      {
+        sequence += line;
+      }
+    }
+    std::cout << header << "\n" << sequence << "\n";
   }
 } // namespace fasta

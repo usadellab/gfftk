@@ -29,6 +29,7 @@ namespace gff
               <<  "\t--min, -m <int>            min lentgth\n"
               <<  "\t--max, -M <int>            max lentgth\n"
               <<  "\t--attribute, -a <str>      select attribute\n"
+              <<  "\t--fasta, -f <path>         FASTA file with sequences\n"
               <<  "\t--help, -h                 Show help\n";
     exit(1);
   }
@@ -37,9 +38,20 @@ namespace gff
   {
     gff::GffFile gff(gff_file);
     gff.parse(*this);
-    for(auto& i: extractions)
+    if(!fasta_in.empty())
+    {
+      extract();
+    }
+  }
+
+  void Extractor::extract()
+  {
+    fasta::FastaFile ff(fasta_in);
+    ff.assemble(extractions);
+    /* for(auto& i : extractions)
     {
       std::cout << i.first << "\n";
+
       for(auto& j: i.second)
       {
         std::cout << "\t" << j->id << "\n";
@@ -50,7 +62,7 @@ namespace gff
           std::cout << "\t\t" << k.start << "-" << k.end << "\n";
         }
       }
-    }
+    } */
   }
 
   const std::string& Extractor::description()
@@ -105,6 +117,10 @@ namespace gff
 
         case 'a':
           attribute = optarg;
+          break;
+
+        case 'f':
+          fasta_in = optarg;
           break;
 
         case 'h': // -h or --help
@@ -208,6 +224,7 @@ namespace gff
         show_feature(i);
       }
     }
+    extractions.at(locus->seqid).back()->sort_coords();
   }
 
   void Extractor::show_feature(const gff::Feature* feature) const
