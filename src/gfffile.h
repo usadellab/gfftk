@@ -31,6 +31,7 @@ namespace gff
       };
     GffFile(std::string gff_file);
     ~GffFile();
+    void close();
     int parse(gff::GffFile::Processor& proc);
     gff::TypeFeature* add_feature(const gff::GffRow& row);
     gff::TypeFeature* get_feature(const std::string& id);
@@ -42,7 +43,6 @@ namespace gff
     std::ifstream gff_in;
     unsigned int row_num = 0;
     int open();
-    void close();
     void parse_directive(const std::string& line);
     std::unordered_map<std::string, std::vector<std::string>> directives;
     gff::TypeFeature* assemble_locus(gff::TypeFeature* feature);

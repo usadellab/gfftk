@@ -66,6 +66,8 @@ namespace fasta
   {
     std::string header;
     std::string sequence;
+    std::string subseq;
+    int strand;
     for(std::string line; std::getline(fh, line);)
     {
       if(line[0] == '>')
@@ -74,39 +76,39 @@ namespace fasta
         {
           if(extractions.count(header))
           {
-            std::string seqpart;
             for(auto& i : extractions.at(header))
             {
-              std::cout << ">" << header << "\t" << i->strand << "\n";
+              std::cout << ">" << i->id << "\t" << i->strand << "\t" << i->start() << "\t" << i->end() << "\t" << i->length() << "\n";
               for(auto& j : i->coordinates())
               {
-                seqpart += sequence.substr(j.start-1, (j.end-j.start+1));
+                unsigned long  len = (j.end-j.start+1);
+                if(j.start + len > sequence.size())
+                {
+                  std::cout << "### too long: " << header << "\t" << i->id << "\t" << i->start() << "\t" << i->end() << "\n";
+                }
+                subseq += sequence.substr(j.start-1, len);
               }
-              if(i->strand == 1)
-              {
-                reverse_complement(seqpart);
-              }
-              else
-              {
-                std::cout << seqpart;
-              }
-              // std::cout << seqpart.length() / 3 << "\t" << "\n";
+              // std::cout << "## " << header << "\t" << i->id << "\t" << i->start() << "\t" << i->end() << "\n";
+              strand = i->strand;
+              print_sequence(subseq, i->strand);
+              // std::cout << subseq.length() / 3 << "\t" << "\n";
               // add checks: len % 3 == 0; len seqpart == len from gff
               std::cout << "\n";
-              seqpart.erase();
+              subseq.erase();
             }
             std::cout << "\n";
           }
           sequence.erase();
+          header.erase();
         }
-        line = line.substr(1);
-        header = stringtools::tokenize(line, ' ')[0];
+        header = stringtools::tokenize(line.erase(0,1), ' ')[0];
       }
       else
       {
         sequence += line;
       }
     }
+    print_sequence(subseq, strand);
     // std::cout << header << "\n" << sequence << "\n";
   }
 
@@ -116,7 +118,22 @@ namespace fasta
     std::reverse(seq.begin(), seq.end());
     for(const auto& i : seq)
     {
+      if(!nuc_complement.count(i))
+      {
+        std::cout << "### missing complement for " << i << "\n";
+        return;
+      }
       std::cout << nuc_complement.at(i);
     }
+  }
+
+  void FastaFile::print_sequence(std::string& seq, int strand)
+  {
+    if(strand == 1)
+    {
+      reverse_complement(seq);
+      return;
+    }
+    std::cout << seq;
   }
 } // namespace fasta

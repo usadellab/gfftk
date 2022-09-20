@@ -48,6 +48,7 @@ namespace gff
     {
       extract();
     }
+    gff.close();
   }
 
   void Extractor::extract()
@@ -221,16 +222,16 @@ namespace gff
 
   void Extractor::show_feature(const gff::Feature* feature) const
   {
-    std::cout << feature->seqid << "\t" << feature->id << "\t" << feature->type
+    std::cerr << feature->seqid << "\t" << feature->id << "\t" << feature->type
               << "\t" << feature->length() << "\t" << feature->start() << "\t"
               << feature->end() << "\t" << feature->size();
     if(!attribute.empty())
     {
       if(feature->comments().count(attribute))
       {
-        std::cout << "\t" << feature->comments().at(attribute)[0];
+        std::cerr << "\t" << feature->comments().at(attribute)[0];
       }
     }
-    std::cout << "\n";
+    std::cerr << "\n";
   }
 } // namespace gff

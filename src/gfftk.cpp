@@ -15,7 +15,6 @@ namespace gff
 
   GffTk::~GffTk()
   {
-    std::cout << "exittest\n";
     cleanup();
   }
 

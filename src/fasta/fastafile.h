@@ -30,6 +30,7 @@ namespace fasta
       int open();
       void close();
       void reverse_complement(std::string& seq);
+      void print_sequence(std::string& seq, int strand);
       inline static const std::unordered_map<char, char> nuc_complement
         { {'A', 'T'}, {'T', 'A'}, {'G', 'C'}, {'C', 'G'} };
   };
