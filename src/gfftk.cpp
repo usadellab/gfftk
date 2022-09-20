@@ -15,6 +15,7 @@ namespace gff
 
   GffTk::~GffTk()
   {
+    std::cout << "exittest\n";
     cleanup();
   }
 
@@ -26,20 +27,27 @@ namespace gff
       usage();
       exit(EXIT_FAILURE);
     }
+    if(argv[1] == std::string("-h"))
+    {
+      usage();
+      return;
+    }
     for(auto i : commands)
     {
       if(i->command() == argv[1])
       {
         if(i->setup(argc, argv))
         {
+          std::cerr << "Error: Setting up " << i->command() << "failed\n";
           exit(EXIT_FAILURE);
         }
         i->run();
-        exit(EXIT_SUCCESS);
+        return;
       }
     }
     std::cerr <<  "Unknown command: " << argv[1] <<"\n";
     list_commands();
+    cleanup();
     exit(EXIT_FAILURE);
   }
 
