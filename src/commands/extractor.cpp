@@ -217,7 +217,7 @@ namespace gff
         show_feature(i);
       }
     }
-    extractions.at(locus->seqid).back()->sort_coords();
+    // extractions.at(locus->seqid).back()->sort_coords();
   }
 
   void Extractor::show_feature(const gff::Feature* feature) const
@@ -225,6 +225,14 @@ namespace gff
     std::cerr << feature->seqid << "\t" << feature->id << "\t" << feature->type
               << "\t" << feature->length() << "\t" << feature->start() << "\t"
               << feature->end() << "\t" << feature->size();
+    long int diff = feature->end() - feature->start();
+    if(feature->end() - feature->start() <= 0)
+    {
+      std::cerr << "[ Error ] end cannot be lower than start:\t" << feature->seqid << "\t" << feature->id << "\t" << feature->type
+              << "\t" << feature->length() << "\t" << feature->start() << "\t"
+              << feature->end() << "\t" << feature->size() << "\n";
+      exit(EXIT_FAILURE);
+    }
     if(!attribute.empty())
     {
       if(feature->comments().count(attribute))

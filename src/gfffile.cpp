@@ -145,6 +145,12 @@ namespace gff
     }
   }
 
+  /**
+   * @brief Add
+   *
+   * @param row
+   * @return gff::TypeFeature*
+   */
   gff::TypeFeature* GffFile::add_feature(const gff::GffRow& row)
   {
     gff::TypeFeature* feat = new gff::TypeFeature(row.seqid, row.id, row.source,
@@ -157,12 +163,16 @@ namespace gff
       feat->add_parent(get_feature(i));
     }
 
+    // Try adding new feature
     const auto &[it, inserted] = features.try_emplace(feat->id, feat);
     if(inserted)  // feature does not exist at locus
     {
       // std::cerr << "\tinserted\n";
+      feat->sort_coords();
       return feat;
     }
+    // Feature is already known. If it is a duplicate, delete currrent feature
+    // and warn
     if(feat->is_duplicate(it->second)) // check for duplicate entry
     {
       std::cerr << "[ Warning ] identified likely identical features" << path << "::" << row_num
@@ -171,13 +181,20 @@ namespace gff
       return nullptr;
     }
     // std::cerr << "\textending with " << it->second->id << "\n";
+    // Feature is already known. Extending with new part of same feature.
+    // If this fails, delete feature part and emit warning
     if(!it->second->extend_with(feat))
     {
-      std::cerr << "[ Warning ] extending " << feat->id << " with "
-                << it->second << "failed\n";
+      std::cerr << "[ Warning ] extending " << it->second << " with "
+                << feat->id << "failed\n";
+      delete feat;
       return nullptr;
     }
+    // Feature is already known and has been extended with new part. Delete
+    // feature part as its info has been used in the extension.
+    // Sort coords and return extended feauture
     delete feat;
+    it->second->sort_coords();
     return it->second;
   }
 

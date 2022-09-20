@@ -194,6 +194,7 @@ namespace gff
   {
     return attributes;
   }
+
   void Feature::sort_coords()
   {
     std::sort(positions.begin(), positions.end(),[](const Coordinates& lhs,
