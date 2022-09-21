@@ -29,7 +29,7 @@ namespace gff
       int phase;
       std::vector<std::string> parents;
       int rownum;
-      int err_code;
+      int err_code = 0;
       attributemap attributes;
       void parse(std::string& gffrow);
 
