@@ -62,7 +62,7 @@ namespace gff
     }
     else
     {
-      id = std::string("anon")+std::to_string(anon_feat_count++);
+      id = std::to_string(anon_feat_count++);
     }
     if(attributes.count(parent_key))
     {

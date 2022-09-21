@@ -33,7 +33,9 @@ namespace gff
       int phase;
       const position start() const;
       const position end() const;
-      using childrenmap = std::unordered_map<std::string, std::unordered_map<std::string, gff::Feature*>>;
+      using childrenmap = std::unordered_map<std::string,
+                                             std::unordered_map<std::string,
+                                                                gff::Feature*>>;
       const childrenmap& get_children() const;
       const std::vector<Coordinates>& coordinates() const;
       void add_child(gff::Feature* child);

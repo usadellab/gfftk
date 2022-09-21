@@ -48,7 +48,6 @@ namespace gff
     {
       extract();
     }
-    gff.close();
   }
 
   void Extractor::extract()
@@ -212,12 +211,10 @@ namespace gff
         }
         std::cout << i->seqid << "\t" << i->id << "\t" << i->type << "\t"
         << i->length() << "\t" << i->start() << "\t" << i->end() << "\t" << parents << "\n"; */
-        // extr_it->second.push_back(i);
         extractions.at(locus->seqid).push_back(i);
         show_feature(i);
       }
     }
-    // extractions.at(locus->seqid).back()->sort_coords();
   }
 
   void Extractor::show_feature(const gff::Feature* feature) const
@@ -225,12 +222,12 @@ namespace gff
     std::cerr << feature->seqid << "\t" << feature->id << "\t" << feature->type
               << "\t" << feature->length() << "\t" << feature->start() << "\t"
               << feature->end() << "\t" << feature->size();
-    long int diff = feature->end() - feature->start();
     if(feature->end() - feature->start() <= 0)
     {
-      std::cerr << "[ Error ] end cannot be lower than start:\t" << feature->seqid << "\t" << feature->id << "\t" << feature->type
-              << "\t" << feature->length() << "\t" << feature->start() << "\t"
-              << feature->end() << "\t" << feature->size() << "\n";
+      std::cerr << "[ Error ] end position cannot be lower than start position:\t"
+                << feature->seqid << "\t" << feature->id << "\t" << feature->type
+                << "\t" << feature->length() << "\t" << feature->start() << "\t"
+                << feature->end() << "\t" << feature->size() << "\n";
       exit(EXIT_FAILURE);
     }
     if(!attribute.empty())

@@ -1,6 +1,6 @@
 CXX=g++
 # CXXFLAGS=-Wall -std=c++20
-CXXFLAGS=-Wall -std=c++2a -Wno-unused-function
+CXXFLAGS=-Wall -std=c++2a -Wno-unused-function -D_FORTIFY_SOURCE=3 -O
 VPATH=.:../src
 INCLUDES=-I. -I../src -I/usr/include
 

@@ -19,6 +19,18 @@ namespace gff
   class Extractor : public Command, GffFile::Processor
   {
     public:
+      class Validator
+      {
+        public:
+          Validator();
+          ~Validator();
+          int validate();
+
+        private:
+          int validate_coding();
+          int validate_nocoding();
+
+      };
       Extractor();
       ~Extractor();
       int setup(int argc, char **argv);
