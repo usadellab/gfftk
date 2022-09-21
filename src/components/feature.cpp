@@ -8,8 +8,9 @@
 namespace gff
 {
   Feature::Feature(const std::string& seqid, const std::string& id,
-      const std::string& source, const std::string& type, const float score,
-      int strand, int phase, position start, position end, attributemap attribs)
+                   const std::string& source, const std::string& type,
+                   const float score, int strand, int phase, position start,
+                   position end, attributemap attribs)
     : seqid(seqid), id(id), source(source), type(type), score(score),
       strand(strand), phase(phase), positions{{start, end}}
   {

@@ -237,7 +237,6 @@ namespace gff
     for(auto it = features.cbegin(); it != features.cend();)
     {
       // std::cerr << "[ Info ]\tDeleting: " << it->first << "\n";
-      std::cerr << "[ Info ]\tDeleting: " << it->second << "\n";
       delete(it->second);
       it++;
     }
