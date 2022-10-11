@@ -31,6 +31,11 @@ namespace gff
       usage();
       return;
     }
+    if(argv[1] == std::string("-v") || argv[1] == std::string("version"))
+    {
+      std::cout << VERSION_NUMBER << "\n"; // g++ macro defined in Makefile
+      return;
+    }
     for(auto i : commands)
     {
       if(i->command() == argv[1])
@@ -69,6 +74,7 @@ namespace gff
   void GffTk::list_commands()
   {
     std::cout << "Available commands:\n";
+    std::cout << "\tversion \tshow version\n";
     for(const auto& i : commands)
     {
       std::cout << "\t" << i->command() << "\t\t" << i->description() << "\n";

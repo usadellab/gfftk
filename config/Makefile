@@ -1,15 +1,16 @@
+GIT_COMMIT=\"$(shell git describe --always --dirty --match 'NOT A TAG')\"
+
 CXX=g++
 # CXXFLAGS=-Wall -std=c++20
+CFLAGS=-DVERSION_NUMBER=$(GIT_COMMIT)
 CXXFLAGS=-Wall -std=c++2a -Wno-unused-function -D_FORTIFY_SOURCE=3 -O
 VPATH=.:../src
 INCLUDES=-I. -I../src -I/usr/include
 
+
 objects = gfftk.o stringtools.o gfffile.o gffrow.o feature.o typefeature.o command.o extractor.o viewer.o fastafile.o
 
 .PHONY : all clean
-
-gfftk.o: gfftk.cpp gfftk.h gfffile.h commands/extractor.h
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
 stringtools.o:	helpers/stringtools.cpp helpers/stringtools.h
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
@@ -38,8 +39,11 @@ viewer.o: commands/viewer.cpp commands/viewer.h commands/command.h
 fastafile.o: fasta/fastafile.cpp fasta/fastafile.h components/feature.h helpers/stringtools.h
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
+gfftk.o: gfftk.cpp gfftk.h gfffile.h commands/extractor.h
+	$(CXX) $(CXXFLAGS) $(CFLAGS) $(INCLUDES) -c $< -o $@
+
 gfftk: $(objects)
-	$(CXX) $(CXXFLAGS) $(INCLUDES)  -o $@ $+
+	$(CXX) $(CXXFLAGS) $(CFLAGS) $(INCLUDES)  -o $@ $+
 
  clean:
 	-rm gfftk $(objects)
