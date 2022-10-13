@@ -5,6 +5,14 @@
 
 #include "components/typefeature.h"
 
+#include <iostream>
+#include <vector>
+#include <unordered_map>
+#include <set>
+
+#include "components/gffrow.h"
+#include "components/feature.h"
+
 namespace gff
 {
 

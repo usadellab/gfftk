@@ -5,7 +5,8 @@
 
 #include "fasta/fastafile.h"
 
-#include <algorithm>
+#include <iostream>
+#include <fstream>
 #include <filesystem>
 #include <unordered_map>
 
@@ -28,7 +29,7 @@ namespace fasta
   int FastaFile::open()
   {
     std::filesystem::file_status fstat = std::filesystem::file_status {};
-    // ToDo: Not wroking as expected. Doe snot exit when given invalid path
+    // ToDo: Not wroking as expected. Does not exit when given invalid path
     if(!std::filesystem::status_known(fstat) ? std::filesystem::exists(fstat) : std::filesystem::exists(path))
     {
       std::cerr << "[ Error ] " << path << " : File not found\n";

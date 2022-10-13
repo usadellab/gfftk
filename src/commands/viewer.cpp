@@ -3,9 +3,14 @@
  * \copyright 2022
 */
 
-#include <iostream>
-
 #include "commands/viewer.h"
+
+#include <iostream>
+#include <climits>
+#include <algorithm>
+
+#include "commands/command.h"
+#include "gfffile.h"
 
 namespace gff
 {

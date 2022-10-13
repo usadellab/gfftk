@@ -7,6 +7,17 @@
 
 #include "gfffile.h"
 
+#include <unordered_map>
+#include <fstream>
+#include <vector>
+#include <iostream>
+#include <filesystem>
+
+#include "components/typefeature.h"
+#include "components/gffrow.h"
+#include "gfftypes.h"
+#include "helpers/stringtools.h"
+
 namespace gff
 {
   GffFile::GffFile(std::string gff_file)

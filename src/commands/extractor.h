@@ -29,7 +29,6 @@ namespace gff
         private:
           int validate_coding();
           int validate_nocoding();
-
       };
       Extractor();
       ~Extractor();

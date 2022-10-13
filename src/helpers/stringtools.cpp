@@ -5,13 +5,13 @@
  * -------------------------------------------------------------------------------
  */
 
+#include "helpers/stringtools.h"
+
 #include <algorithm>
 #include <iostream>
 #include <sstream>
 #include <locale>
 #include <vector>
-
-#include "helpers/stringtools.h"
 
 namespace stringtools
 {

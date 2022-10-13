@@ -3,9 +3,12 @@
  * \copyright 2022
 */
 
+#include "gfftk.h"
+
 #include <iostream>
 
-#include "gfftk.h"
+#include "commands/extractor.h"
+#include "commands/viewer.h"
 
 namespace gff
 {

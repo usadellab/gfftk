@@ -5,6 +5,13 @@
 
 #include "components/feature.h"
 
+#include <iostream>
+#include <set>
+#include <algorithm>
+
+#include "gfftypes.h"
+#include "components/gffrow.h"
+
 namespace gff
 {
   Feature::Feature(const std::string& seqid, const std::string& id,

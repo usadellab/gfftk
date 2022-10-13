@@ -30,7 +30,7 @@ typefeature.o:	components/typefeature.cpp components/typefeature.h components/fe
 command.o: commands/command.cpp commands/command.h
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
-extractor.o: commands/extractor.cpp commands/extractor.h commands/command.h fasta/fastafile.h
+extractor.o: commands/extractor.cpp commands/extractor.h gfffile.h commands/command.h fasta/fastafile.h
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
 viewer.o: commands/viewer.cpp commands/viewer.h commands/command.h

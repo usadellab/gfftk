@@ -5,6 +5,12 @@
 
 #include "components/gffrow.h"
 
+#include <iostream>
+#include <unordered_map>
+
+#include "helpers/stringtools.h"
+#include "gfftypes.h"
+
 namespace gff
 {
   std::int_fast32_t GffRow::anon_feat_count = 0;

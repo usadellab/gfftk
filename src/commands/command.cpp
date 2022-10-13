@@ -3,10 +3,10 @@
  * \copyright 2022
 */
 
-#include <fstream>
-#include <iostream>
-
 #include "commands/command.h"
+
+#include <iostream>
+#include <getopt.h>
 
 namespace gff
 {
