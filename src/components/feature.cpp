@@ -32,7 +32,7 @@ namespace gff
     unsigned long int length = 0;
     for(auto& i : positions)
     {
-      length += i.end - i.start + 1;
+      length += i.end - i.start;
     }
     return length;
   }
