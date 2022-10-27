@@ -34,3 +34,4 @@ work
 *.*.geany
 work/
 *.code-workspace
+data/

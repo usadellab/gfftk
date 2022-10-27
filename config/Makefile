@@ -7,7 +7,6 @@ CXXFLAGS=-Wall -std=c++2a -Wno-unused-function -D_FORTIFY_SOURCE=3 -O
 VPATH=.:../src
 INCLUDES=-I. -I../src -I/usr/include
 
-
 objects = gfftk.o stringtools.o gfffile.o gffrow.o feature.o typefeature.o command.o extractor.o viewer.o fastafile.o
 
 .PHONY : all clean
