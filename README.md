@@ -33,3 +33,8 @@ $: ./gfftk extract -h
 # Extract longest CDS and the corresponding prtotein_id attribute
 $: ./gfftk extract -i GCF_000188115.4.ncbi.gff -t cds -l -a protein_id
 ```
+
+Extract longest CDS from a GFF file and its corresponding sequence file:
+
+```bash
+$: ./gfftk extract -i GCF_000188115.4.ncbi.gff -t cds -l -f GCF_000188115.4.ncbi.fa
