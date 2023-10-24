@@ -6,6 +6,7 @@
 #pragma once
 
 #include <iostream>
+#include <cstdint>
 #include <unordered_map>
 
 #include "helpers/stringtools.h"
