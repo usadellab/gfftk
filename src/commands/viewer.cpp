@@ -73,17 +73,20 @@ int Viewer::setup(int argc, char** argv)
 
 int Viewer::process_locus(gff::TypeFeature* locus)
 {
-  compact_view(locus, locus->id);
+  compact_view(locus, locus);
   return EXIT_SUCCESS; // temporary
 }
 
-void Viewer::compact_view(const gff::Feature* feat,
-                          const std::string_view& locus_id, int level)
+void Viewer::compact_view(const gff::Feature* feat, const gff::Feature* locus,
+                          int level)
 {
   // std::cout << std::string(level, '\t') << feat->type << ":" << feat->id
   //           << "\n";
-  std::cout << locus_id << "\t" << feat->type << "\t" << feat->id << "\t"
-            << feat->start() << "\t" << feat->end();
+  std::cout << locus->id << "\t" << feat->type << "\t" << feat->id << "\t"
+            << feat->start() << "\t" << feat->end() << "\t"
+            << feat->start() - locus->start() << "\t"
+            << feat->start() - locus->start()
+                 + (feat->end() - feat->start() + 1);
   if(!source.empty()) { std::cout << "\t" << source; }
   std::cout << "\n";
   if(!feat->get_children().empty())
@@ -96,7 +99,7 @@ void Viewer::compact_view(const gff::Feature* feat,
       // {return lhs->length() > rhs->length();});
       for(const auto& j : i.second)
       {
-        compact_view(j.second, locus_id, level);
+        compact_view(j.second, locus, level);
       }
     }
     --level;

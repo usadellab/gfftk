@@ -39,7 +39,7 @@ class Viewer
       {"source", optional_argument, nullptr, 's'},
       { nullptr,       no_argument, nullptr,   0}
     };
-    void compact_view(const gff::Feature* feat,
-                      const std::string_view& locus_id, int level = 0);
+    void compact_view(const gff::Feature* feat, const gff::Feature* locus,
+                      int level = 0);
 };
 } // namespace gff
