@@ -23,9 +23,12 @@ $: cd gfftk && mkdir build && cd $_ && ln -s ../config/Makefile
 $: make gfftk
 ```
 
-This should compile a `gfftk` executable.
+This should compile a `gfftk` executable in the directory build. This executable
+can be moved into any directory.
 
 ## Examples
+
+- Assuming you are in `gfftk/build`
 
 ```bash
 $: ./gfftk
@@ -34,7 +37,9 @@ $: ./gfftk extract -h
 $: ./gfftk extract -i GCF_000188115.4.ncbi.gff -t cds -l -a protein_id
 ```
 
-Extract longest CDS from a GFF file and its corresponding sequence file:
+Extract longest CDS from a GFF file and extract its corresponding sequence from
+the corresponding FASTA file (-f). Print to stdout:
 
 ```bash
 $: ./gfftk extract -i GCF_000188115.4.ncbi.gff -t cds -l -f GCF_000188115.4.ncbi.fa
+```
