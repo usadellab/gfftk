@@ -1,99 +1,33 @@
 /*
  * \author Jan Piotr Buchmann <jpb@members.fsf.org>
- * \copyright 2022
-*/
+ * copyright 2026"
+ */
 
-#include "gfftk.h"
+#include "gff/gfffile.h"
+// #include "utils/stringtools.h"
 
 #include <iostream>
 
-#include "commands/extractor.h"
-#include "commands/viewer.h"
-
-namespace gff
+int main(int argc, char* argv[])
 {
-
-  GffTk::GffTk()
-  {  }
-
-  GffTk::~GffTk()
+  if(argc < 2)
   {
-    cleanup();
+    std::cerr << "Usage: " << argv[0] << " <file.gff>\n";
+    return 1;
   }
-
-  void GffTk::parse_args(int argc, char **argv)
+  try
   {
-    if(argc < 2)
-    {
-      std::cerr <<  "Expecting a command\n";
-      usage();
-      exit(EXIT_FAILURE);
-    }
-    if(argv[1] == std::string("-h"))
-    {
-      usage();
-      return;
-    }
-    if(argv[1] == std::string("-v") || argv[1] == std::string("version"))
-    {
-      std::cout << VERSION_NUMBER << "\n"; // g++ macro defined in Makefile
-      return;
-    }
-    for(auto i : commands)
-    {
-      if(i->command() == argv[1])
-      {
-        if(i->setup(argc, argv))
-        {
-          std::cerr << "Error: Setting up " << i->command() << "failed\n";
-          exit(EXIT_FAILURE);
-        }
-        i->run();
-        return;
-      }
-    }
-    std::cerr <<  "Unknown command: " << argv[1] <<"\n";
-    list_commands();
-    cleanup();
-    exit(EXIT_FAILURE);
+    gff::GffFile gff(argv[1]);
+    gff.parse();
   }
-
-  void GffTk::usage()
+  catch(const gff::GffFileNotFound& e)
   {
-    std::cout << "usage: gfftk <command> [args]\n\n"
-              << "gfftk is a toolkit to analyze GFF files\n";
-    list_commands();
-    exit(EXIT_SUCCESS);
+    std::cerr << "[ Error ] " << e.what() << "\n";
+    return EXIT_FAILURE;
   }
-
-  void GffTk::cleanup()
+  catch(const gff::GffException& e)
   {
-    for(auto& i : commands)
-    {
-      delete i;
-    }
+    std::cerr << "[ Error ] " << e.what() << "\n";
+    return EXIT_FAILURE;
   }
-
-  void GffTk::list_commands()
-  {
-    std::cout << "Available commands:\n";
-    std::cout << "\tversion \tshow version\n";
-    for(const auto& i : commands)
-    {
-      std::cout << "\t" << i->command() << "\t\t" << i->description() << "\n";
-    }
-  }
-
-  void GffTk::setup_commands()
-  {
-    commands.push_back(new gff::Extractor());
-    commands.push_back(new gff::Viewer());
-  }
-} // namespace gff
-
-int main(int argc, char **argv)
-{
-  gff::GffTk gfftk;
-  gfftk.setup_commands();
-  gfftk.parse_args(argc, argv);
 }
