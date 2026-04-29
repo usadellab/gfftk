@@ -118,4 +118,12 @@ std::vector<GffEntry*> GffIndex::find_all(const std::string& type)
     if(ptr->type == type) result.push_back(ptr);
   return result;
 }
+
+std::vector<GffEntry*> GffIndex::find_all_parents()
+{
+  std::vector<GffEntry*> result;
+  for(auto& [id, ptr] : by_id)
+    if(!ptr->parent.has_value()) result.push_back(ptr);
+  return result;
+}
 } // namespace gff

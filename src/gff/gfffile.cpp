@@ -109,13 +109,15 @@ std::istream& operator>>(std::istream& is, GffEntry& e)
   std::string strand = "";
   std::string phase = "";
   std::string attributes = "";
+  std::string type = "";
 
-  is >> e.seqname >> e.source >> e.type >> e.beg >> e.end >> score >> strand
+  is >> e.seqname >> e.source >> type >> e.beg >> e.end >> score >> strand
     >> phase >> attributes;
   if(is.fail()) return is; // do smomething with errors here
   e.score = score_to_float(score);
   e.strand = strand_to_int(strand);
   e.phase = phase_to_int(phase);
+  e.type = stringtools::lowercase(type);
   parse_attributes(attributes, e);
   return is;
 }
@@ -134,16 +136,14 @@ void GffFile::find_direct_subtypes_for_id(const std::string& id)
   }
 }
 
-// finds only depth 1
-void GffFile::find_all_subtypes_for_id(const std::string& id,
-                                       const std::string& feat = "")
+std::vector<gff::GffEntry*> GffFile::find_all_subtypes_for_id(
+  const std::string& id, const std::string& feat)
 {
-  std::vector<gff::GffEntry*> all_children
-    = index.descendants_of_feat(id, feat);
-  for(auto& e : all_children)
-  {
-    show_gffentry(*e);
-  }
+  return index.descendants_of_feat(id, feat);
+}
+std::vector<gff::GffEntry*> GffFile::find_all_parents()
+{
+  return index.find_all_parents();
 }
 
 void GffFile::find_root_for_id(const std::string& id)
@@ -152,9 +152,10 @@ void GffFile::find_root_for_id(const std::string& id)
   show_gffentry(*root);
 }
 
-void GffFile::find_type_for_id(const std::string& id, const std::string& type)
+std::vector<gff::GffEntry*> GffFile::find_type_for_id(const std::string& id,
+                                                      const std::string& type)
 {
-  std::vector<gff::GffEntry*> exons = index.children_of_feat(id, type);
+  return index.children_of_feat(id, type);
 }
 
 void GffFile::show_gffentry(const GffEntry& e)
@@ -165,13 +166,9 @@ void GffFile::show_gffentry(const GffEntry& e)
             << e.parent.value_or("None") << "\n";
 }
 
-void GffFile::find_all_of_type(const std::string& type)
+std::vector<gff::GffEntry*> GffFile::find_all_of_type(const std::string& type)
 {
-  std::vector<gff::GffEntry*> types = index.find_all(type);
-  for(auto& e : types)
-  {
-    show_gffentry(*e);
-  }
+  return index.find_all(type);
 }
 
 int GffFile::parse()

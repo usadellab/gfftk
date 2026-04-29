@@ -28,6 +28,7 @@ class GffIndex
     std::vector<GffEntry*> ancestors_of_feat(const std::string& id);
     GffEntry* root_of_feat(const std::string& id);
     std::vector<GffEntry*> find_all(const std::string& type);
+    std::vector<GffEntry*> find_all_parents();
 
   private:
     // id > entry
