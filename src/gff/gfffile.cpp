@@ -8,6 +8,7 @@
 #include "gff/gfffile.h"
 
 #include "gff/gffentry.h"
+#include "gff/gffindex.h"
 #include "utils/stringtools.h"
 
 #include <cstring>
@@ -119,6 +120,19 @@ std::istream& operator>>(std::istream& is, GffEntry& e)
   return is;
 }
 
+void GffFile::find_by_id(const std::string& id)
+{
+  if(auto* feature = index.find(id))
+    std::cout << feature->beg << "-" << feature->end << "\n";
+}
+
+void GffFile::find_type_for_id(const std::string& id, const std::string& type)
+{
+  if(auto* feat_type = index.children_of(id, type))
+    for(auto* e : *feat_type)
+      std::cout << e->beg << "-" << e->end << "\n";
+}
+
 int GffFile::parse()
 {
   for(std::string line; std::getline(gff_in, line);)
@@ -133,11 +147,16 @@ int GffFile::parse()
     gff::GffEntry entry;
     std::stringstream ss(line);
     if(!(ss >> entry)) { std::cerr << "Bad GFF line: " << row_num << "\n"; }
-    std::cout << entry.seqname << "\t" << entry.source << "\t" << entry.feature
-              << "\t" << std::to_string(entry.beg) << "\t"
-              << std::to_string(entry.end) << "\t" << entry.id << "\t"
-              << entry.parent.value_or("None") << "\n";
+    // std::cout << entry.seqname << "\t" << entry.source << "\t" <<
+    // entry.feature
+    //           << "\t" << std::to_string(entry.beg) << "\t"
+    //           << std::to_string(entry.end) << "\t" << entry.id << "\t"
+    //           << entry.parent.value_or("None") << "\n";
+    entries.push_back(std::move(entry));
   }
+  index.build(entries);
+  // find_by_id("gene-sos1");
+  find_type_for_id("gene-sos1", "exon");
   return 0;
 }
 

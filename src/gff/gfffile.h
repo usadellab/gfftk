@@ -11,6 +11,7 @@
 // #include "components/typefeature.h"
 // #include "gfftypes.h"
 #include "gff/gffentry.h"
+#include "gff/gffindex.h"
 #include "utils/stringtools.h"
 
 #include <cstring>
@@ -61,8 +62,12 @@ class GffFile
     void close();
     std::filesystem::path path() const;
     int parse();
+    void find_by_id(const std::string&);
+    void find_type_for_id(const std::string&, const std::string&);
 
   private:
+    GffIndex index;
+    std::vector<GffEntry> entries;
     std::string inpath;
     std::ifstream gff_in;
     unsigned int row_num = 0;
