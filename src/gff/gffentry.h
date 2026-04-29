@@ -16,9 +16,9 @@ struct GffEntry
 {
     std::string seqname; // chromosome / sequence name
     std::string source;
-    std::string feature; // gene, exon, CDS,
-    int beg;             // 1-based, inclusive
-    int end;             // 1-based, inclusive
+    std::string type; // gene, exon, CDS,
+    int beg;          // 1-based, inclusive
+    int end;          // 1-based, inclusive
     float score;
     int strand; // '+', '-', '.'
     int phase;  // '0','1','2','.'

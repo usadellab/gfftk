@@ -30,7 +30,7 @@ void GffIndex::build(std::vector<gff::GffEntry>& entries)
     parent_of[e.id] = *e.parent;
 
     // parent -> children (grouped by feature)
-    children_of[*e.parent][e.feature].push_back(&e);
+    children_of[*e.parent][e.type].push_back(&e);
   }
 }
 
@@ -52,14 +52,14 @@ GffEntry* GffIndex::parent_of_feat(const std::string& id)
 // get children of parent by feature type
 // direct children, optionally filtered by feature type
 std::vector<GffEntry*> GffIndex::children_of_feat(const std::string& id,
-                                                  const std::string& feature)
+                                                  const std::string& type)
 {
   auto pit = children_of.find(id);
   if(pit == children_of.end()) return {};
 
-  if(!feature.empty())
+  if(!type.empty())
   {
-    auto fit = pit->second.find(feature);
+    auto fit = pit->second.find(type);
     return fit != pit->second.end() ? fit->second : std::vector<GffEntry*>{};
   }
 
@@ -71,7 +71,7 @@ std::vector<GffEntry*> GffIndex::children_of_feat(const std::string& id,
 }
 
 std::vector<GffEntry*> GffIndex::descendants_of_feat(const std::string& id,
-                                                     const std::string& feature)
+                                                     const std::string& type)
 {
   std::vector<GffEntry*> result;
   std::queue<std::string> queue;
@@ -83,7 +83,7 @@ std::vector<GffEntry*> GffIndex::descendants_of_feat(const std::string& id,
     queue.pop();
     for(auto* child : children_of_feat(current))
     {
-      if(feature.empty() || child->feature == feature) result.push_back(child);
+      if(type.empty() || child->type == type) result.push_back(child);
       queue.push(child->id); // recurse into grandchildren
     }
   }
@@ -111,11 +111,11 @@ GffEntry* GffIndex::root_of_feat(const std::string& id)
   return path.empty() ? find(id) : path.back();
 }
 
-std::vector<GffEntry*> GffIndex::find_all(const std::string& feature)
+std::vector<GffEntry*> GffIndex::find_all(const std::string& type)
 {
   std::vector<GffEntry*> result;
   for(auto& [id, ptr] : by_id)
-    if(ptr->feature == feature) result.push_back(ptr);
+    if(ptr->type == type) result.push_back(ptr);
   return result;
 }
 } // namespace gff
