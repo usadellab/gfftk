@@ -94,7 +94,7 @@ void parse_attributes(const std::string& attribs, gff::GffEntry& entry)
   {
     auto [key, value] = stringtools::split_kv(token, '=');
     if(key == "ID") { entry.id = value; }
-    else if(key == "parent") { entry.parent = value; }
+    else if(key == "Parent") { entry.parent = value; }
     else
     {
       if(!key.empty()) entry.attributes[key] = value;
@@ -135,9 +135,8 @@ int GffFile::parse()
     if(!(ss >> entry)) { std::cerr << "Bad GFF line: " << row_num << "\n"; }
     std::cout << entry.seqname << "\t" << entry.source << "\t" << entry.feature
               << "\t" << std::to_string(entry.beg) << "\t"
-              << std::to_string(entry.end) << "\t"
-              << std::to_string(entry.score) << "\t" << entry.strand << "\t"
-              << entry.id << "\t" << entry.parent.value_or("None") << "\n";
+              << std::to_string(entry.end) << "\t" << entry.id << "\t"
+              << entry.parent.value_or("None") << "\n";
   }
   return 0;
 }
