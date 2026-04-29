@@ -63,7 +63,7 @@ std::vector<GffEntry*> GffIndex::children_of_feat(const std::string& id,
     return fit != pit->second.end() ? fit->second : std::vector<GffEntry*>{};
   }
 
-  // no filter — return all children flattened
+  // no filter > return all children flattened
   std::vector<GffEntry*> all;
   for(auto& [feat, vec] : pit->second)
     all.insert(all.end(), vec.begin(), vec.end());
@@ -102,7 +102,7 @@ std::vector<GffEntry*> GffIndex::ancestors_of_feat(const std::string& id)
     path.push_back(parent);
     current = parent->id;
   }
-  return path; // ordered nearest -> root
+  return path; // ordered nearest > root
 }
 // root of the tree a node belongs to
 GffEntry* GffIndex::root_of_feat(const std::string& id)

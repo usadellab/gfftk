@@ -138,8 +138,8 @@ void GffFile::find_direct_subtypes_for_id(const std::string& id)
 void GffFile::find_all_subtypes_for_id(const std::string& id,
                                        const std::string& feat = "")
 {
-  std::vector<gff::GffEntry*> all_children = index.descendants_of_feat(
-    id, feat); // check here for defual empy string arg
+  std::vector<gff::GffEntry*> all_children
+    = index.descendants_of_feat(id, feat);
   for(auto& e : all_children)
   {
     show_gffentry(*e);
@@ -154,7 +154,7 @@ void GffFile::find_root_for_id(const std::string& id)
 
 void GffFile::find_type_for_id(const std::string& id, const std::string& type)
 {
-  auto exons = index.children_of_feat(id, type);
+  std::vector<gff::GffEntry*> exons = index.children_of_feat(id, type);
 }
 
 void GffFile::show_gffentry(const GffEntry& e)
@@ -195,7 +195,7 @@ int GffFile::parse()
   // find_direct_subfeatures_for_id("rna-XM_004228713.4");
   // find_all_subfeatures_for_id("gene-LOC101263636");
   // find_root_for_id("exon-XM_004228895.4-1");
-  find_all_of_type("gene");
+  // find_all_of_type("gene");
   return 0;
 }
 
