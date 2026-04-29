@@ -64,6 +64,12 @@ class GffFile
     int parse();
     void find_by_id(const std::string&);
     void find_type_for_id(const std::string&, const std::string&);
+    void find_direct_subfeatures_for_id(const std::string&); // only depth 1
+    void find_all_subfeatures_for_id(const std::string&,
+                                     const std::string&); // only depth 1
+    void find_root_for_id(const std::string&);
+    void show_gffentry(const GffEntry& e);
+    void find_all_of_type(const std::string&);
 
   private:
     GffIndex index;

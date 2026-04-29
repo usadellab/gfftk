@@ -122,15 +122,56 @@ std::istream& operator>>(std::istream& is, GffEntry& e)
 
 void GffFile::find_by_id(const std::string& id)
 {
-  if(auto* feature = index.find(id))
-    std::cout << feature->beg << "-" << feature->end << "\n";
+  if(GffEntry* feature = index.find(id)) { show_gffentry(*feature); }
+}
+
+void GffFile::find_direct_subfeatures_for_id(const std::string& id)
+{
+  auto all_children = index.children_of_feat(id);
+  for(auto& e : all_children)
+  {
+    show_gffentry(*e);
+  }
+}
+
+// finds only depth 1
+void GffFile::find_all_subfeatures_for_id(const std::string& id,
+                                          const std::string& feat = "")
+{
+  std::vector<gff::GffEntry*> all_children = index.descendants_of_feat(
+    id, feat); // check here for defual empy string arg
+  for(auto& e : all_children)
+  {
+    show_gffentry(*e);
+  }
+}
+
+void GffFile::find_root_for_id(const std::string& id)
+{
+  GffEntry* root = index.root_of_feat(id);
+  show_gffentry(*root);
 }
 
 void GffFile::find_type_for_id(const std::string& id, const std::string& type)
 {
-  if(auto* feat_type = index.children_of(id, type))
-    for(auto* e : *feat_type)
-      std::cout << e->beg << "-" << e->end << "\n";
+  auto exons = index.children_of_feat(id, type);
+}
+
+void GffFile::show_gffentry(const GffEntry& e)
+{
+  std::cout << e.seqname << "\t" << e.source << "\t" << e.feature << "\t"
+            << std::to_string(e.beg) << "\t" << std::to_string(e.end) << "\t"
+            << e.strand << "\t" << std::to_string(e.end) << "\t" << e.id << "\t"
+            << e.parent.value_or("None") << "\n";
+}
+
+void GffFile::find_all_of_type(const std::string& type)
+{
+  std::vector<gff::GffEntry*> types = index.find_all(type);
+  for(auto& e : types)
+  {
+    show_gffentry(*e);
+  }
 }
 
 int GffFile::parse()
@@ -147,16 +188,14 @@ int GffFile::parse()
     gff::GffEntry entry;
     std::stringstream ss(line);
     if(!(ss >> entry)) { std::cerr << "Bad GFF line: " << row_num << "\n"; }
-    // std::cout << entry.seqname << "\t" << entry.source << "\t" <<
-    // entry.feature
-    //           << "\t" << std::to_string(entry.beg) << "\t"
-    //           << std::to_string(entry.end) << "\t" << entry.id << "\t"
-    //           << entry.parent.value_or("None") << "\n";
     entries.push_back(std::move(entry));
   }
   index.build(entries);
-  // find_by_id("gene-sos1");
-  find_type_for_id("gene-sos1", "exon");
+  // find_by_id("gene-LOC101263636");
+  // find_direct_subfeatures_for_id("rna-XM_004228713.4");
+  // find_all_subfeatures_for_id("gene-LOC101263636");
+  // find_root_for_id("exon-XM_004228895.4-1");
+  find_all_of_type("gene");
   return 0;
 }
 
