@@ -70,6 +70,9 @@ class GffFile
     void show_gffentry(const GffEntry& e);
     std::vector<gff::GffEntry*> find_all_of_type(const std::string&);
     std::vector<gff::GffEntry*> find_all_parents();
+    void find_longest_type(const std::string& type);
+    void find_longest_type_with(const std::string& type = "mrna",
+                                const std::string& sum_by = "cds");
 
   private:
     GffIndex index;
@@ -82,4 +85,5 @@ class GffFile
 };
 std::istream& operator>>(std::istream& is, GffEntry& e);
 void parse_attributes(const std::string& attribs, gff::GffEntry& entry);
+
 } // namespace gff

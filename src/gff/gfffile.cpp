@@ -139,7 +139,7 @@ void GffFile::find_direct_subtypes_for_id(const std::string& id)
 std::vector<gff::GffEntry*> GffFile::find_all_subtypes_for_id(
   const std::string& id, const std::string& feat)
 {
-  return index.descendants_of_feat(id, feat);
+  return index.descendants_of_type(id, feat);
 }
 std::vector<gff::GffEntry*> GffFile::find_all_parents()
 {
@@ -196,6 +196,39 @@ int GffFile::parse()
   return 0;
 }
 
+void GffFile::find_longest_type(const std::string& type)
+{
+  auto result = index.longest_per_root(type);
+  for(const auto& e : result)
+  {
+    std::cout << e.seqname << "\t" << e.parent.value_or("None") << "\t" << e.id
+              << "\t" << index.total_length(e) << "bp\t" << e.coords.size()
+              << " parts\n";
+    for(const auto& c : e.coords)
+    {
+      std::cout << c.beg << "\t" << c.end << "\n";
+    }
+  }
+}
+
+void GffFile::find_longest_type_with(const std::string& type,
+                                     const std::string& sum_by)
+{
+  auto summary = index.type_lengths();
+  for(const auto& tl : summary)
+  {
+    // print summary
+    for(const auto& [type, len] : tl.total)
+      std::cout << tl.root_id << "\t" << type
+                << "  count: " << tl.count.at(type) << "  total: " << len
+                << "bp\n";
+    // longest mRNA directly after summary
+    auto* longest = index.longest_of(tl, "mrna", "cds");
+    if(longest)
+      std::cout << "  longest " << type << ": " << longest->id << " "
+                << index.total_length(longest->id) << "bp\n--------------\n";
+  }
+}
 void GffFile::clean_up() { row_num = 0; }
 
 } // end namespace gff

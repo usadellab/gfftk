@@ -7,6 +7,7 @@
 
 #include "command/command.h"
 #include "command/extractor.h"
+#include "command/isoformer.h"
 #include "gff/gfffile.h"
 
 #include <iostream>
@@ -58,7 +59,7 @@ void GffTk::parse_args(int argc, char** argv)
 void GffTk::usage()
 {
   std::cout << "usage: gfftk <command> [args]\n\n"
-            << "gfftk is a toolkit to analyze GFF files\n";
+            << "gfftk is a toolkit to work with GFF files\n";
   list_commands();
   exit(EXIT_SUCCESS);
 }
@@ -85,6 +86,7 @@ void GffTk::list_commands()
 void GffTk::setup_commands()
 {
   commands.push_back(new gff::Extractor());
+  commands.push_back(new gff::Isoformer());
   // commands.push_back(new gff::Viewer());
 }
 } // namespace gff

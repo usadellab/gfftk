@@ -9,9 +9,17 @@
 #include <optional>
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 namespace gff
 {
+struct Coordinates
+{
+    int beg;
+    int end;
+    int length() const { return end - beg + 1; }
+};
+
 struct GffEntry
 {
     std::string seqname; // chromosome / sequence name
@@ -25,6 +33,26 @@ struct GffEntry
     std::unordered_map<std::string, std::string> attributes;
     std::string id;
     std::optional<std::string> parent;
+    int length() const { return end - beg + 1; }
+};
+
+struct GffLongestEntry
+{
+    std::string seqname;
+    std::string source;
+    std::string type;
+    std::vector<gff::Coordinates> coords;
+    int strand;
+    std::string id;
+    std::optional<std::string> parent;
+};
+
+struct TypeLengths
+{
+    std::string seqname;
+    std::string root_id;
+    std::unordered_map<std::string, int> total; // feature -> summed length
+    std::unordered_map<std::string, int> count; // feature -> count
 };
 
 } // namespace gff

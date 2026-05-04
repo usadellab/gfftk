@@ -11,10 +11,13 @@
 #include <algorithm>
 #include <climits>
 #include <iostream>
+#include <map>
+#include <string>
 // #include "fasta/fastafile.h"
 
 namespace gff
 {
+
 class Extractor : public Command
 {
   public:
@@ -26,6 +29,7 @@ class Extractor : public Command
     const std::string& description();
     const std::string& command();
     void find_longest_types(gff::GffFile& gf);
+    void find_longest_type(gff::GffFile& gf);
 
   private:
     const std::string descr = "Extract features from GFF file";

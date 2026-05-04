@@ -44,7 +44,11 @@ int Extractor::run()
   {
     gff::GffFile gff(gff_file);
     gff.parse();
-    if(get_longest) { find_longest_types(gff); }
+    if(get_longest)
+    {
+      // find_longest_types(gff);
+      find_longest_type(gff);
+    }
   }
   catch(const gff::GffFileNotFound& e)
   {
@@ -59,62 +63,10 @@ int Extractor::run()
   return 0;
 }
 
-void Extractor::find_longest_types(gff::GffFile& gf)
+void Extractor::find_longest_type(gff::GffFile& gf)
 {
-
-  // gf.find_all_subtypes_for_id("gene-GAD3");
-  std::vector<gff::GffEntry*> parents = gf.find_all_parents();
-  for(auto& p : parents)
-  {
-    std::cout << p->id << "\n";
-    struct longest_type
-    {
-        std::string parent;
-        std::string id;
-        std::vector<gff::GffEntry*> parts;
-    };
-    std::vector<gff::GffEntry*> types
-      = gf.find_all_subtypes_for_id(p->id, type);
-    if(types.size() == 0) { continue; }
-    if(types.size() == 1)
-    {
-      std::cout << types.at(0)->id << "\t" << types.at(0)->beg << "\t"
-                << types.at(0)->end << "\t"
-                << "\n";
-      continue;
-    }
-    longest_type prev
-      = {types.at(0)->parent.value_or("None"), types.at(0)->id, {}};
-    for(auto& t : types)
-    {
-      if(t->parent != prev.parent)
-      {
-        if(!prev.parent.empty())
-        {
-          std::cout << prev.id << "\n";
-          for(auto& c : prev.parts)
-          {
-            std::cout << c->beg << "\t" << c->end << "\t" << "\n";
-          }
-        }
-        prev.parent = *(t->parent);
-        prev.id = t->id;
-        prev.parts.push_back(t);
-      }
-      else
-      {
-        prev.parts.push_back(t);
-      }
-    }
-    if(!prev.parent.empty())
-    {
-      std::cout << prev.id << "\n";
-      for(auto& c : prev.parts)
-      {
-        std::cout << c->beg << "\t" << c->end << "\t" << "\n";
-      }
-    }
-  }
+  // gf.print_all();
+  //  gf.find_longest_type(type);
 }
 
 const std::string& Extractor::description() { return descr; }
