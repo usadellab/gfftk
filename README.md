@@ -80,29 +80,6 @@ The directory `example` contains a very short extract from the GFF file from the
 [TAIR10 *Arabidopsis thaliana* annotation at
 NCBI](https://www.ncbi.nlm.nih.gov/datasets/genome/GCF_000001735.4/).
 
-You can download the full GFF file and genomic sequence from *Arabidopsis
-thaliana* via FTP and run the commands with these files.
-
-```bash
-$: wget  https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/001/735/GCF_000001735.4_TAIR10.1/GCF_000001735.4_TAIR10.1_genomic.gff.gz
-$: wget  https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/001/735/GCF_000001735.4_TAIR10.1/GCF_000001735.4_TAIR10.1_genomic.fna.gz
-$: gunzip -k https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/001/735/GCF_000001735.4_TAIR10.1/GCF_000001735.4_TAIR10.1_genomic.gff.gz
-$: gunzip -k https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/001/735/GCF_000001735.4_TAIR10.1/GCF_000001735.4_TAIR10.1_genomic.fna.gz
-$: ./build/bin/gfftk summarize -i GCF_000001735.4_TAIR10.1_genomic.gff | column -t  -s $'\t' | less -S
-[ GFF Summary ]
-Finished summary
-sequence     roots    antisense_rna  cds      direct_repeat  exon      five_prime_utr  gene     inverted_repeat  lnc_rna  mirna  mrna     ncrna  primary_transcript  pseudogene  region  repeat_region  rrna  sequence_feature  snorna  snrna  three_prime_utr  transcript  trna
-NC_003074.8  7644     25             9474     0              62765     0               6544     0                763      67     10353    56     50                  1080        1       0              2     19                47      19     0                384         92
-NC_003070.9  9733     20             12653    0              87301     0               8771     0                1098     115    13336    86     89                  930         1       0              0     31                89      22     0                450         238
-NC_003075.7  5855     14             7426     0              50105     0               5007     0                559      69     8137     49     55                  835         1       0              0     12                44      10     0                272         77
-NC_000932.1  130      0              85       0              156       0               129      0                0        0      85       0      0                   0           1       0              7     0                 0       0      0                0           37
-NC_003076.8  8458     12             10995    0              73623     0               7469     0                775      103    11802    40     77                  951         1       0              0     37                61      27     0                317         123
-NC_003071.7  6325     21             7599     0              50533     0               5265     0                683      74     8431     55     55                  1047        1       0              2     12                46      4      0                403         95
-NC_037304.1  1151     0              33       46             365       25              276      34               0        0      33       254    0                   8           1       29             3     707               0       0      23               0           22
-total        39296    92             48265    46             324848    25              33461    34               3878     428    52177    540    326                 4851        7       29             14    818               287     82     23               1826        684
-average      5613.71  13.14          6895.00  6.57           46406.86  3.57            4780.14  4.86             554.00   61.14  7453.86  77.14  46.57               693.00      1.00    4.14           2.00  116.86            41.00   11.71  3.29             260.86      97.71
-median       6325.00  14.00          7599.00  0.00           50533.00  0.00            5265.00  0.00             683.00   69.00  8431.00  55.00  55.00               930.00      1.00    0.00           2.00  19.00             46.00   10.00  0.00             317.00      92.00
-```
 
 ### Summarize a GFF file
 
@@ -120,9 +97,29 @@ Finished summary
 The output table is printed to the standard output a TSV. It can be redirected
 into an output file or pipes.
 
-To get a pretty-print output you can pipe the
-output into `column`, a Linux tool which is often available in most Linux
-distributions.
+To get a pretty-print output you can pipe the output into `column`, a Linux tool
+which is often available in most Linux distributions. You can download the full
+GFF file and genomic sequence from *Arabidopsis thaliana* via FTP and run the
+commands with these files.
+
+```bash
+$: wget  https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/001/735/GCF_000001735.4_TAIR10.1/GCF_000001735.4_TAIR10.1_genomic.gff.gz
+$: gunzip -k https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/001/735/GCF_000001735.4_TAIR10.1/GCF_000001735.4_TAIR10.1_genomic.gff.gz
+$: ./build/bin/gfftk summarize -i GCF_000001735.4_TAIR10.1_genomic.gff | column -t  -s $'\t' | less -S
+[ GFF Summary ]
+Finished summary
+sequence     roots    antisense_rna  cds      direct_repeat  exon      five_prime_utr  gene     inverted_repeat  lnc_rna  mirna  mrna     ncrna  primary_transcript  pseudogene  region  repeat_region  rrna  sequence_feature  snorna  snrna  three_prime_utr  transcript  trna
+NC_003074.8  7644     25             9474     0              62765     0               6544     0                763      67     10353    56     50                  1080        1       0              2     19                47      19     0                384         92
+NC_003070.9  9733     20             12653    0              87301     0               8771     0                1098     115    13336    86     89                  930         1       0              0     31                89      22     0                450         238
+NC_003075.7  5855     14             7426     0              50105     0               5007     0                559      69     8137     49     55                  835         1       0              0     12                44      10     0                272         77
+NC_000932.1  130      0              85       0              156       0               129      0                0        0      85       0      0                   0           1       0              7     0                 0       0      0                0           37
+NC_003076.8  8458     12             10995    0              73623     0               7469     0                775      103    11802    40     77                  951         1       0              0     37                61      27     0                317         123
+NC_003071.7  6325     21             7599     0              50533     0               5265     0                683      74     8431     55     55                  1047        1       0              2     12                46      4      0                403         95
+NC_037304.1  1151     0              33       46             365       25              276      34               0        0      33       254    0                   8           1       29             3     707               0       0      23               0           22
+total        39296    92             48265    46             324848    25              33461    34               3878     428    52177    540    326                 4851        7       29             14    818               287     82     23               1826        684
+average      5613.71  13.14          6895.00  6.57           46406.86  3.57            4780.14  4.86             554.00   61.14  7453.86  77.14  46.57               693.00      1.00    4.14           2.00  116.86            41.00   11.71  3.29             260.86      97.71
+median       6325.00  14.00          7599.00  0.00           50533.00  0.00            5265.00  0.00             683.00   69.00  8431.00  55.00  55.00               930.00      1.00    0.00           2.00  19.00             46.00   10.00  0.00             317.00      92.00
+```
 
 ```bash
 $: ./build/bin/gfftk summarize -i ../example/GCF_000188115.demo.gff | column -s $'\t' | less
