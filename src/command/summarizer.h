@@ -39,8 +39,6 @@ class Summarizer : public Command
     int run();
     const std::string& description();
     const std::string& command();
-    void show_summary(const gff::GffSummary& s,
-                      std::ostream& out = std::cout) const;
     void print_transposed_summary(const GffSummary& s,
                                   SummaryMode mode = SummaryMode::Count) const;
     static float average(std::vector<float> v);

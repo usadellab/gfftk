@@ -24,9 +24,7 @@ Summarizer::Summarizer()
 void Summarizer::usage()
 {
   std::cout << "Summarize GFF and print to STDOUT\n\n"
-            << "usage: gfftk " << name
-            << " --input <GFF> \n"
-               "[OPTIONAL]\n\n"
+            << "usage: gfftk " << name << " --input <GFF> \n\n"
             << "Mandatory:\n"
             << "\t--input, -i <path>  Path to GFF file\n"
             << "Optional:\n"
@@ -94,37 +92,10 @@ int Summarizer::setup(int argc, char** argv)
   return EXIT_SUCCESS;
 }
 
-void Summarizer::show_summary(const GffSummary& s, std::ostream& out) const
-{
-  out << "\n[ GFF Summary ]\n"
-      << "  total entries   : " << s.total_entries << "\n"
-      << "  total parents     : " << s.total_roots << "\n"
-      << "  sequences       : " << s.total_sequences << "\n"
-      << "  avg roots/seq   : " << s.avg_roots_per_seq << "\n"
-      << "\n  global features:\n";
-
-  for(auto& [feat, fs] : s.global_by_type)
-    out << "    " << std::left << std::setw(20) << feat
-        << "  count: " << std::setw(8) << fs.count << "  min: " << std::setw(8)
-        << fs.min_length << "  max: " << std::setw(8) << fs.max_length
-        << "  avg: " << std::fixed << std::setprecision(1) << fs.avg_length
-        << "bp\n";
-
-  out << "\n  per sequence:\n";
-  for(auto& [seq, ss] : s.by_sequence)
-  {
-    out << "    " << seq << "  entries: " << ss.total_entries
-        << "  parents: " << ss.root_count << "\n";
-    for(auto& [feat, fs] : ss.by_type)
-      out << "      " << std::left << std::setw(20) << feat
-          << "  count: " << std::setw(6) << fs.count << "  avg: " << std::fixed
-          << std::setprecision(1) << fs.avg_length << "bp\n";
-  }
-}
-
 void Summarizer::print_transposed_summary(const GffSummary& s,
                                           SummaryMode mode) const
 {
+  std::cerr << "[ GFF Summary ]\n";
   outstr << "sequence\troots";
   for(const auto& feat : s.types)
     outstr << "\t" << feat;
