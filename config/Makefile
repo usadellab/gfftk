@@ -1,7 +1,9 @@
-##
-## makefiel gfftk
-##
+# gffk makefile
+#  Jan Piotr Buchmann <jpb@members.fsf.org>
+#  copyright BDS-HHU 2026
 
+
+GIT_COMMIT := $(shell git describe --always --dirty --match 'NOT A TAG')
 
 SRC_DIR := ../src
 OBJ_DIR := build
@@ -10,7 +12,7 @@ TARGET  := $(BIN_DIR)/gfftk
 INCLUDES := -I$(SRC_DIR)
 
 CXX      := g++
-CXXFLAGS := -std=c++20 -Wall -Wextra -Wpedantic  $(INCLUDES)
+CXXFLAGS := -std=c++20 -Wall -Wextra -Wpedantic  $(INCLUDES) -DVERSION_NUMBER='"$(GIT_COMMIT)"'
 LDFLAGS  :=
 
 SRCS := $(shell find $(SRC_DIR) -name '*.cpp')
@@ -70,20 +72,10 @@ clean:
 	rm -rf $(OBJ_DIR) $(BIN_DIR)
 	@echo "  Cleaned."
 
-# Remove everything including generated files
-.PHONY: distclean
-distclean: clean
-	rm -f gprof_analysis.txt
-
-# Show gprof report (after a prof build + run)
-.PHONY: gprof
-gprof:
-	gprof $(TARGET) gmon.out > gprof_analysis.txt
-	@echo "  Profile written to gprof_analysis.txt"
-
-# Print effective flags / sources (useful for debugging the Makefile itself)
+# Print effective flags / sources / debug makefile
 .PHONY: info
 info:
+	@echo "VERSION  : $(GIT_COMMIT)"
 	@echo "TARGET   : $(TARGET)"
 	@echo "SRCS     : $(SRCS)"
 	@echo "OBJS     : $(OBJS)"
