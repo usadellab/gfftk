@@ -6,6 +6,7 @@
 #pragma once
 
 #include "command/command.h"
+#include "fasta/fastafile.h"
 #include "gff/gfffile.h"
 
 #include <algorithm>
@@ -28,7 +29,7 @@ class Isoformer : public Command
     int run();
     const std::string& description();
     const std::string& command();
-    void find_longest_isoforms(gff::GffFile& gf);
+    void find_longest_isoforms(gff::GffFile& gf, fasta::FastaFile& ff);
 
   private:
     const std::string descr = "Extract isoforms from GFF file";

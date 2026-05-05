@@ -224,9 +224,8 @@ void GffIndex::compute_longest(
   }
 }
 
-std::vector<GffLongestEntry> GffIndex::longest_per_root(const std::string& type)
+void GffIndex::longest_per_root(const std::string& type)
 {
-  std::vector<GffLongestEntry> result;
 
   for(auto* root : roots())
   {
@@ -272,16 +271,13 @@ std::vector<GffLongestEntry> GffIndex::longest_per_root(const std::string& type)
     for(auto* c : best_parts)
       entry.coords.push_back({c->beg, c->end});
 
-    result.push_back(std::move(entry));
+    longest_types.push_back(std::move(entry));
   }
-  return result;
 }
 
-std::vector<GffLongestEntry> GffIndex::longest_per_root(
-  const std::string& child_type, const std::string& sum_by)
+void GffIndex::longest_per_root(const std::string& child_type,
+                                const std::string& sum_by)
 {
-  std::vector<GffLongestEntry> result;
-
   for(auto* root : roots()) // ← no feature filter
   {
     auto children = children_of_feat(root->id, child_type);
@@ -315,9 +311,8 @@ std::vector<GffLongestEntry> GffIndex::longest_per_root(
     {
       entry.coords.push_back({longest->beg, longest->end});
     }
-    result.push_back(std::move(entry));
+    longest_types.push_back(std::move(entry));
   }
-  return result;
 }
 
 std::vector<GffEntry*> GffIndex::roots()
@@ -398,65 +393,9 @@ void sort_entries(std::vector<GffEntry>& entries)
             });
 }
 
-} // namespace gff
-
-/*
-std::vector<GffLongestEntry> GffIndex::all_longest(
-  const std::string& type, const std::string& child_type)
+std::vector<GffLongestEntry>& GffIndex::longest_entries()
 {
-  if(longest.empty()) { std::cerr << "No longest feature " << type << "\n"; }
-
-  std::vector<GffLongestEntry> result;
-
-  for(auto& [parent_id, type_map] : children_of)
-  {
-    auto it = type_map.find(type);
-    if(it == type_map.end()) { continue; };
-
-    // find longest entry
-    auto* longest = *std::max_element(
-      it->second.begin(), it->second.end(),
-      [&](const GffEntry* a, const GffEntry* b)
-      { return length_by(a, child_type) < length_by(b, child_type); });
-
-    // build result struct
-
-    std::cerr << "[ Debug ] longest: " << longest->id
-              << " beg: " << longest->beg << " end: " << longest->end << "\n";
-
-    auto children = children_of_feat(longest->id, child_type);
-    std::cerr << "[ Debug ] child_feature: " << child_type
-              << " children found: " << children.size() << "\n";
-
-    GffLongestEntry entry;
-    entry.seqname = longest->seqname;
-    entry.source = longest->source;
-    entry.type = longest->type;
-    entry.strand = longest->strand;
-    entry.id = longest->id;
-    entry.parent = longest->parent;
-    // populate coords from children
-    if(!child_type.empty())
-    {
-      auto children = children_of_feat(longest->id, child_type);
-      // sort by position
-      std::sort(children.begin(), children.end(),
-                [](const GffEntry* a, const GffEntry* b)
-                { return a->beg < b->beg; });
-      for(auto* c : children)
-      {
-        std::cout << c->beg << "\n";
-        entry.coords.push_back({c->beg, c->end});
-      }
-    }
-    else
-    {
-      // no child feature — single coordinate span
-      entry.coords.push_back({longest->beg, longest->end});
-    }
-
-    result.push_back(std::move(entry));
-  }
-  return result;
+  return longest_types;
 }
-*/
+
+} // namespace gff

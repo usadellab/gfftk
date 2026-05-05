@@ -51,8 +51,8 @@ struct TypeLengths
 {
     std::string seqname;
     std::string root_id;
-    std::unordered_map<std::string, int> total; // feature -> summed length
-    std::unordered_map<std::string, int> count; // feature -> count
+    std::unordered_map<std::string, int> total; // feature > summed length
+    std::unordered_map<std::string, int> count; // feature > counts
 };
 
 } // namespace gff

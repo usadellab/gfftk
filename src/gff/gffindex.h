@@ -41,15 +41,15 @@ class GffIndex
     std::vector<GffEntry*> ancestors_of_feat(const std::string& id);
     GffEntry* root_of_feat(const std::string& id);
 
-    std::vector<GffLongestEntry> longest_per_root(const std::string& type);
-    std::vector<GffLongestEntry> longest_per_root(const std::string& type,
-                                                  const std::string& sum_by);
+    void longest_per_root(const std::string& type);
+    void longest_per_root(const std::string& type, const std::string& sum_by);
     std::vector<GffEntry*> roots();
     std::vector<TypeLengths> type_lengths(const std::string& sum_by = "");
     GffEntry* longest_of(const std::vector<GffEntry*>& entries,
                          const std::string& sum_by = "");
     GffEntry* longest_of(const TypeLengths tl, const std::string& child_feature,
                          const std::string& sum_by = "");
+    std::vector<GffLongestEntry>& longest_entries();
 
   private:
     int length_by(const GffEntry* e, const std::string& child_feature);
@@ -63,6 +63,7 @@ class GffIndex
     std::unordered_map<std::string,
                        std::unordered_map<std::string, std::vector<GffEntry*>>>
       children_of;
+    std::vector<GffLongestEntry> longest_types;
 };
 void sort_entries(std::vector<GffEntry>& entries);
 } // namespace gff

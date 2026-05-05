@@ -5,6 +5,7 @@
 
 #include "command/isoformer.h"
 
+#include "fasta/fastafile.h"
 #include "gff/gfffile.h"
 
 #include <algorithm>
@@ -40,9 +41,10 @@ int Isoformer::run()
 {
   try
   {
+    fasta::FastaFile ff(fasta_in);
     gff::GffFile gff(gff_file);
     gff.parse();
-    if(get_longest) { find_longest_isoforms(gff); }
+    if(get_longest) { find_longest_isoforms(gff, ff); }
   }
   catch(const gff::GffFileNotFound& e)
   {
@@ -57,9 +59,20 @@ int Isoformer::run()
   return 0;
 }
 
-void Isoformer::find_longest_isoforms(gff::GffFile& gf)
+void Isoformer::find_longest_isoforms(gff::GffFile& gf, fasta::FastaFile& ff)
 {
-  gf.find_longest_type(type);
+  auto isoforms = gf.find_longest_type(type);
+  // for(const auto& e : isoforms)
+  // {
+  //   std::cout << e.seqname << "\t" << e.parent.value_or("None") << "\t" <<
+  //   e.id
+  //             << "\t" << e.coords.size() << " parts\n";
+  //   for(const auto& c : e.coords)
+  //   {
+  //     std::cout << c.beg << "\t" << c.end << "\n";
+  //   }
+  // }
+  ff.extract(isoforms, "isoforms.fa");
 }
 
 const std::string& Isoformer::description() { return descr; }

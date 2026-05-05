@@ -196,19 +196,24 @@ int GffFile::parse()
   return 0;
 }
 
-void GffFile::find_longest_type(const std::string& type)
+std::vector<gff::GffLongestEntry>& GffFile::find_longest_type(
+  const std::string& type)
 {
-  auto result = index.longest_per_root(type);
-  for(const auto& e : result)
-  {
-    std::cout << e.seqname << "\t" << e.parent.value_or("None") << "\t" << e.id
-              << "\t" << index.total_length(e) << "bp\t" << e.coords.size()
-              << " parts\n";
-    for(const auto& c : e.coords)
-    {
-      std::cout << c.beg << "\t" << c.end << "\n";
-    }
-  }
+  index.longest_per_root(type);
+  std::vector<gff::GffLongestEntry>& result = index.longest_entries();
+  return result;
+  // for(const auto& e : result)
+  // {
+  //   std::cout << e.seqname << "\t" << e.parent.value_or("None") << "\t" <<
+  //   e.id
+  //             << "\t" << index.total_length(e) << "bp\t" << e.coords.size()
+  //             << " parts\n";
+  //   for(const auto& c : e.coords)
+  //   {
+  //     std::cout << c.beg << "\t" << c.end << "\n";
+  //   }
+  // }
+  // return result;
 }
 
 void GffFile::find_longest_type_with(const std::string& type,
