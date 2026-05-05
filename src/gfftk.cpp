@@ -1,6 +1,6 @@
 /*
  * \author Jan Piotr Buchmann <jpb@members.fsf.org>
- * \copyright 2022
+ * copyright BDS-HHU 2026
  */
 
 #include "gfftk.h"
@@ -34,8 +34,8 @@ void GffTk::parse_args(int argc, char** argv)
   }
   if(argv[1] == std::string("-v") || argv[1] == std::string("version"))
   {
-    // std::cout << VERSION_NUMBER << "\n"; // g++ macro defined in Makefile
-    std::cout << "dev" << "\n"; // g++ macro defined in Makefile
+    std::cout << VERSION_NUMBER << "\n"; // g++ macro defined in Makefile
+    // std::cout << "dev" << "\n";          // g++ macro defined in Makefile
     return;
   }
   for(auto i : commands)

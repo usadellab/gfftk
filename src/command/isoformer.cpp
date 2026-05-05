@@ -1,6 +1,6 @@
 /*
  * \author Jan Piotr Buchmann <jpb@members.fsf.org>
- * \copyright 2022
+ * copyright BDS-HHU 2026
  */
 
 #include "command/isoformer.h"
