@@ -3,7 +3,7 @@
 #  copyright BDS-HHU 2026
 
 
-GIT_COMMIT := $(shell git describe --always --dirty --match 'NOT A TAG')
+GIT_COMMIT := $(shell git describe --tags --always --dirty)
 
 MAKEFILE_DIR := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 SRC_DIR      := $(MAKEFILE_DIR)../src
