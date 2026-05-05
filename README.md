@@ -7,7 +7,7 @@ functions to parse GFF file can be used in own projects or tools.
 
 ## Requirements
 
-- GCC >= 15.2.1
+- GCC >= 11.4.0
 
 ## Build
 
