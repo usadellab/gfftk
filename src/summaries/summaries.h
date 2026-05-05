@@ -28,7 +28,7 @@ struct SequenceSummary
     std::string seqname;
     int total_entries = 0;
     int root_count = 0;
-    std::unordered_map<std::string, gff::TypeSummary> by_feature;
+    std::unordered_map<std::string, TypeSummary> by_type;
 };
 
 struct GffSummary
@@ -37,8 +37,13 @@ struct GffSummary
     int total_roots = 0;
     int total_sequences = 0;
     float avg_roots_per_seq = 0.0f;
-    std::unordered_map<std::string, gff::TypeSummary> global_by_feature;
-    std::unordered_map<std::string, gff::SequenceSummary> by_sequence;
+    std::vector<std::string> types; // sorted feature names
+    std::unordered_map<std::string, TypeSummary> global_by_type;
+    std::unordered_map<std::string, SequenceSummary> by_sequence;
+
+    // per-feature value vectors — precomputed for stats
+    std::unordered_map<std::string, std::vector<float>> values_per_seq;
+    std::vector<int> root_counts_per_seq;
 };
 
 } // namespace gff

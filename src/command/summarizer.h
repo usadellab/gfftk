@@ -13,22 +13,40 @@
 #include <climits>
 #include <iostream>
 #include <map>
+#include <numeric>
 #include <string>
 
 namespace gff
 {
 
+enum class SummaryMode
+{
+  Count,
+  AvgLength,
+  TotalLength
+};
+
 class Summarizer : public Command
 {
   public:
-    Summarizer();
-    ~Summarizer();
+    explicit Summarizer();
+    Summarizer(const Summarizer&) = delete;
+    Summarizer& operator=(const Summarizer&) = delete;
+    Summarizer(Summarizer&&) = delete;
+    Summarizer& operator=(Summarizer&&) = delete;
     int setup(int argc, char** argv);
     void usage();
     int run();
     const std::string& description();
     const std::string& command();
-    void show_summary(const gff::GffSummary& s, std::ostream&) const;
+    void show_summary(const gff::GffSummary& s,
+                      std::ostream& out = std::cout) const;
+    void print_transposed_summary(const GffSummary& s,
+                                  SummaryMode mode = SummaryMode::Count) const;
+    static float average(std::vector<float> v);
+    static float median(std::vector<float> v);
+    static float average(std::vector<int> v);
+    static float median(std::vector<int> v);
 
   private:
     const std::string descr = "Summarize GFF file";
@@ -39,5 +57,9 @@ class Summarizer : public Command
       { "help",       no_argument, nullptr, 'h'},
       {nullptr,                 0, nullptr,   0}
     };
+    std::ostream& outstr;
+    const int col_width = 12;
+    const int seq_width = 20;
 };
+
 } // namespace gff

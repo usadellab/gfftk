@@ -377,57 +377,68 @@ std::vector<GffSelectedEntry>& GffIndex::longest_entries()
 
 GffSummary GffIndex::summarize() const
 {
-  gff::GffSummary summary;
-  summary.total_entries = by_id.size();
+  GffSummary s;
+  s.total_entries = by_id.size();
 
-  // per entry
   for(auto& [id, entry] : by_id)
   {
     int len = entry->length();
 
-    // global feature summary
-    auto& gf = summary.global_by_feature[entry->type];
-    gf.type = entry->type;
-    gf.count++;
-    gf.total_length += len;
-    gf.min_length = std::min(gf.min_length, len);
-    gf.max_length = std::max(gf.max_length, len);
+    auto& gt = s.global_by_type[entry->type];
+    gt.type = entry->type;
+    gt.count++;
+    gt.total_length += len;
+    gt.min_length = std::min(gt.min_length, len);
+    gt.max_length = std::max(gt.max_length, len);
 
-    // per sequence summary
-    auto& ss = summary.by_sequence[entry->seqname];
+    auto& ss = s.by_sequence[entry->seqname];
     ss.seqname = entry->seqname;
     ss.total_entries++;
 
-    auto& sf = ss.by_feature[entry->type];
+    auto& sf = ss.by_type[entry->type];
     sf.type = entry->type;
     sf.count++;
     sf.total_length += len;
     sf.min_length = std::min(sf.min_length, len);
     sf.max_length = std::max(sf.max_length, len);
 
-    // root entries (entries without a parent)
     if(parent_of.count(id) == 0)
     {
-      summary.total_roots++;
+      s.total_roots++;
       ss.root_count++;
     }
   }
 
-  // averages
-  summary.total_sequences = summary.by_sequence.size();
-  summary.avg_roots_per_seq
-    = summary.total_sequences > 0
-      ? (float)summary.total_roots / summary.total_sequences
-      : 0.0f;
+  // sorted features
+  for(auto& [feat, _] : s.global_by_type)
+    s.types.push_back(feat);
+  std::sort(s.types.begin(), s.types.end());
 
-  for(auto& [feat, fs] : summary.global_by_feature)
+  // averages + precompute per-seq value vectors
+  s.total_sequences = s.by_sequence.size();
+  s.avg_roots_per_seq
+    = s.total_sequences > 0 ? (float)s.total_roots / s.total_sequences : 0.0f;
+
+  for(auto& [feat, fs] : s.global_by_type)
     fs.avg_length = fs.count > 0 ? (float)fs.total_length / fs.count : 0.0f;
 
-  for(auto& [seq, ss] : summary.by_sequence)
-    for(auto& [feat, fs] : ss.by_feature)
-      fs.avg_length = fs.count > 0 ? (float)fs.total_length / fs.count : 0.0f;
+  for(auto& [seq, ss] : s.by_sequence)
+  {
+    s.root_counts_per_seq.push_back(ss.root_count);
+    for(auto& feat : s.types)
+    {
+      auto it = ss.by_type.find(feat);
+      s.values_per_seq[feat].push_back(it != ss.by_type.end() ? it->second.count
+                                                              : 0.0f);
+      if(it != ss.by_type.end())
+        it->second.avg_length
+          = it->second.count > 0
+            ? (float)it->second.total_length / it->second.count
+            : 0.0f;
+    }
+  }
 
-  return summary;
+  return s;
 }
 
 } // namespace gff
