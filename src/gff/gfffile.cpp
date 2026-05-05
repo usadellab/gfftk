@@ -7,6 +7,7 @@
 
 #include "gff/gffentry.h"
 #include "gff/gffindex.h"
+#include "summaries/summaries.h"
 #include "utils/stringtools.h"
 
 #include <cstring>
@@ -233,4 +234,5 @@ void GffFile::find_longest_type_with(const std::string& type,
 }
 void GffFile::clean_up() { row_num = 0; }
 
+gff::GffSummary GffFile::summarize() const { return index.summarize(); }
 } // end namespace gff

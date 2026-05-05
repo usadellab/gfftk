@@ -5,9 +5,11 @@
 
 GIT_COMMIT := $(shell git describe --always --dirty --match 'NOT A TAG')
 
-SRC_DIR := ../src
-OBJ_DIR := build
-BIN_DIR := bin
+MAKEFILE_DIR := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
+SRC_DIR      := $(MAKEFILE_DIR)../src
+BUILD_DIR := build
+OBJ_DIR := $(BUILD_DIR)/obj
+BIN_DIR := $(BUILD_DIR)/bin
 TARGET  := $(BIN_DIR)/gfftk
 INCLUDES := -I$(SRC_DIR)
 
@@ -54,25 +56,18 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 $(OBJ_DIR) $(BIN_DIR):
 	mkdir -p $@
 
-#Targets
-
 # Debug build shortcut
 .PHONY: debug
 debug:
 	$(MAKE) BUILD=debug
 
-# Profile build shortcut
-.PHONY: prof
-prof:
-	$(MAKE) BUILD=prof
-
 # Remove compiled objects and binary
 .PHONY: clean
 clean:
-	rm -rf $(OBJ_DIR) $(BIN_DIR)
+	rm -rf $(BUILD_DIR)
 	@echo "  Cleaned."
 
-# Print effective flags / sources / debug makefile
+# Debug makefile
 .PHONY: info
 info:
 	@echo "VERSION  : $(GIT_COMMIT)"

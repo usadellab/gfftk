@@ -8,27 +8,30 @@ given in the [`examples`](doc/examples) directory.
 
 ## Requirements
 
-- GCC >= 9.0.0
+- GCC >= 15.2.1
 
 ## Build
 
 ```bash
 $: git clone https://github.com/usadellab/gfftk.git
-$: cd gfftk && mkdir build && cd $_ && ln -s ../config/Makefile
-$: make gfftk
+$: cd gfftk && mkdir work && cd $_
+$: make -f ../config/Makefile
 ```
 
-This should compile a `gfftk` executable in the directory build. This executable
-can be moved into any directory.
+This should compile a `gfftk` executable (`build/bin/gfftk`). The executable can
+be moved into any directory. Move the executable before running `make clean` as
+it will remove all binaries and intermediary files.
 
-Current functions:
+## Current functions
 
 - Identify and extract isoforms. Requires a `GFF` file and the corresponding
   `FASTA` file.
 
+- Summarize a GFF file: how many types in total, per sequence, etc.
+
 ## Usage
 
-`gfftk` has the follwoing available subcommands so far:
+`gfftk` has the following available sub commands:
 
 ``` bash
 $: ./bin/gfftk
@@ -38,28 +41,8 @@ usage: gfftk <command> [args]
 gfftk is a toolkit to work with GFF files
 Available commands:
         version         show version
-        extract         Extract features from GFF file
         isoform         Extract isoforms from GFF file
-```
-
-### extract
-
-```bash
-Extracting features from GFF, e.g. CDS features
-
-usage: gfftk extract --input <GFF> --type [mRNA, CDS,..] [OPTIONAL]
-
-Mandatory:
-        --input, -i <path>         Path to GFF file
-        --type, -t  <type>         GFF type, e.g. mRNA
-Optional:
-        --longest, -l              longest type
-        --shortest, -s             shortest type
-        --min, -m <int>            min lentgth
-        --max, -M <int>            max lentgth
-        --attribute, -a <str>      select attribute
-        --fasta, -f <path>         FASTA file with sequences
-        --help, -h                 Show help
+        summarize               Summarize GFF file
 ```
 
 ### isoform
@@ -81,22 +64,56 @@ Optional:
 
 ## Examples
 
-### Identifying and saving isoforms based on the longest CDS sequence
+### Summarize a GFF file
 
 ```bash
-$: gfftk isoform  -i ../data/GCF_000001735.4_TAIR10.1_genomic.gff -t CDS -l -o TAIR10.longest.cds.fa
+$: ./build/bin/gfftk summarize -i ../example/GCF_000188115.demo.gff
+[ GFF Summary ]
+  total entries   : 191
+  total parents     : 13
+  sequences       : 1
+  avg roots/seq   : 13
+
+  global features:
+    region                count: 1         min: 98455869  max: 98455869  avg: 98455872.0bp
+    lnc_rna               count: 1         min: 2523      max: 2523      avg: 2523.0bp
+    cds                   count: 18        min: 15        max: 1197      avg: 390.7bp
+    mrna                  count: 19        min: 1022      max: 13216     avg: 4338.2bp
+    gene                  count: 12        min: 1022      max: 13216     avg: 4002.1bp
+    exon                  count: 140       min: 41        max: 1649      avg: 288.0bp
+
+  per sequence:
+    NC_015438.3  entries: 191  parents: 13
+      region                count: 1       avg: 98455872.0bp
+      lnc_rna               count: 1       avg: 2523.0bp
+      cds                   count: 18      avg: 390.7bp
+      mrna                  count: 19      avg: 4338.2bp
+      gene                  count: 12      avg: 4002.1bp
+      exon                  count: 140     avg: 288.0bp
+Finished summary
+```
+
+### Identifying and saving isoforms based on the longest CDS sequence
+
+- This will write all isoforms into the file `example.longest.cds.fa`
+
+```bash
+$: ./build/bin/gfftk isoform  -i ../example/GCF_000188115.demo.gff -f ../example/NC_015438.3.demo.fa -t CDS -l -o example.longest.cds.fa
 ```
 
 ### Identifying and saving isoforms based on the shortest CDS sequence
 
+- This will write all isoforms into the file `example.shortest.cds.fa`
+
 ```bash
-$: gfftk isoform  -i ../data/GCF_000001735.4_TAIR10.1_genomic.gff -t CDS -s -o TAIR10.shortest.cds.fa
+$: ./build/bin/gfftk isoform  -i ../example/GCF_000188115.demo.gff -f ../example/NC_015438.3.demo.fa -s -t CDS  -o TAIR10.shortest.cds.fa
 ```
 
+<!--
 ## Testing
 
 ### Calculate length of elements between lines (including) 212044 and 212053
 
 ```bash
 $: sed -n '212044,212053p' ../data/GCF_000188115.5.gff | awk -F'\t' -v OFS="\t" '{len+=($5-$4)+1}END{print len}'
-```
+``` -->

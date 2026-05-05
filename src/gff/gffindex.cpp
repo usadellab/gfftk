@@ -6,6 +6,7 @@
 #include "gff/gffindex.h"
 
 #include "gff/gffentry.h"
+#include "summaries/summaries.h"
 
 #include <algorithm>
 #include <climits>
@@ -372,6 +373,61 @@ void sort_entries(std::vector<GffEntry>& entries)
 std::vector<GffSelectedEntry>& GffIndex::longest_entries()
 {
   return selected_entries;
+}
+
+GffSummary GffIndex::summarize() const
+{
+  gff::GffSummary summary;
+  summary.total_entries = by_id.size();
+
+  // per entry
+  for(auto& [id, entry] : by_id)
+  {
+    int len = entry->length();
+
+    // global feature summary
+    auto& gf = summary.global_by_feature[entry->type];
+    gf.type = entry->type;
+    gf.count++;
+    gf.total_length += len;
+    gf.min_length = std::min(gf.min_length, len);
+    gf.max_length = std::max(gf.max_length, len);
+
+    // per sequence summary
+    auto& ss = summary.by_sequence[entry->seqname];
+    ss.seqname = entry->seqname;
+    ss.total_entries++;
+
+    auto& sf = ss.by_feature[entry->type];
+    sf.type = entry->type;
+    sf.count++;
+    sf.total_length += len;
+    sf.min_length = std::min(sf.min_length, len);
+    sf.max_length = std::max(sf.max_length, len);
+
+    // root entries (entries without a parent)
+    if(parent_of.count(id) == 0)
+    {
+      summary.total_roots++;
+      ss.root_count++;
+    }
+  }
+
+  // averages
+  summary.total_sequences = summary.by_sequence.size();
+  summary.avg_roots_per_seq
+    = summary.total_sequences > 0
+      ? (float)summary.total_roots / summary.total_sequences
+      : 0.0f;
+
+  for(auto& [feat, fs] : summary.global_by_feature)
+    fs.avg_length = fs.count > 0 ? (float)fs.total_length / fs.count : 0.0f;
+
+  for(auto& [seq, ss] : summary.by_sequence)
+    for(auto& [feat, fs] : ss.by_feature)
+      fs.avg_length = fs.count > 0 ? (float)fs.total_length / fs.count : 0.0f;
+
+  return summary;
 }
 
 } // namespace gff

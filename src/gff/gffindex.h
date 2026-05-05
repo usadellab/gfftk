@@ -5,6 +5,7 @@
 
 #pragma once
 #include "gff/gffentry.h"
+#include "summaries/summaries.h"
 
 #include <algorithm>
 #include <iostream>
@@ -51,6 +52,7 @@ class GffIndex
       const std::string& type);
     std::vector<gff::GffSelectedEntry>& shortest_per_root(
       const std::string& type);
+    gff::GffSummary summarize() const;
 
   private:
     enum class LengthSelectionMode

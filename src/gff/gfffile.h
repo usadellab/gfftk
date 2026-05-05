@@ -9,6 +9,7 @@
 
 #include "gff/gffentry.h"
 #include "gff/gffindex.h"
+#include "summaries/summaries.h"
 #include "utils/stringtools.h"
 
 #include <cstring>
@@ -76,6 +77,7 @@ class GffFile
       const std::string& type);
     void find_longest_type_with(const std::string& type = "mrna",
                                 const std::string& sum_by = "cds");
+    gff::GffSummary summarize() const;
 
   private:
     GffIndex index;

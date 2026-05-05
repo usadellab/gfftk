@@ -8,6 +8,7 @@
 #include "command/command.h"
 #include "command/extractor.h"
 #include "command/isoformer.h"
+#include "command/summarizer.h"
 #include "gff/gfffile.h"
 
 #include <iostream>
@@ -85,9 +86,9 @@ void GffTk::list_commands()
 
 void GffTk::setup_commands()
 {
-  commands.push_back(new gff::Extractor());
+  // commands.push_back(new gff::Extractor());
   commands.push_back(new gff::Isoformer());
-  // commands.push_back(new gff::Viewer());
+  commands.push_back(new gff::Summarizer());
 }
 } // namespace gff
 
