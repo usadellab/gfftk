@@ -22,18 +22,20 @@ Isoformer::~Isoformer() {}
 
 void Isoformer::usage()
 {
-  std::cout << "Extracting isoforms from GFF\n\n"
-            << "usage: gfftk isoforms --input <GFF> --type [mRNA, CDS,..] "
-               "[OPTIONAL]\n\n"
-            << "Mandatory:\n"
-            << "\t--input, -i <path>         Path to GFF file\n"
-            << "\t--type, -t  <type>         Level on which isoforms should be "
-               "selected, e.g. CDS\n"
-            << "Optional:\n"
-            << "\t--longest, -l              Longest type\n"
-            << "\t--shortest, -s             Shortest type\n"
-            << "\t--fasta, -f <path>         FASTA file with sequences\n"
-            << "\t--help, -h                 Show help\n";
+  std::cout
+    << "Extracting isoforms from GFF\n\n"
+    << "usage: gfftk isoforms --input <GFF> --type [mRNA, CDS, exon, ..] "
+       "[OPTIONAL]\n\n"
+    << "Mandatory:\n"
+    << "\t--input, -i <path>    Path to GFF file\n"
+    << "\t--type,  -t <type>    Level on which isoforms should be "
+       "selected, e.g. CDS. Default: CDS\n"
+    << "\t--fasta, -f <path>    FASTA file from which to extract isoforms\n"
+    // << "\t--out,   -o <path>      FASTA file to which write isoforms\n"
+    << "Optional:\n"
+    << "\t--longest, -l         Longest type (Default)\n"
+    << "\t--shortest, -s        Shortest type\n"
+    << "\t--help, -h            Show this help\n";
   exit(1);
 }
 
@@ -41,10 +43,15 @@ int Isoformer::run()
 {
   try
   {
+    std::cerr << "Opening input FASTA file " << fasta_in << "\n";
     fasta::FastaFile ff(fasta_in);
+    std::cerr << "Parsing GFF file " << gff_file << "\n";
     gff::GffFile gff(gff_file);
     gff.parse();
     if(get_longest) { find_longest_isoforms(gff, ff); }
+    if(get_shortest) { find_shortest_isoforms(gff, ff); }
+
+    std::cerr << "Finished extracting isoforms\n";
   }
   catch(const gff::GffFileNotFound& e)
   {
@@ -62,17 +69,12 @@ int Isoformer::run()
 void Isoformer::find_longest_isoforms(gff::GffFile& gf, fasta::FastaFile& ff)
 {
   auto isoforms = gf.find_longest_type(type);
-  // for(const auto& e : isoforms)
-  // {
-  //   std::cout << e.seqname << "\t" << e.parent.value_or("None") << "\t" <<
-  //   e.id
-  //             << "\t" << e.coords.size() << " parts\n";
-  //   for(const auto& c : e.coords)
-  //   {
-  //     std::cout << c.beg << "\t" << c.end << "\n";
-  //   }
-  // }
-  ff.extract(isoforms, "isoforms.fa");
+  ff.extract(isoforms, fasta_out);
+}
+void Isoformer::find_shortest_isoforms(gff::GffFile& gf, fasta::FastaFile& ff)
+{
+  auto isoforms = gf.find_shortest_type(type);
+  ff.extract(isoforms, fasta_out);
 }
 
 const std::string& Isoformer::description() { return descr; }
@@ -93,11 +95,6 @@ int Isoformer::setup(int argc, char** argv)
         gff_file = optarg;
         break;
 
-      case 't':
-        sopt = optarg;
-        type = stringtools::lowercase(sopt);
-        break;
-
       case 'l':
         get_longest = true;
         break;
@@ -108,6 +105,15 @@ int Isoformer::setup(int argc, char** argv)
 
       case 'f':
         fasta_in = optarg;
+        break;
+
+      case 'o':
+        fasta_out = optarg;
+        break;
+
+      case 't':
+        sopt = optarg;
+        type = stringtools::lowercase(sopt);
         break;
 
       case 'h': // -h or --help
@@ -122,16 +128,26 @@ int Isoformer::setup(int argc, char** argv)
         break;
     }
   }
-  // test_input_file();
-  if(type.empty())
+  if(fasta_in.empty())
   {
-    type = "cds";
-    std::cerr << "Fetching isoforms based on CDS.\n";
+    std::cerr << "Error: path for input FASTA file is required\n";
+    usage();
+    return EXIT_FAILURE;
+  }
+  if(fasta_out.empty())
+  {
+    std::cerr << "Error: Output path to isoform FASTA file required\n";
+    usage();
+    return EXIT_FAILURE;
   }
   if(!get_shortest)
   {
     get_longest = true;
     std::cerr << "Fetching longest isoforms based on " << type << "\n";
+  }
+  else
+  {
+    std::cerr << "Fetching shortest isoforms based on " << type << "\n";
   }
   return EXIT_SUCCESS;
 }

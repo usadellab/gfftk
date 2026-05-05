@@ -20,7 +20,7 @@ class FastaFile
   public:
     FastaFile();
     explicit FastaFile(const std::string& path);
-    void extract(const std::vector<gff::GffLongestEntry>& entries,
+    void extract(const std::vector<gff::GffSelectedEntry>& entries,
                  const std::string& out_path, int line_len = 60);
 
   private:

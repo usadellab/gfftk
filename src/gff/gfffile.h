@@ -70,7 +70,9 @@ class GffFile
     void show_gffentry(const GffEntry& e);
     std::vector<gff::GffEntry*> find_all_of_type(const std::string&);
     std::vector<gff::GffEntry*> find_all_parents();
-    std::vector<gff::GffLongestEntry>& find_longest_type(
+    std::vector<gff::GffSelectedEntry>& find_longest_type(
+      const std::string& type);
+    std::vector<gff::GffSelectedEntry>& find_shortest_type(
       const std::string& type);
     void find_longest_type_with(const std::string& type = "mrna",
                                 const std::string& sum_by = "cds");

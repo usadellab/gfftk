@@ -22,7 +22,7 @@ class GffIndex
     int spliced_length(const std::string& id);
     int coding_length(const std::string& id);
 
-    int total_length(const GffLongestEntry& le);
+    int total_length(const GffSelectedEntry& le);
     int total_length(const GffEntry* e, const std::string& sum_by = "");
     int total_length(const std::string& id, const std::string& sum_by = "");
 
@@ -40,18 +40,25 @@ class GffIndex
                                                const std::string& target = "");
     std::vector<GffEntry*> ancestors_of_feat(const std::string& id);
     GffEntry* root_of_feat(const std::string& id);
-
-    void longest_per_root(const std::string& type);
-    void longest_per_root(const std::string& type, const std::string& sum_by);
     std::vector<GffEntry*> roots();
     std::vector<TypeLengths> type_lengths(const std::string& sum_by = "");
     GffEntry* longest_of(const std::vector<GffEntry*>& entries,
                          const std::string& sum_by = "");
     GffEntry* longest_of(const TypeLengths tl, const std::string& child_feature,
                          const std::string& sum_by = "");
-    std::vector<GffLongestEntry>& longest_entries();
+    std::vector<GffSelectedEntry>& longest_entries();
+    std::vector<gff::GffSelectedEntry>& longest_per_root(
+      const std::string& type);
+    std::vector<gff::GffSelectedEntry>& shortest_per_root(
+      const std::string& type);
 
   private:
+    enum class LengthSelectionMode
+    {
+      Longest,
+      Shortest
+    };
+    void select_per_root(const std::string& feature, LengthSelectionMode mode);
     int length_by(const GffEntry* e, const std::string& child_feature);
     std::unordered_map<std::string, std::unordered_map<std::string, GffEntry*>>
       longest;
@@ -63,7 +70,7 @@ class GffIndex
     std::unordered_map<std::string,
                        std::unordered_map<std::string, std::vector<GffEntry*>>>
       children_of;
-    std::vector<GffLongestEntry> longest_types;
+    std::vector<GffSelectedEntry> selected_entries;
 };
 void sort_entries(std::vector<GffEntry>& entries);
 } // namespace gff

@@ -8,6 +8,7 @@
 #include "gff/gffentry.h"
 
 #include <algorithm>
+#include <climits>
 #include <iostream>
 #include <queue>
 #include <string>
@@ -139,7 +140,7 @@ std::vector<GffEntry*> GffIndex::find_all_parents()
   return result;
 }
 
-int GffIndex::total_length(const GffLongestEntry& le)
+int GffIndex::total_length(const GffSelectedEntry& le)
 {
   int total = 0;
   for(const auto& c : le.coords)
@@ -224,29 +225,30 @@ void GffIndex::compute_longest(
   }
 }
 
-void GffIndex::longest_per_root(const std::string& type)
+void GffIndex::select_per_root(const std::string& target_feature,
+                               LengthSelectionMode mode)
 {
-
   for(auto* root : roots())
   {
-    // find all target features at any depth
-    auto targets = descendants_of_type(root->id, type);
+    auto targets = descendants_of_type(root->id, target_feature);
     if(targets.empty()) continue;
 
-    // group by direct parent each parent gets its own longest
     std::unordered_map<std::string, std::vector<GffEntry*>> by_parent;
     for(auto* t : targets)
       if(t->parent) by_parent[*t->parent].push_back(t);
 
-    // pick longest group, the parent whose targets sum to most
+    // pick best group based on mode
     std::string best_parent;
-    int best_len = -1;
+    int best_len = (mode == LengthSelectionMode::Longest) ? -1 : INT_MAX;
     for(auto& [pid, parts] : by_parent)
     {
       int len = 0;
       for(auto* p : parts)
         len += p->length();
-      if(len > best_len)
+
+      bool better = (mode == LengthSelectionMode::Longest) ? len > best_len
+                                                           : len < best_len;
+      if(better)
       {
         best_len = len;
         best_parent = pid;
@@ -257,62 +259,36 @@ void GffIndex::longest_per_root(const std::string& type)
     std::sort(best_parts.begin(), best_parts.end(),
               [](const GffEntry* a, const GffEntry* b)
               { return a->beg < b->beg; });
-
     auto* parent_entry = find(best_parent);
 
-    GffLongestEntry entry;
+    GffSelectedEntry entry;
     entry.seqname = best_parts.front()->seqname;
     entry.source = best_parts.front()->source;
-    entry.type = type;
+    entry.type = target_feature;
     entry.strand = best_parts.front()->strand;
     entry.id = parent_entry ? parent_entry->id : best_parent;
     entry.parent = parent_entry ? parent_entry->parent : std::nullopt;
 
     for(auto* c : best_parts)
+    {
       entry.coords.push_back({c->beg, c->end});
-
-    longest_types.push_back(std::move(entry));
+    }
+    selected_entries.push_back(std::move(entry));
   }
 }
 
-void GffIndex::longest_per_root(const std::string& child_type,
-                                const std::string& sum_by)
+std::vector<gff::GffSelectedEntry>& GffIndex::longest_per_root(
+  const std::string& type)
 {
-  for(auto* root : roots()) // ← no feature filter
-  {
-    auto children = children_of_feat(root->id, child_type);
-    if(children.empty()) { continue; }
+  select_per_root(type, LengthSelectionMode::Longest);
+  return selected_entries;
+}
 
-    auto* longest = *std::max_element(
-      children.begin(), children.end(),
-      [&](const GffEntry* a, const GffEntry* b)
-      { return length_by(a, sum_by) < length_by(b, sum_by); });
-
-    GffLongestEntry entry;
-    entry.seqname = longest->seqname;
-    entry.source = longest->source;
-    entry.type = longest->type;
-    entry.strand = longest->strand;
-    entry.id = longest->id;
-    entry.parent = longest->parent;
-
-    if(!sum_by.empty())
-    {
-      auto grandchildren = children_of_feat(longest->id, sum_by);
-      std::sort(grandchildren.begin(), grandchildren.end(),
-                [](const GffEntry* a, const GffEntry* b)
-                { return a->beg < b->beg; });
-      for(auto* c : grandchildren)
-      {
-        entry.coords.push_back({c->beg, c->end});
-      }
-    }
-    else
-    {
-      entry.coords.push_back({longest->beg, longest->end});
-    }
-    longest_types.push_back(std::move(entry));
-  }
+std::vector<gff::GffSelectedEntry>& GffIndex::shortest_per_root(
+  const std::string& type)
+{
+  select_per_root(type, LengthSelectionMode::Shortest);
+  return selected_entries;
 }
 
 std::vector<GffEntry*> GffIndex::roots()
@@ -393,9 +369,9 @@ void sort_entries(std::vector<GffEntry>& entries)
             });
 }
 
-std::vector<GffLongestEntry>& GffIndex::longest_entries()
+std::vector<GffSelectedEntry>& GffIndex::longest_entries()
 {
-  return longest_types;
+  return selected_entries;
 }
 
 } // namespace gff

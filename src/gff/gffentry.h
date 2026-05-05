@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include <climits>
 #include <iostream>
 #include <optional>
 #include <string>
@@ -28,7 +29,7 @@ struct GffEntry
     int beg;          // 1-based, inclusive
     int end;          // 1-based, inclusive
     float score;
-    int strand; // '+', '-', '.'
+    int strand; // '+', '-', '.', '?`
     int phase;  // '0','1','2','.'
     std::unordered_map<std::string, std::string> attributes;
     std::string id;
@@ -36,7 +37,7 @@ struct GffEntry
     int length() const { return end - beg + 1; }
 };
 
-struct GffLongestEntry
+struct GffSelectedEntry
 {
     std::string seqname;
     std::string source;

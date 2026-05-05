@@ -98,7 +98,7 @@ std::string FastaFile::reverse_complement(const std::string& seq)
   return rc;
 }
 
-void FastaFile::extract(const std::vector<gff::GffLongestEntry>& entries,
+void FastaFile::extract(const std::vector<gff::GffSelectedEntry>& entries,
                         const std::string& out_path, int line_len)
 {
   std::ofstream out(out_path);
@@ -131,5 +131,6 @@ void FastaFile::extract(const std::vector<gff::GffLongestEntry>& entries,
       out << seq.substr(i, line_len) << "\n";
     }
   }
+  std::cerr << "Wrote isoforms to " << out_path << "\n";
 }
 } // namespace fasta

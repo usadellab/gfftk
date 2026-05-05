@@ -188,20 +188,14 @@ int GffFile::parse()
     entries.push_back(std::move(entry));
   }
   index.build(entries);
-  // find_by_id("gene-LOC101263636");
-  // find_direct_subfeatures_for_id("rna-XM_004228713.4");
-  // find_all_subfeatures_for_id("gene-LOC101263636");
-  // find_root_for_id("exon-XM_004228895.4-1");
-  // find_all_of_type("gene");
   return 0;
 }
 
-std::vector<gff::GffLongestEntry>& GffFile::find_longest_type(
+std::vector<gff::GffSelectedEntry>& GffFile::find_longest_type(
   const std::string& type)
 {
-  index.longest_per_root(type);
-  std::vector<gff::GffLongestEntry>& result = index.longest_entries();
-  return result;
+  return index.longest_per_root(type);
+
   // for(const auto& e : result)
   // {
   //   std::cout << e.seqname << "\t" << e.parent.value_or("None") << "\t" <<
@@ -213,7 +207,12 @@ std::vector<gff::GffLongestEntry>& GffFile::find_longest_type(
   //     std::cout << c.beg << "\t" << c.end << "\n";
   //   }
   // }
-  // return result;
+}
+
+std::vector<gff::GffSelectedEntry>& GffFile::find_shortest_type(
+  const std::string& type)
+{
+  return index.shortest_per_root(type);
 }
 
 void GffFile::find_longest_type_with(const std::string& type,
@@ -237,50 +236,3 @@ void GffFile::find_longest_type_with(const std::string& type,
 void GffFile::clean_up() { row_num = 0; }
 
 } // end namespace gff
-/*
-
-void GffFile::parse_directive(const std::string& line)
-{
-  int status = 0;
-  int directive_beg;
-  for(long unsigned int i = 0; i < line.size(); ++i)
-  {
-    // std::cout << i << " : " << line[i] << " " << status << "\n";
-    switch(status)
-    {
-      case(0):
-        if(line[i] != '#')
-        {
-          status = 1;
-          break;
-        }
-        ++i;
-
-      case(1):
-        if(line[i] != '#' || line[i] != '!')
-        {
-          ++i;
-          directive_beg = i;
-          status = 2;
-          break;
-        }
-        ++i;
-
-      case(2):
-        if(line[i] == ' ')
-        {
-          std::string directive = line.substr(directive_beg, i - 1);
-          std::string val = line.substr(i + 1);
-          const auto& [it, pass] = directives.try_emplace(
-            stringtools::strip(directive),
-            std::vector<std::string>{stringtools::strip(val)});
-          if(!pass) { it->second.push_back(line.substr(i + 1)); }
-          return;
-        }
-        continue;
-      default:
-        return;
-    }
-  }
-}
-*/
