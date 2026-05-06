@@ -39,7 +39,7 @@ void GffFile::close()
 
   if(gff_in.is_open())
   {
-    std::cerr << "[ Info ] Closing GFF: " << inpath << "\t";
+    std::cerr << "[ Info ] Closing GFF: " << inpath << "\n";
     gff_in.close();
   }
 }

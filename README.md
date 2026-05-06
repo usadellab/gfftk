@@ -62,12 +62,13 @@ Optional:
 ```bash
 Extracting isoforms from GFF
 
-usage: gfftk isoforms --input <GFF> --type [mRNA, CDS, exon, ..] [OPTIONAL]
+usage: gfftk isoforms --input <GFF> --type [mRNA, CDS, exon, ..] --out <PATH>[OPTIONAL]
 
 Mandatory:
         --input, -i <path>    Path to GFF file
         --type,  -t <type>    Level on which isoforms should be selected, e.g. CDS. Default: CDS
         --fasta, -f <path>    FASTA file from which to extract isoforms
+        --out,   -o <path>      FASTA file to which write isoforms
 Optional:
         --longest, -l         Longest type (Default)
         --shortest, -s        Shortest type

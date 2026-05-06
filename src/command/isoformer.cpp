@@ -24,14 +24,15 @@ void Isoformer::usage()
 {
   std::cout
     << "Extracting isoforms from GFF\n\n"
-    << "usage: gfftk isoforms --input <GFF> --type [mRNA, CDS, exon, ..] "
+    << "usage: gfftk isoforms --input <GFF> --type [mRNA, CDS, exon, ..] --out "
+       "<PATH>"
        "[OPTIONAL]\n\n"
     << "Mandatory:\n"
     << "\t--input, -i <path>    Path to GFF file\n"
     << "\t--type,  -t <type>    Level on which isoforms should be "
        "selected, e.g. CDS. Default: CDS\n"
     << "\t--fasta, -f <path>    FASTA file from which to extract isoforms\n"
-    // << "\t--out,   -o <path>      FASTA file to which write isoforms\n"
+    << "\t--out,   -o <path>      FASTA file to which write isoforms\n"
     << "Optional:\n"
     << "\t--longest, -l         Longest type (Default)\n"
     << "\t--shortest, -s        Shortest type\n"
