@@ -38,6 +38,7 @@ int Summarizer::run()
   {
     gff::GffFile gff(gff_file);
     gff.parse();
+    gff.close();
     print_transposed_summary(gff.summarize());
     std::cerr << "Finished summary\n";
   }

@@ -79,9 +79,9 @@ class GffFile
                                 const std::string& sum_by = "cds");
     gff::GffSummary summarize() const;
     static std::unordered_map<std::string, int> synth_entries_count;
+    GffIndex index;
 
   private:
-    GffIndex index;
     std::vector<GffEntry> entries;
     std::string inpath;
     std::ifstream gff_in;

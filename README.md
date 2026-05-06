@@ -154,4 +154,9 @@ $: ./build/bin/gfftk isoform -i ../example/GCF_000001735.4_TAIR10.demo.gff -f ..
 
 ```bash
 $: sed -n '212044,212053p' ../data/GCF_000188115.5.gff | awk -F'\t' -v OFS="\t" '{len+=($5-$4)+1}END{print len}'
+
+### Check identified genes
+
+```bash
+$: awk -F'\t' '($0!~/^#/)&&($3=="gene")' ../data/GCF_000001735.4_TAIR10.1_genomic.gff |cut -f1,4,5,9| sed -r "s/;.*$//g; s/ID=//"|les
 ``` -->

@@ -7,12 +7,14 @@
 
 #include "gff/gffentry.h"
 #include "summaries/summaries.h"
+#include "utils/stringtools.h"
 
 #include <algorithm>
 #include <climits>
 #include <iostream>
 #include <queue>
 #include <string>
+#include <unordered_set>
 #include <vector>
 
 namespace gff
@@ -27,15 +29,16 @@ void GffIndex::build(std::vector<gff::GffEntry>& entries)
   {
     by_id[e.id] = &e;
   }
-
   // build bidirectional links
   for(auto& e : entries)
   {
     if(!e.parent) { continue; }
-    // child > parent
-    parent_of[e.id] = *e.parent;
-    // parent > children (grouped by feature)
-    children_of[*e.parent][e.type].push_back(&e);
+    auto parents = stringtools::tokenize(*e.parent, ',');
+    parent_of[e.id] = parents;
+    for(const auto& pid : parents)
+    {
+      children_of[pid][e.type].push_back(&e);
+    }
   }
 }
 
@@ -49,9 +52,18 @@ GffEntry* GffIndex::find(const std::string& id)
 // direct parent of a node
 GffEntry* GffIndex::parent_of_feat(const std::string& id)
 {
+  std::vector<GffEntry*> parents = parents_of_feat(id);
+  return parents.empty() ? nullptr : parents.front();
+}
+
+std::vector<GffEntry*> GffIndex::parents_of_feat(const std::string& id)
+{
+  std::vector<GffEntry*> result;
   auto it = parent_of.find(id);
-  if(it == parent_of.end()) return nullptr;
-  return find(it->second);
+  if(it == parent_of.end()) return {};
+  for(const auto& pid : it->second)
+    if(auto* e = find(pid)) result.push_back(e);
+  return result;
 }
 
 // get children of parent by feature type
@@ -105,16 +117,30 @@ std::vector<GffEntry*> GffIndex::descendants_of_type(const std::string& id,
 std::vector<GffEntry*> GffIndex::ancestors_of_feat(const std::string& id)
 {
   std::vector<GffEntry*> path;
-  std::string current = id;
+  std::unordered_set<std::string> visited;
+  std::queue<std::string> queue;
+  queue.push(id);
 
-  while(true)
+  while(!queue.empty())
   {
-    auto* parent = parent_of_feat(current);
-    if(!parent) break;
-    path.push_back(parent);
-    current = parent->id;
+    std::string current = queue.front(); // Needs to be called before pop()
+    queue.pop();
+    if(visited.count(current)) continue;
+    visited.insert(current);
+
+    auto it = parent_of.find(current);
+    if(it == parent_of.end()) continue;
+
+    for(const auto& pid : it->second) // iterate  parent ids
+    {
+      if(auto* e = find(pid))
+      {
+        path.push_back(e);
+        queue.push(pid);
+      }
+    }
   }
-  return path; // ordered nearest > root
+  return path;
 }
 // root of the tree a node belongs to
 GffEntry* GffIndex::root_of_feat(const std::string& id)
@@ -234,13 +260,15 @@ void GffIndex::select_per_root(const std::string& target_feature,
   for(auto* root : roots())
   {
     auto targets = descendants_of_type(root->id, target_feature);
-    if(targets.empty()) continue;
+    if(targets.empty()) { continue; }
 
     std::unordered_map<std::string, std::vector<GffEntry*>> by_parent;
     for(auto* t : targets)
+    {
       if(t->parent) by_parent[*t->parent].push_back(t);
+    }
 
-    // pick best group based on mode
+    // pick best group based on mode (shortest/longest)
     std::string best_parent;
     int best_len = (mode == LengthSelectionMode::Longest) ? -1 : INT_MAX;
     for(auto& [pid, parts] : by_parent)
@@ -257,12 +285,13 @@ void GffIndex::select_per_root(const std::string& target_feature,
         best_parent = pid;
       }
     }
+    if(best_parent.empty()) { continue; }
 
-    auto& best_parts = by_parent[best_parent];
+    std::vector<gff::GffEntry*>& best_parts = by_parent[best_parent];
     std::sort(best_parts.begin(), best_parts.end(),
               [](const GffEntry* a, const GffEntry* b)
               { return a->beg < b->beg; });
-    auto* parent_entry = find(best_parent);
+    gff::GffEntry* parent_entry = find(best_parent);
 
     GffSelectedEntry entry;
     entry.seqname = best_parts.front()->seqname;
@@ -397,32 +426,35 @@ GffSummary GffIndex::summarize() const
     ss.seqname = entry->seqname;
     ss.total_entries++;
 
-    auto& sf = ss.by_type[entry->type];
-    sf.type = entry->type;
-    sf.count++;
-    sf.total_length += len;
-    sf.min_length = std::min(sf.min_length, len);
-    sf.max_length = std::max(sf.max_length, len);
+    auto& st = ss.by_type[entry->type];
+    st.type = entry->type;
+    st.count++;
+    st.total_length += len;
+    st.min_length = std::min(st.min_length, len);
+    st.max_length = std::max(st.max_length, len);
 
+    // root = not present in parent_of
     if(parent_of.count(id) == 0)
     {
       s.total_roots++;
       ss.root_count++;
     }
   }
-
-  // sorted features
+  // sorted types
   for(auto& [feat, _] : s.global_by_type)
+  {
     s.types.push_back(feat);
+  }
   std::sort(s.types.begin(), s.types.end());
 
-  // averages + precompute per-seq value vectors
   s.total_sequences = s.by_sequence.size();
   s.avg_roots_per_seq
     = s.total_sequences > 0 ? (float)s.total_roots / s.total_sequences : 0.0f;
 
   for(auto& [feat, fs] : s.global_by_type)
+  {
     fs.avg_length = fs.count > 0 ? (float)fs.total_length / fs.count : 0.0f;
+  }
 
   for(auto& [seq, ss] : s.by_sequence)
   {
@@ -430,17 +462,55 @@ GffSummary GffIndex::summarize() const
     for(auto& feat : s.types)
     {
       auto it = ss.by_type.find(feat);
-      s.values_per_seq[feat].push_back(it != ss.by_type.end() ? it->second.count
-                                                              : 0.0f);
+      s.values_per_seq[feat].push_back(
+        it != ss.by_type.end() ? (float)it->second.count : 0.0f);
       if(it != ss.by_type.end())
+      {
         it->second.avg_length
           = it->second.count > 0
             ? (float)it->second.total_length / it->second.count
             : 0.0f;
+      }
     }
   }
-
   return s;
+}
+void GffIndex::print_descendants(const std::string& id, std::ostream& out)
+{
+  auto* root = find(id);
+  if(!root)
+  {
+    out << "[ Error ] ID not found: " << id << "\n";
+    return;
+  }
+
+  out << root->type << "\t" << root->id << "\t" << root->seqname << "\t"
+      << root->beg << "\t" << root->end << "\n";
+
+  // BFS with depth tracking for indentation
+  std::queue<std::pair<std::string, int>> queue;
+  queue.push({id, 1});
+
+  while(!queue.empty())
+  {
+    auto [current, depth] = queue.front();
+    queue.pop();
+
+    auto pit = children_of.find(current);
+    if(pit == children_of.end()) continue;
+
+    for(auto& [feature, children] : pit->second)
+    {
+      for(auto* child : children)
+      {
+        out << std::string(depth * 2, '\t') // indent by depth
+            << child->type << "\t" << child->id << "\t" << child->seqname
+            << "\t" << child->beg << "\t" << child->end << "\t"
+            << child->length() << "\n";
+        queue.push({child->id, depth + 1});
+      }
+    }
+  }
 }
 
 } // namespace gff

@@ -48,6 +48,7 @@ int Isoformer::run()
     std::cerr << "Parsing GFF file " << gff_file << "\n";
     gff::GffFile gff(gff_file);
     gff.parse();
+    gff.close();
     if(get_longest) { find_longest_isoforms(gff, ff); }
     if(get_shortest) { find_shortest_isoforms(gff, ff); }
 

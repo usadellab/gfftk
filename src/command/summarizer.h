@@ -41,10 +41,10 @@ class Summarizer : public Command
     const std::string& command();
     void print_transposed_summary(const GffSummary& s,
                                   SummaryMode mode = SummaryMode::Count) const;
-    static float average(std::vector<float> v);
-    static float median(std::vector<float> v);
-    static float average(std::vector<int> v);
-    static float median(std::vector<int> v);
+    static float average(std::vector<float>);
+    static float median(std::vector<float>);
+    static float average(std::vector<int>);
+    static float median(std::vector<int>);
 
   private:
     const std::string descr = "Summarize GFF file";
