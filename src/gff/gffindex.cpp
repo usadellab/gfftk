@@ -235,25 +235,6 @@ int GffIndex::length_by(const GffEntry* e, const std::string& sum_by)
   return total;
 }
 
-void GffIndex::compute_longest(
-  const std::unordered_map<std::string, std::string>& sum_by)
-{
-  for(auto& [parent_id, feature_map] : children_of)
-  {
-    for(auto& [feature, children] : feature_map)
-    {
-      std::string child_feature;
-      if(auto it = sum_by.find(feature); it != sum_by.end())
-        child_feature = it->second;
-
-      longest[parent_id][feature] = *std::max_element(
-        children.begin(), children.end(),
-        [&](const GffEntry* a, const GffEntry* b)
-        { return length_by(a, child_feature) < length_by(b, child_feature); });
-    }
-  }
-}
-
 void GffIndex::select_per_root(const std::string& target_feature,
                                LengthSelectionMode mode)
 {

@@ -204,18 +204,6 @@ std::vector<gff::GffSelectedEntry>& GffFile::find_longest_type(
   const std::string& type)
 {
   return index.longest_per_root(type);
-
-  // for(const auto& e : result)
-  // {
-  //   std::cout << e.seqname << "\t" << e.parent.value_or("None") << "\t" <<
-  //   e.id
-  //             << "\t" << index.total_length(e) << "bp\t" << e.coords.size()
-  //             << " parts\n";
-  //   for(const auto& c : e.coords)
-  //   {
-  //     std::cout << c.beg << "\t" << c.end << "\n";
-  //   }
-  // }
 }
 
 std::vector<gff::GffSelectedEntry>& GffFile::find_shortest_type(
@@ -224,24 +212,6 @@ std::vector<gff::GffSelectedEntry>& GffFile::find_shortest_type(
   return index.shortest_per_root(type);
 }
 
-void GffFile::find_longest_type_with(const std::string& type,
-                                     const std::string& sum_by)
-{
-  auto summary = index.type_lengths();
-  for(const auto& tl : summary)
-  {
-    // print summary
-    for(const auto& [type, len] : tl.total)
-      std::cout << tl.root_id << "\t" << type
-                << "  count: " << tl.count.at(type) << "  total: " << len
-                << "bp\n";
-    // longest mRNA directly after summary
-    auto* longest = index.longest_of(tl, "mrna", "cds");
-    if(longest)
-      std::cout << "  longest " << type << ": " << longest->id << " "
-                << index.total_length(longest->id) << "bp\n--------------\n";
-  }
-}
 void GffFile::clean_up() { row_num = 0; }
 
 gff::GffSummary GffFile::summarize() const { return index.summarize(); }

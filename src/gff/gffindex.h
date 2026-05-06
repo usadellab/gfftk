@@ -18,17 +18,7 @@ class GffIndex
 {
   public:
     void build(std::vector<gff::GffEntry>& entries);
-    void compute_longest(
-      const std::unordered_map<std::string, std::string>& sum_by);
-    int summed_length(const std::string& id, const std::string& child_feature);
-    int spliced_length(const std::string& id);
-    int coding_length(const std::string& id);
 
-    int total_length(const GffSelectedEntry& le);
-    int total_length(const GffEntry* e, const std::string& sum_by = "");
-    int total_length(const std::string& id, const std::string& sum_by = "");
-
-    // get all children for feat id od type feature
     // Methods for descendants / children
     std::vector<GffEntry*> descendants_of_type(const std::string& id,
                                                const std::string& target = "");
@@ -57,6 +47,8 @@ class GffIndex
       const std::string& type);
     std::vector<gff::GffSelectedEntry>& shortest_per_root(
       const std::string& type);
+
+    // Reporting methods
     gff::GffSummary summarize() const;
     void print_descendants(const std::string& id,
                            std::ostream& out = std::cout);
@@ -67,6 +59,14 @@ class GffIndex
       Longest,
       Shortest
     };
+    int summed_length(const std::string& id, const std::string& child_feature);
+    int spliced_length(const std::string& id);
+    int coding_length(const std::string& id);
+
+    int total_length(const GffSelectedEntry& le);
+    int total_length(const GffEntry* e, const std::string& sum_by = "");
+    int total_length(const std::string& id, const std::string& sum_by = "");
+
     void select_per_root(const std::string& feature, LengthSelectionMode mode);
     int length_by(const GffEntry* e, const std::string& child_feature);
     std::unordered_map<std::string, std::unordered_map<std::string, GffEntry*>>

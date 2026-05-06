@@ -75,8 +75,6 @@ class GffFile
       const std::string& type);
     std::vector<gff::GffSelectedEntry>& find_shortest_type(
       const std::string& type);
-    void find_longest_type_with(const std::string& type = "mrna",
-                                const std::string& sum_by = "cds");
     gff::GffSummary summarize() const;
     static std::unordered_map<std::string, int> synth_entries_count;
     GffIndex index;
