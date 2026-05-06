@@ -44,6 +44,7 @@ void GffFile::close()
   }
 }
 
+std::unordered_map<std::string, int> GffFile::synth_entries_count = {};
 std::filesystem::path GffFile::path() const { return inpath; }
 
 void GffFile::open()
@@ -100,6 +101,7 @@ void parse_attributes(const std::string& attribs, gff::GffEntry& entry)
       if(!key.empty()) entry.attributes[key] = value;
     }
   }
+  if(entry.id.empty()) { make_synthetic_id(entry); }
 }
 
 std::istream& operator>>(std::istream& is, GffEntry& e)
@@ -112,13 +114,21 @@ std::istream& operator>>(std::istream& is, GffEntry& e)
 
   is >> e.seqname >> e.source >> type >> e.beg >> e.end >> score >> strand
     >> phase >> attributes;
-  if(is.fail()) return is; // do smomething with errors here
+
+  if(is.fail()) { return is; } // do smomething with errors here
+
   e.score = score_to_float(score);
   e.strand = strand_to_int(strand);
   e.phase = phase_to_int(phase);
   e.type = stringtools::lowercase(type);
   parse_attributes(attributes, e);
   return is;
+}
+
+void make_synthetic_id(gff::GffEntry& e)
+{
+  e.id = e.type + std::to_string(++GffFile::synth_entries_count[e.type]);
+  e.has_id = false;
 }
 
 void GffFile::find_by_id(const std::string& id)

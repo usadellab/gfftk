@@ -34,6 +34,7 @@ struct GffEntry
     std::unordered_map<std::string, std::string> attributes;
     std::string id;
     std::optional<std::string> parent;
+    bool has_id = false;
     int length() const { return end - beg + 1; }
 };
 

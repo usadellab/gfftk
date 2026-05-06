@@ -78,6 +78,7 @@ class GffFile
     void find_longest_type_with(const std::string& type = "mrna",
                                 const std::string& sum_by = "cds");
     gff::GffSummary summarize() const;
+    static std::unordered_map<std::string, int> synth_entries_count;
 
   private:
     GffIndex index;
@@ -90,5 +91,6 @@ class GffFile
 };
 std::istream& operator>>(std::istream& is, GffEntry& e);
 void parse_attributes(const std::string& attribs, gff::GffEntry& entry);
+void make_synthetic_id(gff::GffEntry&);
 
 } // namespace gff

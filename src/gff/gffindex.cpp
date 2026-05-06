@@ -24,12 +24,14 @@ void GffIndex::build(std::vector<gff::GffEntry>& entries)
   sort_entries(entries);
   // index all entries by ID
   for(auto& e : entries)
+  {
     by_id[e.id] = &e;
+  }
 
   // build bidirectional links
   for(auto& e : entries)
   {
-    if(!e.parent) continue;
+    if(!e.parent) { continue; }
     // child > parent
     parent_of[e.id] = *e.parent;
     // parent > children (grouped by feature)
