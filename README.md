@@ -2,14 +2,13 @@
 
 ## Overview
 
-`gfftk` is a toolkit to examine GFF files and extract specific entries. The core
-functions to parse GFF file can be used in own projects or tools.
-
-## Requirements
-
-- GCC >= 11.4.0
+`gfftk` is a toolkit to examine GFF files and extract specific entries e.g.,
+isoforms. The core functions to parse GFF file can be used in own projects or
+tools.
 
 ## Build
+
+- Requires: GCC >= `11.4.0`
 
 ```bash
 $: git clone https://github.com/usadellab/gfftk.git
@@ -17,16 +16,10 @@ $: cd gfftk && mkdir work && cd $_
 $: make -f ../config/Makefile
 ```
 
-This should compile a `gfftk` executable (`build/bin/gfftk`). The executable can
-be moved into any directory. Move the executable before running `make clean` as
-it will remove all binaries and intermediary files.
-
-## Current functions
-
-- Identify and extract isoforms. Requires a `GFF` file and the corresponding
-  `FASTA` file.
-
-- Summarize a GFF file: how many types in total, per sequence, etc.
+This should compile a `gfftk` executable (`build/bin/gfftk` in your current
+working directory). The executable can be moved into any directory. Move the
+executable before running `make clean` as it will remove the binary and
+intermediary files.
 
 ## Usage
 
@@ -44,7 +37,13 @@ Available commands:
         summarize               Summarize GFF file
 ```
 
-### summarize
+## Commands
+
+### `summarize`
+
+The command takes a GFF file and outputs a TSV table counting feature types
+(genes, exons, CDS, mRNA, etc.) per sequence, plus the descriptive statistics
+totals, averages, and medians.
 
 ```bash
 Summarize GFF and print to STDOUT
@@ -57,7 +56,18 @@ Optional:
         --help,  -h         Show this help
 ```
 
-### isoform
+- [`summarize` examples](#summarize-a-gff-file)
+
+### `isoform`
+
+Many genes can produce multiple slightly different protein variants, called
+isoforms, from the same gene. This command lets you pick just one representative
+variant per gene from the structural GFF annotation file.
+
+You provide a `GFF` file and the corresponding `FASTA` file, and specify which
+type level to compare (e.g., CDS for protein-coding regions, or exon for the
+broader transcribed regions). You then choose whether to keep the longest or
+shortest variant per gene, and the results are written to a new `FASTA` file.
 
 ```bash
 Extracting isoforms from GFF
@@ -75,12 +85,12 @@ Optional:
         --help, -h            Show this help
 ```
 
+- [`isoform` examples](#identifying-and-saving-isoforms)
+
 ## Examples
 
 The directory `example` contains a very short extract from the GFF file from the
-[TAIR10 *Arabidopsis thaliana* annotation at
-NCBI](https://www.ncbi.nlm.nih.gov/datasets/genome/GCF_000001735.4/).
-
+[TAIR10 *Arabidopsis thaliana* annotation at NCBI](https://www.ncbi.nlm.nih.gov/datasets/genome/GCF_000001735.4/).
 
 ### Summarize a GFF file
 
@@ -126,26 +136,34 @@ median       6325.00  14.00          7599.00  0.00           50533.00  0.00     
 $: ./build/bin/gfftk summarize -i ../example/GCF_000188115.demo.gff | column -s $'\t' | less
 ```
 
-### Identifying and saving isoforms based on the longest CDS sequence
+### Identifying and saving isoforms
 
-- This will write all isoforms into the file `example.longest.cds.fa`
+#### Identify isoforms based on the longest/shortest CDS sequence for an entry
+
+- This will use the longest (argument `-l`) CDS sequence (argument: `-t CDS`)
+  for each entry as its representative isoform
+- All isoforms will be saved to `TAIR10.longest.cds.fa` (argument `-o TAIR10.longest.cds.fa`)
 
 ```bash
 $: ./build/bin/gfftk isoform -i ../example/GCF_000001735.4_TAIR10.demo.gff -f ../example/GCF_000001735.4_TAIR10.demo.fa -l -t CDS  -o TAIR10.longest.cds.fa
 ```
 
-### Identifying and saving isoforms based on the longest exon sequence
-
-```bash
-$: ./build/bin/gfftk isoform -i ../example/GCF_000001735.4_TAIR10.demo.gff -f ../example/GCF_000001735.4_TAIR10.demo.fa -l -t exon  -o TAIR10.longest.exon.fa
-```
-
-### Identifying and saving isoforms based on the shortest CDS sequence
-
-- This will write all isoforms into the file `example.shortest.cds.fa`
+- This will use the longest (argument `-s`) CDS sequence (argument: `-t CDS`)
+  for each entry as its representative isoform
+- All isoforms will be saved to `TAIR10.shortest.cds.fa` (argument `-o TAIR10.shortest.cds.fa`)
 
 ```bash
 $: ./build/bin/gfftk isoform -i ../example/GCF_000001735.4_TAIR10.demo.gff -f ../example/GCF_000001735.4_TAIR10.demo.fa -s -t CDS  -o TAIR10.shortest.cds.fa
+```
+
+#### Identifying and saving isoforms based on the longest exon sequence
+
+- This will use the longest (argument: `-l`) exon (argument: `-t exon`) for each
+  entry as its representative isoform
+- All isoforms will be saved to `example.longest.cds.fa` (argument `-o TAIR10.longest.exon.fa`)
+
+```bash
+$: ./build/bin/gfftk isoform -i ../example/GCF_000001735.4_TAIR10.demo.gff -f ../example/GCF_000001735.4_TAIR10.demo.fa -l -t exon  -o TAIR10.longest.exon.fa
 ```
 
 <!--
