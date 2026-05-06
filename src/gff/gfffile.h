@@ -21,6 +21,11 @@
 
 namespace gff
 {
+
+std::istream& operator>>(std::istream& is, GffEntry& e);
+void parse_attributes(const std::string& attribs, gff::GffEntry& entry);
+void make_synthetic_id(gff::GffEntry&);
+
 class GffException : public std::runtime_error
 {
   public:
@@ -48,6 +53,13 @@ class GffOpenError : public GffException
     {
     }
 };
+
+struct GffEntryDelimiter : std::ctype<char>
+{
+    GffEntryDelimiter();
+    static mask const* get_table();
+};
+
 class GffFile
 {
   public:
@@ -59,7 +71,7 @@ class GffFile
     ~GffFile();
     void close();
     std::filesystem::path path() const;
-    int parse();
+    void parse();
     void find_by_id(const std::string&);
     std::vector<GffEntry*> find_type_for_id(const std::string&,
                                             const std::string&);
@@ -80,15 +92,13 @@ class GffFile
     GffIndex index;
 
   private:
-    std::vector<GffEntry> entries;
     std::string inpath;
+    std::locale def_locale;
+    std::vector<GffEntry> entries;
     std::ifstream gff_in;
     unsigned int row_num = 0;
     void open();
     void clean_up();
 };
-std::istream& operator>>(std::istream& is, GffEntry& e);
-void parse_attributes(const std::string& attribs, gff::GffEntry& entry);
-void make_synthetic_id(gff::GffEntry&);
 
 } // namespace gff

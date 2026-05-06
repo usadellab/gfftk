@@ -33,6 +33,16 @@ else
     CXXFLAGS += -O2 -DNDEBUG
 endif
 
+# TEST_SRCS := src/test/test_gffparsing.cpp \
+#              src/gff/gfffile.cpp       \
+#              src/gff/gffindex.cpp
+
+# bin/test_gff: $(TEST_SRCS)
+# 	$(CXX) $(CXXFLAGS) -I../src $^ -o $@ \
+# 		-lboost_unit_test_framework
+
+# test: bin/test_gff
+# 	./bin/test_gff --log_level=message
 
 .PHONY: all
 all: $(TARGET)

@@ -13,6 +13,7 @@
 #include <cstring>
 #include <filesystem>
 #include <fstream>
+#include <locale>
 #include <map>
 #include <optional>
 #include <string>
@@ -21,6 +22,91 @@
 
 namespace gff
 {
+
+static float score_to_float(const std::string& value)
+{
+  if(value == ".") { return 0.0; }
+  return std::stof(value);
+}
+
+static int phase_to_int(const std::string& value)
+{
+  if(value == ".") { return 3; }
+  return std::stoi(value);
+}
+
+static int strand_to_int(std::string& value)
+{
+  if(value == "+") { return 0; }
+  if(value == "-") { return 1; }
+  if(value == ".") { return 2; }
+  if(value == "?") { return 3; }
+  std::cerr << "Unknwon strandness: " << value << "\n";
+  return 4; // Unknown
+}
+
+void parse_attributes(const std::string& attribs, gff::GffEntry& entry)
+{
+  std::istringstream ss(attribs);
+  std::string token;
+
+  while(std::getline(ss, token, ';'))
+  {
+    auto [key, value] = stringtools::split_kv(token, '=');
+    if(key == "ID") { entry.id = value; }
+    else if(key == "Parent") { entry.parent = value; }
+    else
+    {
+      if(!key.empty()) entry.attributes[key] = value;
+    }
+  }
+  if(entry.id.empty()) { make_synthetic_id(entry); }
+}
+
+void make_synthetic_id(gff::GffEntry& e)
+{
+  e.id = e.type + std::to_string(++GffFile::synth_entries_count[e.type]);
+  e.has_id = false;
+}
+
+GffEntryDelimiter::GffEntryDelimiter()
+  : std::ctype<char>(get_table())
+{
+}
+
+std::ctype_base::mask const* GffEntryDelimiter::get_table()
+{
+  // This table is created once. Should be alive during GffFile
+  static std::vector<std::ctype_base::mask> rc(table_size, 0);
+  rc['\t'] = std::ctype_base::space;
+  rc['\n'] = std::ctype_base::space;
+  return &rc[0];
+}
+
+std::istream& operator>>(std::istream& is, GffEntry& e)
+{
+  std::locale def_locale = is.getloc();
+  is.imbue(std::locale(def_locale, new GffEntryDelimiter));
+
+  std::string score = "";
+  std::string strand = "";
+  std::string phase = "";
+  std::string attributes = "";
+  std::string type = "";
+
+  is >> e.seqname >> e.source >> type >> e.beg >> e.end >> score >> strand
+    >> phase >> attributes;
+
+  if(is.fail()) { return is; } // do smomething with errors here
+
+  e.score = score_to_float(score);
+  e.strand = strand_to_int(strand);
+  e.phase = phase_to_int(phase);
+  e.type = stringtools::lowercase(type);
+  parse_attributes(attributes, e);
+  is.imbue(def_locale); // reset locale to use any witespace as delimiter
+  return is;
+}
 
 GffFile::GffFile(std::string gff_file)
   : inpath(gff_file)
@@ -62,73 +148,6 @@ void GffFile::open()
 
   gff_in.open(inpath);
   if(!gff_in.is_open()) throw GffOpenError(inpath);
-}
-
-static float score_to_float(const std::string& value)
-{
-  if(value == ".") { return 0.0; }
-  return std::stof(value);
-}
-
-static int phase_to_int(const std::string& value)
-{ // 0 fwd, 1: rev, 2: . 3: ? 4: bad
-  if(value == ".") { return 3; }
-  return std::stoi(value);
-}
-
-static int strand_to_int(std::string& value)
-{ // 0 fwd, 1: rev, 2: . 3: ? 4: bad
-  if(value == "+") { return 0; }
-  if(value == "-") { return 1; }
-  if(value == ".") { return 2; }
-  if(value == "?") { return 3; }
-  std::cerr << "Unknwon strandness: " << value << "\n";
-  return 4;
-}
-
-void parse_attributes(const std::string& attribs, gff::GffEntry& entry)
-{
-  std::istringstream ss(attribs);
-  std::string token;
-
-  while(std::getline(ss, token, ';'))
-  {
-    auto [key, value] = stringtools::split_kv(token, '=');
-    if(key == "ID") { entry.id = value; }
-    else if(key == "Parent") { entry.parent = value; }
-    else
-    {
-      if(!key.empty()) entry.attributes[key] = value;
-    }
-  }
-  if(entry.id.empty()) { make_synthetic_id(entry); }
-}
-
-std::istream& operator>>(std::istream& is, GffEntry& e)
-{
-  std::string score = "";
-  std::string strand = "";
-  std::string phase = "";
-  std::string attributes = "";
-  std::string type = "";
-
-  is >> e.seqname >> e.source >> type >> e.beg >> e.end >> score >> strand
-    >> phase >> attributes;
-
-  if(is.fail()) { return is; } // do smomething with errors here
-
-  e.score = score_to_float(score);
-  e.strand = strand_to_int(strand);
-  e.phase = phase_to_int(phase);
-  e.type = stringtools::lowercase(type);
-  parse_attributes(attributes, e);
-  return is;
-}
-
-void make_synthetic_id(gff::GffEntry& e)
-{
-  e.id = e.type + std::to_string(++GffFile::synth_entries_count[e.type]);
-  e.has_id = false;
 }
 
 void GffFile::find_by_id(const std::string& id)
@@ -180,7 +199,7 @@ std::vector<gff::GffEntry*> GffFile::find_all_of_type(const std::string& type)
   return index.find_all(type);
 }
 
-int GffFile::parse()
+void GffFile::parse()
 {
   for(std::string line; std::getline(gff_in, line);)
   {
@@ -192,12 +211,16 @@ int GffFile::parse()
       continue;
     }
     gff::GffEntry entry;
-    std::stringstream ss(line);
-    if(!(ss >> entry)) { std::cerr << "Bad GFF line: " << row_num << "\n"; }
+    std::istringstream ss(line);
+    if(!(ss >> entry))
+    {
+      std::cerr << "[ Warning ] bad GFF line at row:" << row_num
+                << "\tskipping\n";
+      continue;
+    }
     entries.push_back(std::move(entry));
   }
   index.build(entries);
-  return 0;
 }
 
 std::vector<gff::GffSelectedEntry>& GffFile::find_longest_type(
