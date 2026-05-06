@@ -96,6 +96,7 @@ std::istream& operator>>(std::istream& is, GffEntry& e)
 
   is >> e.seqname >> e.source >> type >> e.beg >> e.end >> score >> strand
     >> phase >> attributes;
+  is.imbue(def_locale); // reset locale to use any witespace as delimiter
 
   if(is.fail()) { return is; } // do smomething with errors here
 
@@ -104,7 +105,7 @@ std::istream& operator>>(std::istream& is, GffEntry& e)
   e.phase = phase_to_int(phase);
   e.type = stringtools::lowercase(type);
   parse_attributes(attributes, e);
-  is.imbue(def_locale); // reset locale to use any witespace as delimiter
+
   return is;
 }
 
