@@ -3,20 +3,18 @@
 ## Overview
 
 `gfftk` is a toolkit designed to work with [GFF
-files](https://github.com/The-Sequence-Ontology/Specifications/blob/master/gff3.md), a
-file format to store structural information about genomic features. Genes in GFF
-files a stored as a hierarchy of components, e.g., a gene may consist of one or
-more transcripts, each of which is made up of exons and other element types.
+files](https://github.com/The-Sequence-Ontology/Specifications/blob/master/gff3.md),
+a file format to store structural information about genomic features. Genes in
+GFF files a stored as a hierarchy of components, e.g., a gene may consist of one
+or more transcripts, each of which is made up of exons and other element types.
 `gfftk` can read and resolve these hierarchical relationships.
 
 `gfftk` identifies isoforms by calculating the total length of a selected
-element type (e.g., summing the lengths of all exons belonging to each
-isoform) and then selecting the longest or shortest sequence as the isoform
-representing that gene.
-
-The user can select which element type is used for this length calculation
-(e.g., exon, cDNA, mRNA) and whether the longest or shortest isoform should be
-selected. Any element type present in the GFF file can be used.
+element type (e.g., summing the lengths of all exons belonging to each isoform)
+and then selecting the longest or shortest sequence as the isoform representing
+that gene. The element type used for the calculation and whether to select the
+longest or shortest isoform can be selected by the user. Any element type
+present in the GFF can be selected.
 
 ## Build
 
@@ -184,17 +182,3 @@ $: ./build/bin/gfftk isoform -i ../example/GCF_000001735.4_TAIR10.demo.gff -f ..
 ```bash
 $: ./build/bin/gfftk isoform -i ../example/GCF_000001735.4_TAIR10.demo.gff -f ../example/GCF_000001735.4_TAIR10.demo.fa -l -t exon  -o TAIR10.longest.exon.fa
 ```
-
-<!--
-## Testing
-
-### Calculate length of elements between lines (including) 212044 and 212053
-
-```bash
-$: sed -n '212044,212053p' ../data/GCF_000188115.5.gff | awk -F'\t' -v OFS="\t" '{len+=($5-$4)+1}END{print len}'
-
-### Check identified genes
-
-```bash
-$: awk -F'\t' '($0!~/^#/)&&($3=="gene")' ../data/GCF_000001735.4_TAIR10.1_genomic.gff |cut -f1,4,5,9| sed -r "s/;.*$//g; s/ID=//"|les
-``` -->
