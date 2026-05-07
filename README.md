@@ -157,17 +157,17 @@ $: ./build/bin/gfftk summarize -i ../example/GCF_000188115.demo.gff | column -s 
 
 #### Identify isoforms based on the longest/shortest CDS sequence for an entry
 
-- This will use the longest (argument `-l`) CDS sequence (argument: `-t CDS`)
+- This will use the longest (argument: `-l`) CDS sequence (argument: `-t CDS`)
   for each entry as its representative isoform
-- All isoforms will be saved to `TAIR10.longest.cds.fa` (argument `-o TAIR10.longest.cds.fa`)
+- All isoforms will be saved to `TAIR10.longest.cds.fa` (argument: `-o TAIR10.longest.cds.fa`)
 
 ```bash
 $: ./build/bin/gfftk isoform -i ../example/GCF_000001735.4_TAIR10.demo.gff -f ../example/GCF_000001735.4_TAIR10.demo.fa -l -t CDS  -o TAIR10.longest.cds.fa
 ```
 
-- This will use the shortest (argument `-s`) CDS sequence (argument: `-t CDS`)
+- This will use the shortest (argument: `-s`) CDS sequence (argument: `-t CDS`)
   for each entry as its representative isoform
-- All isoforms will be saved to `TAIR10.shortest.cds.fa` (argument `-o TAIR10.shortest.cds.fa`)
+- All isoforms will be saved to `TAIR10.shortest.cds.fa` (argument: `-o TAIR10.shortest.cds.fa`)
 
 ```bash
 $: ./build/bin/gfftk isoform -i ../example/GCF_000001735.4_TAIR10.demo.gff -f ../example/GCF_000001735.4_TAIR10.demo.fa -s -t CDS  -o TAIR10.shortest.cds.fa
@@ -177,7 +177,7 @@ $: ./build/bin/gfftk isoform -i ../example/GCF_000001735.4_TAIR10.demo.gff -f ..
 
 - This will use the longest (argument: `-l`) exon (argument: `-t exon`) for each
   entry as its representative isoform
-- All isoforms will be saved to `example.longest.cds.fa` (argument `-o TAIR10.longest.exon.fa`)
+- All isoforms will be saved to `example.longest.cds.fa` (argument: `-o TAIR10.longest.exon.fa`)
 
 ```bash
 $: ./build/bin/gfftk isoform -i ../example/GCF_000001735.4_TAIR10.demo.gff -f ../example/GCF_000001735.4_TAIR10.demo.fa -l -t exon  -o TAIR10.longest.exon.fa
