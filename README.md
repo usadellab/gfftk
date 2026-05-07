@@ -2,13 +2,12 @@
 
 ## Overview
 
-`gfftk` is a toolkit designed to work with (GFF
- files)[github.com/The-Sequence-Ontology/Specifications/blob/master/gff3.md], a
+`gfftk` is a toolkit designed to work with [GFF
+files](github.com/The-Sequence-Ontology/Specifications/blob/master/gff3.md), a
 file format to store structural information about genomic features. Genes in GFF
-files a stored as a hierarchy of components, e.g., a
-gene may consist of one or more transcripts, each of which is made up of exons
-and other element types. `gfftk` can read and resolve these hierarchical
-relationships.
+files a stored as a hierarchy of components, e.g., a gene may consist of one or
+more transcripts, each of which is made up of exons and other element types.
+`gfftk` can read and resolve these hierarchical relationships.
 
 `gfftk` identifies isoforms by calculating the total length of a selected
 element type (e.g., summing the lengths of all exons belonging to each
