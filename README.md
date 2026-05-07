@@ -21,7 +21,7 @@ selected. Any element type present in the GFF file can be used.
 
 ## Build
 
-- Latest precompiled binaries: <https://github.com/username/repo/releases/latest>
+- Latest precompiled binaries: <https://github.com/usadellab/gfftk/releases/latest>
 
 - Requires Linux:
   - `GCC` >= `11.4.0`
