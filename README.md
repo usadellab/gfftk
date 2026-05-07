@@ -2,13 +2,33 @@
 
 ## Overview
 
-`gfftk` is a toolkit to examine GFF files and extract specific entries e.g.,
-isoforms. The core functions to parse GFF file can be used in own projects or
-tools.
+`gfftk` is a toolkit designed to work with (GFF
+ files)[github.com/The-Sequence-Ontology/Specifications/blob/master/gff3.md], a
+file format to store structural information about genomic features. Genes in GFF
+files a stored as a hierarchy of components, e.g., a
+gene may consist of one or more transcripts, each of which is made up of exons
+and other element types. `gfftk` can read and resolve these hierarchical
+relationships.
+
+`gfftk` identifies isoforms by calculating the total length of a selected
+element type (e.g., summing the lengths of all exons belonging to each
+isoform) and then selecting the longest or shortest sequence as the isoform
+representing that gene.
+
+The user can select which element type is used for this length calculation
+(e.g., exon, cDNA, mRNA) and whether the longest or shortest isoform should be
+selected. Any element type present in the GFF file can be used.
 
 ## Build
 
-- Requires: GCC >= `11.4.0`
+- Latest precompiled binaries: <https://github.com/username/repo/releases/latest>
+
+- Requires Linux:
+  - `GCC` >= `11.4.0`
+  - `GLIBC` >= `2.34`
+  - CPU architecture: `x86_64`
+
+### Compiling
 
 ```bash
 $: git clone https://github.com/usadellab/gfftk.git
@@ -148,7 +168,7 @@ $: ./build/bin/gfftk summarize -i ../example/GCF_000188115.demo.gff | column -s 
 $: ./build/bin/gfftk isoform -i ../example/GCF_000001735.4_TAIR10.demo.gff -f ../example/GCF_000001735.4_TAIR10.demo.fa -l -t CDS  -o TAIR10.longest.cds.fa
 ```
 
-- This will use the longest (argument `-s`) CDS sequence (argument: `-t CDS`)
+- This will use the shortest (argument `-s`) CDS sequence (argument: `-t CDS`)
   for each entry as its representative isoform
 - All isoforms will be saved to `TAIR10.shortest.cds.fa` (argument `-o TAIR10.shortest.cds.fa`)
 
