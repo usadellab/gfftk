@@ -9,7 +9,7 @@ GFF files a stored as a hierarchy of components, e.g., a gene may consist of one
 or more transcripts, each of which is made up of exons and other element types.
 `gfftk` can read and resolve these hierarchical relationships.
 
-`gfftk` identifies isoforms by calculating the total length of a selected
+`gfftk` identifies transcript isoforms by calculating the total length of a selected
 element type (e.g., summing the lengths of all exons belonging to each isoform)
 and then selecting the longest or shortest sequence as the isoform representing
 that gene. The element type used for the calculation and whether to select the
