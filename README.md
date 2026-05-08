@@ -120,13 +120,13 @@ The directory `example` contains a very short extract from the GFF file from the
 - The column sequence indicates the sequence name
 
 ```bash
-$: ./build/bin/gfftk summarize -i ../example/GCF_000001735.4_TAIR10.demo.gff
+$: ./build/bin/gfftk summarize -i ../example/TAIR10.demo.gff
 [ GFF Summary ]
-sequence        roots   cds     exon    gene    lnc_rna mirna   mrna    primary_transcript      region
-NC_003070.9     17      31      236     16      4       1       32      1       1
-total   17      31      236     16      4       1       32      1       1
-average 17.00   31.00   236.00  16.00   4.00    1.00    32.00   1.00    1.00
-median  17.00   31.00   236.00  16.00   4.00    1.00    32.00   1.00    1.00
+sequence	roots	cds	chromosome	exon	five_prime_utr	gene	mirna	mrna	ncrna	protein	three_prime_utr	trna
+Chr1	218	658	1	728	150	93	2	124	3	124	115	1
+total	218	658	1	728	150	93	2	124	3	124	115	1
+average	218.00	658.00	1.00	728.00	150.00	93.00	2.00	124.00	3.00	124.00	115.00	1.00
+median	218.00	658.00	1.00	728.00	150.00	93.00	2.00	124.00	3.00	124.00	115.00	1.00
 Finished summary
 ```
 
